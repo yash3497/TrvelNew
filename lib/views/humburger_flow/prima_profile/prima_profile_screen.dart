@@ -1,0 +1,866 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/src/widgets/container.dart';
+import 'package:flutter/src/widgets/framework.dart';
+import 'package:syncfusion_flutter_gauges/gauges.dart';
+import 'package:travel_app/model/prima_profile_model.dart';
+import 'package:travel_app/views/humburger_flow/prima_profile/about_me_screen.dart';
+import 'package:travel_app/views/humburger_flow/prima_profile/create_prima_profile.dart';
+import 'package:travel_app/views/humburger_flow/prima_profile/prima_my_account_screen.dart';
+import 'package:travel_app/views/humburger_flow/prima_profile/travel_photos_screen.dart';
+import 'package:travel_app/widget/custom_button.dart';
+import 'package:travel_app/widget/custom_dropdown_button.dart';
+
+import '../../../utils/constant.dart';
+
+class PrimaProfileScreen extends StatefulWidget {
+  const PrimaProfileScreen({super.key});
+
+  @override
+  State<PrimaProfileScreen> createState() => _PrimaProfileScreenState();
+}
+
+class _PrimaProfileScreenState extends State<PrimaProfileScreen> {
+  List travelPhoto = [
+    'assets/images/Rectangle 111.png',
+    'assets/images/Rectangle 111 (1).png',
+    'assets/images/Rectangle 111 (2).png',
+    'assets/images/Rectangle 111 (3).png',
+  ];
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: SizedBox(
+          height: height(context) * 1.85,
+          child: Stack(
+            // mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Positioned(
+                top: 0,
+                child: Container(
+                  height: height(context) * 0.42,
+                  width: width(context) * 1,
+                  decoration: const BoxDecoration(
+                      image: DecorationImage(
+                          fit: BoxFit.fill,
+                          image: AssetImage('assets/images/prima3.png'))),
+                  child: SafeArea(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            icon: Icon(
+                              Icons.arrow_back_ios,
+                              color: white,
+                            )),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 12.0),
+                          child: Text(
+                            'Prima Profile',
+                            style: bodyText20w700(color: white),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(right: 20.0, top: 10),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => PrimaMyAccount()));
+                            },
+                            child: ImageIcon(
+                                color: white,
+                                const AssetImage(
+                                  'assets/images/editicon.png',
+                                )),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                top: height(context) * 0.38,
+                child: Container(
+                  height: height(context) * 1.5,
+                  padding: EdgeInsets.all(10),
+                  width: width(context) * 1,
+                  decoration: shadowDecoration(20, 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(
+                        child: Container(
+                          height: 2,
+                          width: width(context) * 0.35,
+                          color: black,
+                        ),
+                      ),
+                      addVerticalSpace(10),
+                      Center(
+                        child: Text(
+                          'Alexander Doe',
+                          style: bodyText30W600(color: black),
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Icon(Icons.location_on_outlined),
+                          Text('Mumbai, Maharashtras')
+                        ],
+                      ),
+                      addVerticalSpace(15),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              tripFriendDialog(context);
+                            },
+                            child: Column(
+                              children: [
+                                Image.asset('assets/images/Group.png'),
+                                addVerticalSpace(5),
+                                Text(
+                                  'Trip Friend',
+                                  style: bodyText12Small(color: black),
+                                )
+                              ],
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              inviteToTripDsialog(context);
+                            },
+                            child: Column(
+                              children: [
+                                Image.asset('assets/images/Group1.png'),
+                                addVerticalSpace(5),
+                                Text(
+                                  'Invite to Trips',
+                                  style: bodyText12Small(color: black),
+                                )
+                              ],
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              joinToTripBottomSheet(context);
+                            },
+                            child: Column(
+                              children: [
+                                Image.asset('assets/images/Group3.png'),
+                                addVerticalSpace(5),
+                                Text(
+                                  'Join their trip',
+                                  style: bodyText12Small(color: black),
+                                )
+                              ],
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              sendMessageDialog(context);
+                            },
+                            child: Column(
+                              children: [
+                                Icon(
+                                  Icons.mail,
+                                  color: primary,
+                                ),
+                                addVerticalSpace(5),
+                                Text(
+                                  'Message',
+                                  style: bodyText12Small(color: black),
+                                )
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      addVerticalSpace(15),
+                      Text(
+                        'About Alexander',
+                        style: bodyText22w700(color: black),
+                      ),
+                      addVerticalSpace(10),
+                      Row(
+                        children: [
+                          Image.asset('assets/images/Vector (1).png'),
+                          addHorizontalySpace(8),
+                          Text(
+                            'Software Developer',
+                            style: TextStyle(fontSize: 18, color: black),
+                          )
+                        ],
+                      ),
+                      addVerticalSpace(4),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.person,
+                            color: primary,
+                          ),
+                          addHorizontalySpace(8),
+                          Text(
+                            'Female, 25',
+                            style: TextStyle(fontSize: 18, color: black),
+                          ),
+                          addHorizontalySpace(width(context) * 0.1),
+                          Icon(
+                            Icons.connect_without_contact_outlined,
+                            color: primary,
+                          ),
+                          addHorizontalySpace(8),
+                          Text(
+                            'Married',
+                            style: TextStyle(fontSize: 18, color: black),
+                          ),
+                        ],
+                      ),
+                      addVerticalSpace(14),
+                      Text(
+                        'I am alexander lorem ipsum Lorem ipsum lorem ipsum Lorem ipsum lorem ipsum Lorem ipsum lorem ipsum Lorem ipsum lorem ipsum Lorem ipsum lorem ipsum',
+                        style: bodyText16normal(spacing: 1.5, color: black),
+                      ),
+                      addVerticalSpace(15),
+                      Text(
+                        'Tripometer of Alexander',
+                        style: bodyText20w700(color: black),
+                      ),
+                      addVerticalSpace(15),
+                      TripometerCircleWidget(),
+                      addVerticalSpace(8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Alexander’s Friends',
+                            style: bodyText20w700(color: black),
+                          ),
+                          TextButton(
+                              onPressed: () {},
+                              child: Text(
+                                'View all',
+                                style: bodyText14w600(color: black),
+                              ))
+                        ],
+                      ),
+                      TripFriendsAndMutualFriendsWidget(),
+                      addVerticalSpace(5),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Travel Photos of Alexander',
+                            style: bodyText20w700(color: black),
+                          ),
+                          TextButton(
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (ctx) =>
+                                            TravelPhotosScreen()));
+                              },
+                              child: Text(
+                                'View all>',
+                                style: bodyText14w600(color: primary),
+                              )),
+                        ],
+                      ),
+                      addVerticalSpace(6),
+                      Container(
+                        padding: EdgeInsets.all(8),
+                        height: height(context) * 0.13,
+                        width: width(context) * 0.95,
+                        decoration:
+                            myFillBoxDecoration(0, black.withOpacity(0.08), 15),
+                        child: SizedBox(
+                          height: height(context) * 0.13,
+                          child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: travelPhoto.length,
+                              itemBuilder: (ctx, i) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        height: height(context) * 0.11,
+                                        width: width(context) * 0.23,
+                                        child: Image.asset(
+                                          travelPhoto[i],
+                                          fit: BoxFit.fill,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }),
+                        ),
+                      ),
+                      addVerticalSpace(15),
+                      Text(
+                        'Other Interests',
+                        style: bodyText20w700(color: black),
+                      ),
+                      Text(
+                        'Loves to cook, workout, read fiction and philosophy, listens to classical music, travel and talk',
+                        style: bodyText13normal(spacing: 1.4, color: black),
+                      )
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  tripFriendDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+              contentPadding: const EdgeInsets.all(6),
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0))),
+              content: Builder(
+                builder: (context) {
+                  var height = MediaQuery.of(context).size.height;
+                  var width = MediaQuery.of(context).size.width;
+
+                  return Container(
+                      height: height * 0.22,
+                      padding: EdgeInsets.all(10),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Text(
+                            'Trip Friend',
+                            style: bodyText16w600(color: black),
+                          ),
+                          Text(
+                            'The request has been sent. You will be a trip friend after the request has been accepted. ',
+                            textAlign: TextAlign.center,
+                            style: bodyText13normal(spacing: 1.4, color: black),
+                          ),
+                          // addVerticalSpace(height * 0.07),
+                          SizedBox(
+                            width: width * 0.4,
+                            child: CustomButton(
+                                name: 'Okay',
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                }),
+                          )
+                        ],
+                      ));
+                },
+              ),
+            ));
+  }
+
+  inviteToTripDsialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+              contentPadding: const EdgeInsets.all(6),
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0))),
+              content: Builder(
+                builder: (context) {
+                  var height = MediaQuery.of(context).size.height;
+                  var width = MediaQuery.of(context).size.width;
+
+                  return Container(
+                      height: height * 0.36,
+                      padding: EdgeInsets.all(10),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Text(
+                            'An invitation will be send to Alexander to join your trip',
+                            textAlign: TextAlign.center,
+                            style: bodyText16w600(color: black),
+                          ),
+                          addVerticalSpace(height * 0.02),
+                          Text(
+                            'Select a trip for Invitation',
+                            style: bodyText14w600(color: black),
+                          ),
+                          CustomDropDownButton(
+                              itemList: locationList,
+                              lableText: '  Trip Invitation  '),
+                          Text(
+                            'Trips requesting for new trip friends are only listed here',
+                            style: bodyText12Small(color: black),
+                            textAlign: TextAlign.center,
+                          ),
+                          addVerticalSpace(10),
+                          SizedBox(
+                            width: width * 0.4,
+                            child: CustomButton(
+                                name: 'Send Invitation',
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                }),
+                          )
+                        ],
+                      ));
+                },
+              ),
+            ));
+  }
+
+  sendMessageDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+              contentPadding: const EdgeInsets.all(6),
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0))),
+              content: Builder(
+                builder: (context) {
+                  var height = MediaQuery.of(context).size.height;
+                  var width = MediaQuery.of(context).size.width;
+
+                  return Container(
+                      height: height * 0.32,
+                      padding: EdgeInsets.all(10),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Text(
+                            'Send a quick messages to Alexander',
+                            textAlign: TextAlign.center,
+                            style: bodyText16w600(color: black),
+                          ),
+                          addVerticalSpace(height * 0.01),
+                          Container(
+                              decoration: myFillBoxDecoration(
+                                  0, black.withOpacity(0.1), 15),
+                              width: width * 0.94,
+                              // height: height(context) * 0.08,
+                              child: TextField(
+                                  maxLines: 3,
+                                  decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      contentPadding: EdgeInsets.all(10),
+                                      hintStyle: bodyText13normal(color: black),
+                                      hintText:
+                                          'Write something interesting'))),
+                          Text(
+                            'Please send message only to the person whomm you know well. TravelNew has a zero-tolerance policy for spam',
+                            style: bodyText12Small(spacing: 1.4, color: black),
+                            textAlign: TextAlign.center,
+                          ),
+                          addVerticalSpace(10),
+                          SizedBox(
+                            width: width * 0.4,
+                            child: CustomButton(
+                                name: 'Send Message',
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                }),
+                          )
+                        ],
+                      ));
+                },
+              ),
+            ));
+  }
+
+  Future<void> joinToTripBottomSheet(BuildContext context) {
+    return showModalBottomSheet<void>(
+      isScrollControlled: true,
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20.0),
+      ),
+      builder: (BuildContext context) {
+        return StatefulBuilder(builder: (context, setState) {
+          return Container(
+            padding: EdgeInsets.all(10),
+            height: height(context) * 0.6,
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(
+                'You have following request to be your trip friend',
+                textAlign: TextAlign.center,
+                style: bodyText18w600(color: black),
+              ),
+              addVerticalSpace(15),
+              Expanded(
+                  child: ListView.builder(
+                      itemCount: 8,
+                      itemBuilder: (ctx, i) {
+                        return Column(
+                          children: [
+                            Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const CircleAvatar(
+                                    backgroundImage: AssetImage(
+                                        'assets/images/nearbyfestivals.png'),
+                                    radius: 30,
+                                  ),
+                                  addHorizontalySpace(5),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Sumit patil',
+                                        style: bodyText16w600(color: black),
+                                      ),
+                                      addVerticalSpace(3),
+                                      Row(
+                                        children: [
+                                          Image.asset(
+                                            'assets/images/Vector (1).png',
+                                            color: primary,
+                                          ),
+                                          addHorizontalySpace(1),
+                                          Text(
+                                            'Software Developer',
+                                            style:
+                                                bodyText12Small(color: black),
+                                          )
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            Icons.location_on,
+                                            color: primary,
+                                          ),
+                                          addHorizontalySpace(1),
+                                          Text(
+                                            'Pune',
+                                            style:
+                                                bodyText12Small(color: black),
+                                          )
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  Spacer(),
+                                  Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      InkWell(
+                                        onTap: () {},
+                                        child: Container(
+                                          height: 25,
+                                          width: 100,
+                                          decoration: myFillBoxDecoration(
+                                              0, primary, 5),
+                                          child: Center(
+                                            child: Text(
+                                              'Accept',
+                                              style:
+                                                  bodyText14w600(color: black),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      addVerticalSpace(10),
+                                      InkWell(
+                                        onTap: () {},
+                                        child: Container(
+                                          height: 25,
+                                          width: 100,
+                                          decoration: myOutlineBoxDecoration(
+                                              1, primary, 5),
+                                          child: Center(
+                                            child: Text(
+                                              'Deny',
+                                              style:
+                                                  bodyText14w600(color: black),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                ]),
+                            const Divider(
+                              thickness: 1,
+                            )
+                          ],
+                        );
+                      }))
+            ]),
+          );
+        });
+      },
+    );
+  }
+}
+
+class TripFriendsAndMutualFriendsWidget extends StatefulWidget {
+  const TripFriendsAndMutualFriendsWidget({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<TripFriendsAndMutualFriendsWidget> createState() =>
+      _TripFriendsAndMutualFriendsWidgetState();
+}
+
+class _TripFriendsAndMutualFriendsWidgetState
+    extends State<TripFriendsAndMutualFriendsWidget>
+    with TickerProviderStateMixin {
+  TabController? controller;
+  @override
+  void initState() {
+    controller = TabController(length: 2, vsync: this);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    controller!.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(8),
+      height: height(context) * 0.28,
+      width: width(context) * 0.95,
+      decoration: myFillBoxDecoration(0, black.withOpacity(0.08), 15),
+      child: Column(
+        children: [
+          TabBar(
+            indicatorSize: TabBarIndicatorSize.tab,
+            unselectedLabelColor: Colors.grey,
+            controller: controller,
+            onTap: (value) {},
+            isScrollable: false,
+            indicator: BoxDecoration(
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.circular(10),
+                color: primary),
+            indicatorColor: primary,
+            labelColor: black,
+            labelStyle:
+                const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+            unselectedLabelStyle:
+                const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+            tabs: const [
+              Tab(
+                text: 'Trip Friends',
+              ),
+              Tab(
+                text: 'Mutual Friends',
+              ),
+            ],
+          ),
+          Expanded(
+            child: TabBarView(controller: controller, children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  addVerticalSpace(10),
+                  SizedBox(
+                    height: height(context) * 0.14,
+                    child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: tripAndMutualfrnds.length,
+                        itemBuilder: (ctx, i) {
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  height: height(context) * 0.11,
+                                  width: width(context) * 0.23,
+                                  child: Image.asset(
+                                    tripAndMutualfrnds[i]['img'],
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
+                                addVerticalSpace(5),
+                                Text(tripAndMutualfrnds[i]['name']),
+                              ],
+                            ),
+                          );
+                        }),
+                  ),
+                  addVerticalSpace(18),
+                  InkWell(
+                    onTap: () {},
+                    child: const Text(
+                      'You have trip friend request >',
+                      style: TextStyle(
+                          decoration: TextDecoration.underline,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600),
+                    ),
+                  )
+                ],
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  addVerticalSpace(10),
+                  SizedBox(
+                    height: height(context) * 0.14,
+                    child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: tripAndMutualfrnds.length,
+                        itemBuilder: (ctx, i) {
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  height: height(context) * 0.11,
+                                  width: width(context) * 0.23,
+                                  child: Image.asset(
+                                    tripAndMutualfrnds[i]['img'],
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
+                                Text(tripAndMutualfrnds[i]['name']),
+                              ],
+                            ),
+                          );
+                        }),
+                  ),
+                  addVerticalSpace(8),
+                  InkWell(
+                    onTap: () {},
+                    child: const Text(
+                      'You have trip friend request >',
+                      style: TextStyle(
+                          decoration: TextDecoration.underline,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600),
+                    ),
+                  )
+                ],
+              ),
+            ]),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class TripometerCircleWidget extends StatelessWidget {
+  TripometerCircleWidget({
+    Key? key,
+  }) : super(key: key);
+  final List tripoMeter = ['Adventure', 'Religious', 'Nature', 'City'];
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: 10,
+      runSpacing: 10,
+      children: List.generate(tripoMeter.length, (i) {
+        return Stack(
+          children: [
+            Container(
+              height: height(context) * 0.12,
+              width: width(context) * 0.45,
+              padding: EdgeInsets.all(10),
+              decoration: myFillBoxDecoration(0, black.withOpacity(0.1), 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: height(context) * 0.09,
+                    child: SfRadialGauge(
+                      axes: <RadialAxis>[
+                        RadialAxis(
+                          centerX: 0.2,
+                          centerY: 0.6,
+                          canScaleToFit: false,
+                          canRotateLabels: false,
+                          showAxisLine: false,
+                          showLabels: false,
+                          showTicks: false,
+                          minimum: 0,
+                          maximum: 100,
+                          interval: 10,
+                          ranges: <GaugeRange>[
+                            GaugeRange(
+                              startValue: 0,
+                              endValue: 78,
+                              color: primary,
+                              startWidth: 8,
+                              endWidth: 8,
+                            ),
+                          ],
+                          annotations: <GaugeAnnotation>[
+                            GaugeAnnotation(
+                                widget: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "85%",
+                                  style: bodytext12Bold(color: Colors.black),
+                                ),
+                              ],
+                            ))
+                          ],
+                        ) // RadialAxis
+                      ], // < RadialAxis > [ ]
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Positioned(
+                top: 10,
+                right: 10,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      tripoMeter[i],
+                      style: bodyText16w600(color: black),
+                    ),
+                    addVerticalSpace(7),
+                    Text(
+                      'Road Trip',
+                      style: bodyText12Small(color: black),
+                    ),
+                    Text(
+                      'Paragliding',
+                      style: bodyText12Small(color: black),
+                    ),
+                    addVerticalSpace(5),
+                    Text(
+                      'View all',
+                      style: bodytext12Bold(color: black),
+                    )
+                  ],
+                ))
+          ],
+        );
+      }),
+    );
+  }
+}
