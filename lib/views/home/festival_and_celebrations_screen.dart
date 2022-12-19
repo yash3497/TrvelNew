@@ -1,11 +1,18 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:travel_app/views/aspired_trip/save_trip_and_get_qoute.dart';
 import 'package:travel_app/widget/custom_button.dart';
-
+import 'package:travel_app/views/start/signup_with_social_media_screen.dart';
 import '../../model/home_model.dart';
 import '../../utils/constant.dart';
 import '../../widget/custom_appbar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+var _count = 0;
+void getCount(_count) async {
+  SharedPreferences counter = await SharedPreferences.getInstance();
+  counter.setInt('count', _count);
+}
 class FestivalAndCelebrationsScreen extends StatefulWidget {
   const FestivalAndCelebrationsScreen({super.key});
 
@@ -17,6 +24,7 @@ class FestivalAndCelebrationsScreen extends StatefulWidget {
 class _FestivalAndCelebrationsScreenState
     extends State<FestivalAndCelebrationsScreen> with TickerProviderStateMixin {
   TabController? _tabController;
+
   @override
   void initState() {
     _tabController = TabController(length: 4, vsync: this);
@@ -107,10 +115,27 @@ class FestivalsDataList extends StatelessWidget {
             children: [
               InkWell(
                 onTap: () {
-                  Navigator.push(
+                  if( FirebaseAuth.instance.currentUser != null){
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ShowDetailsOfFestivals()));
+                  }
+                  else
+                    if (_count == 10) {
+                    Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => ShowDetailsOfFestivals()));
+                        builder: (context) => SignupWithSocialMediaScreen(),
+                      ),
+                    );
+                  } else {
+                    _count++;
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ShowDetailsOfFestivals()));
+                  }
                 },
                 child: Container(
                   margin: EdgeInsets.only(top: 10, bottom: 5),
@@ -283,7 +308,18 @@ class ShowDetailsOfFestivals extends StatelessWidget {
                       children: [
                         IconButton(
                             onPressed: () {
-                              Navigator.pop(context);
+                              // if (_count == 10) {
+                              //   Navigator.push(
+                              //     context,
+                              //     MaterialPageRoute(
+                              //       builder: (context) =>
+                              //           SignupWithSocialMediaScreen(),
+                              //     ),
+                              //   );
+                              // } else {
+                                //_count++;
+                                Navigator.pop(context);
+                              //}
                             },
                             icon: Icon(Icons.arrow_back_ios)),
                         Spacer(),

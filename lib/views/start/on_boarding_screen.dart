@@ -3,6 +3,7 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:travel_app/views/start/signup_with_social_media_screen.dart';
+import 'package:travel_app/widget/my_bottom_navbar.dart';
 
 import '../../utils/constant.dart';
 import 'sign_in_screen.dart';
@@ -32,10 +33,12 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                 setState(() {
                   if (i == 5) {
                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                SignupWithSocialMediaScreen()));
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MyBottomBar(),
+                        //SignupWithSocialMediaScreen(),
+                      ),
+                    );
                   }
                 });
               },
@@ -70,7 +73,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                       "Experience more fun while your trip. Get Information viz. know places, what & where to buy, special to eat and more mentioned in our travel utility section.",
                   assetUrl: 'assets/images/onb5.png',
                 ),
-                SignInScreen()
+                SignInScreen(),
               ],
             ),
           ),

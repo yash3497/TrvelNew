@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:travel_app/utils/constant.dart';
 import 'package:travel_app/views/home/home_screen.dart';
 import 'package:travel_app/views/start/forgot_password.dart';
@@ -11,8 +13,17 @@ import 'package:travel_app/widget/my_bottom_navbar.dart';
 import '../../widget/custom_button.dart';
 import '../../widget/custom_textfield.dart';
 
-class SignInScreen extends StatelessWidget {
+class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
+
+  @override
+  State<SignInScreen> createState() => _SignInScreenState();
+}
+
+class _SignInScreenState extends State<SignInScreen> {
+  String email="";
+
+  String password="";
 
   @override
   Widget build(BuildContext context) {
@@ -52,16 +63,26 @@ class SignInScreen extends StatelessWidget {
                       style: bodyText16normal(color: black),
                     ),
                     addVerticalSpace(height(context) * 0.08),
-                    CustomTextFieldWidget(
-                      labelText: 'Email Address',
+                    TextField(
+                      onChanged: (value) {
+                        email = value;
+                      },
+                      decoration: InputDecoration(hintText: 'Email'),
+                      // icon: Icon(
+                      //   Icons.help,
+                      //   color: primary,
+                      // ),
                     ),
                     addVerticalSpace(20),
-                    CustomTextFieldWidget(
-                      labelText: 'Password',
-                      icon: Icon(
-                        Icons.remove_red_eye_rounded,
-                        color: primary,
-                      ),
+                    TextField(
+                      onChanged: (value) {
+                        password = value;
+                      },
+                      decoration: InputDecoration(hintText: 'Password'),
+                      // icon: Icon(
+                      //   Icons.help,
+                      //   color: primary,
+                      // ),
                     ),
                     addVerticalSpace(20),
                     InkWell(
@@ -92,11 +113,27 @@ class SignInScreen extends StatelessWidget {
                     addVerticalSpace(height(context) * 0.07),
                     CustomButton(
                       name: 'Sign in',
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: ((context) => MyBottomBar())));
+                      onPressed: () async {
+                        try {
+
+                          final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+                              email: email,
+                              password: password
+                          );
+                          final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+                          sharedPreferences.setString('email', email.toString());
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: ((context) => MyBottomBar())));
+                        } on FirebaseAuthException catch (e) {
+                          if (e.code == 'user-not-found') {
+                            print('No user found for that email.');
+                          } else if (e.code == 'wrong-password') {
+                            print('Wrong password provided for that user.');
+                          }
+                        }
+                       // FirebaseAuth.instance.createUserWithEmailAndPassword(email: null, password: )
                       },
                     ),
                     addVerticalSpace(height(context) * 0.08),

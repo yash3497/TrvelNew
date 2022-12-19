@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:travel_app/services/firebase_services.dart';
 import 'package:travel_app/utils/constant.dart';
 import 'package:travel_app/views/start/sign_in_screen.dart';
 import 'package:travel_app/widget/my_bottom_navbar.dart';
@@ -62,7 +63,11 @@ class SignupWithSocialMediaScreen extends StatelessWidget {
             ),
             addVerticalSpace(height(context) * 0.06),
             InkWell(
-              onTap: () {},
+              onTap: () async {
+                await FirebaseServices().signInWithGoogle();
+                Navigator.push(context,
+                    MaterialPageRoute(builder: ((context) => MyBottomBar())));
+              },
               child: Container(
                 height: 50,
                 width: width(context) * 0.92,
@@ -82,7 +87,12 @@ class SignupWithSocialMediaScreen extends StatelessWidget {
             ),
             addVerticalSpace(15),
             InkWell(
-              onTap: () {},
+              onTap: () async {
+                await FirebaseServices().signInWithFacebook();
+                Navigator.push(context,
+                    MaterialPageRoute(builder: ((context) => MyBottomBar())));
+                // signing with facebook
+              },
               child: Container(
                 height: 50,
                 width: width(context) * 0.92,

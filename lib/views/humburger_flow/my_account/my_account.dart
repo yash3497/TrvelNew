@@ -1,8 +1,10 @@
 import 'dart:developer';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:travel_app/utils/constant.dart';
 import 'package:travel_app/views/humburger_flow/my_account/B2B_registration.dart';
 import 'package:travel_app/views/humburger_flow/my_account/account_settings.dart';
@@ -16,6 +18,7 @@ import 'package:travel_app/views/humburger_flow/prima_profile/prima_profile_scre
 import 'package:travel_app/views/prima/go_prima_screen.dart';
 import 'package:travel_app/views/start/forgot_password.dart';
 import 'package:travel_app/views/start/sign_up_screen.dart';
+import 'package:travel_app/views/start/signup_with_social_media_screen.dart';
 import 'package:travel_app/widget/custom_textfield.dart';
 
 import '../../../widget/custom_button.dart';
@@ -231,20 +234,32 @@ class MyAccountScreen extends StatelessWidget {
               ),
             ),
             addVerticalSpace(height(context) * 0.06),
-            InkWell(
-              onTap: () {
-                // Navigator.push(context,MaterialPageRoute(builder: (ctx)=>));
-              },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.logout_outlined),
-                  addHorizontalySpace(10),
-                  Text(
-                    'Log out',
-                    style: bodyText20w700(color: black),
-                  ),
-                ],
+            Visibility(
+              //visible: if( FirebaseAuth.instance.currentUser != null),
+              child: InkWell(
+                onTap: () async {
+                  if( FirebaseAuth.instance.currentUser != null)
+                 { final SharedPreferences sharedPreferences =
+                      await SharedPreferences.getInstance();
+                  sharedPreferences.remove('email');
+                  await FirebaseAuth.instance.signOut();
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: ((context) => SignupWithSocialMediaScreen())));}
+                  // Navigator.push(context,MaterialPageRoute(builder: (ctx)=>));
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.logout_outlined),
+                    addHorizontalySpace(10),
+                    Text(
+                      'Log out',
+                      style: bodyText20w700(color: black),
+                    ),
+                  ],
+                ),
               ),
             ),
             addVerticalSpace(height(context) * 0.06),

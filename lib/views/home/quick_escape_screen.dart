@@ -101,165 +101,167 @@ class QuickEscapeDataList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        InkWell(
-          onTap: () {
-            // Navigator.push(context,MaterialPageRoute(builder: (context)=>));
-          },
-          child: Container(
-            margin: EdgeInsets.only(top: 10, bottom: 5),
-            height: height(context) * 0.36,
-            width: width(context) * 0.93,
-            decoration: shadowDecoration(15, 2),
-            child: Column(
-              children: [
-                Stack(
-                  children: [
-                    ClipRRect(
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(15),
-                            topRight: Radius.circular(15)),
-                        child: Image.asset('assets/images/beach.png')),
-                    Positioned(
-                        top: -5,
-                        right: -5,
-                        child: IconButton(
-                            onPressed: () {},
-                            icon: Icon(
-                              Icons.bookmark_border,
-                              color: white,
-                            ))),
-                    Positioned(
-                        bottom: 0,
-                        left: 0,
-                        child: Container(
-                          padding: EdgeInsets.only(left: 8),
-                          height: height(context) * 0.064,
-                          width: width(context),
-                          color: black.withOpacity(0.4),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.calendar_month,
-                                    color: primary,
-                                    size: 20,
-                                  ),
-                                  addHorizontalySpace(5),
-                                  Text(
-                                    '6th Feb 2022',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        color: white),
-                                  )
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.location_on_rounded,
-                                    color: primary,
-                                    size: 20,
-                                  ),
-                                  addHorizontalySpace(5),
-                                  Text(
-                                    'Udupi, Karnataka',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        color: white),
-                                  ),
-                                  addHorizontalySpace(width(context) * 0.3),
-                                  Container(
-                                    height: 20,
-                                    width: width(context) * 0.2,
-                                    decoration:
-                                        myFillBoxDecoration(0, primary, 4),
-                                    child: Center(
-                                      child: Text(
-                                        '2 days',
-                                        style: bodytext12Bold(color: black),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              )
-                            ],
-                          ),
-                        ))
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          InkWell(
+            onTap: () {
+              // Navigator.push(context,MaterialPageRoute(builder: (context)=>));
+            },
+            child: Container(
+              margin: EdgeInsets.only(top: 10, bottom: 5),
+              height: height(context) * 0.40,
+              width: width(context) * 0.93,
+              decoration: shadowDecoration(15, 2),
+              child: Column(
+                children: [
+                  Stack(
                     children: [
-                      Text(
-                        'Nagaur Cattle Festival',
-                        style: bodyText22w700(color: black),
-                      ),
-                      Text(
-                        'Animal Husbandry dept & Stare Tourism dept',
-                        style: bodyText14normal(color: black),
-                      ),
-                      addVerticalSpace(11),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Image.asset(
-                            'assets/images/cardrive.png',
-                          ),
-                          addHorizontalySpace(5),
-                          SizedBox(
-                            width: width(context) * 0.15,
-                            child: Text(
-                              '12 Hours drive',
-                              style: bodytext12Bold(color: black),
+                      ClipRRect(
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(15),
+                              topRight: Radius.circular(15)),
+                          child: Image.asset('assets/images/beach.png')),
+                      Positioned(
+                          top: -5,
+                          right: -5,
+                          child: IconButton(
+                              onPressed: () {},
+                              icon: Icon(
+                                Icons.bookmark_border,
+                                color: white,
+                              ))),
+                      Positioned(
+                          bottom: 0,
+                          left: 0,
+                          child: Container(
+                            padding: EdgeInsets.only(left: 8),
+                            height: height(context) * 0.064,
+                            width: width(context),
+                            color: black.withOpacity(0.4),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.calendar_month,
+                                      color: primary,
+                                      size: 20,
+                                    ),
+                                    addHorizontalySpace(5),
+                                    Text(
+                                      '6th Feb 2022',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          color: white),
+                                    )
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.location_on_rounded,
+                                      color: primary,
+                                      size: 20,
+                                    ),
+                                    addHorizontalySpace(5),
+                                    Text(
+                                      'Udupi, Karnataka',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          color: white),
+                                    ),
+                                    addHorizontalySpace(width(context) * 0.3),
+                                    Container(
+                                      height: 20,
+                                      width: width(context) * 0.2,
+                                      decoration:
+                                          myFillBoxDecoration(0, primary, 4),
+                                      child: Center(
+                                        child: Text(
+                                          '2 days',
+                                          style: bodytext12Bold(color: black),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                )
+                              ],
                             ),
-                          ),
-                          Text(
-                            '  |  ',
-                            style: bodyText16normal(color: black),
-                          ),
-                          Image.asset(
-                            'assets/images/train2.png',
-                          ),
-                          addHorizontalySpace(5),
-                          SizedBox(
-                            width: width(context) * 0.15,
-                            child: Text(
-                              '16 Hours journey',
-                              style: bodytext12Bold(color: black),
-                            ),
-                          ),
-                          Text(
-                            '  |  ',
-                            style: bodyText16normal(color: black),
-                          ),
-                          Image.asset(
-                            'assets/images/flight.png',
-                          ),
-                          addHorizontalySpace(5),
-                          SizedBox(
-                            width: width(context) * 0.15,
-                            child: Text(
-                              'No direct flights',
-                              style: bodytext12Bold(color: black),
-                            ),
-                          )
-                        ],
-                      )
+                          ))
                     ],
                   ),
-                )
-              ],
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Nagaur Cattle Festival',
+                          style: bodyText22w700(color: black),
+                        ),
+                        Text(
+                          'Animal Husbandry dept & Stare Tourism dept',
+                          style: bodyText14normal(color: black),
+                        ),
+                        addVerticalSpace(11),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Image.asset(
+                              'assets/images/cardrive.png',
+                            ),
+                            addHorizontalySpace(5),
+                            SizedBox(
+                              width: width(context) * 0.15,
+                              child: Text(
+                                '12 Hours drive',
+                                style: bodytext12Bold(color: black),
+                              ),
+                            ),
+                            Text(
+                              '  |  ',
+                              style: bodyText16normal(color: black),
+                            ),
+                            Image.asset(
+                              'assets/images/train2.png',
+                            ),
+                            addHorizontalySpace(5),
+                            SizedBox(
+                              width: width(context) * 0.15,
+                              child: Text(
+                                '16 Hours journey',
+                                style: bodytext12Bold(color: black),
+                              ),
+                            ),
+                            Text(
+                              '  |  ',
+                              style: bodyText16normal(color: black),
+                            ),
+                            Image.asset(
+                              'assets/images/flight.png',
+                            ),
+                            addHorizontalySpace(5),
+                            SizedBox(
+                              width: width(context) * 0.15,
+                              child: Text(
+                                'No direct flights',
+                                style: bodytext12Bold(color: black),
+                              ),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

@@ -1,11 +1,19 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:travel_app/views/aspired_trip/aspired_trip_details_screen.dart';
 import 'package:travel_app/widget/custom_appbar.dart';
 import 'package:travel_app/widget/custom_textfield.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../utils/constant.dart';
+import 'package:travel_app/views/start/signup_with_social_media_screen.dart';
+
+var _count = 0;
+void getCount(_count) async {
+  SharedPreferences counter = await SharedPreferences.getInstance();
+  counter.setInt('count', _count);
+}
 
 class AspiredTrip2Screen extends StatefulWidget {
   const AspiredTrip2Screen({super.key});
@@ -55,10 +63,25 @@ class _AspiredTrip2ScreenState extends State<AspiredTrip2Screen> {
           Expanded(child: ListView.builder(itemBuilder: (ctx, i) {
             return InkWell(
               onTap: () {
-                Navigator.push(
+                if (FirebaseAuth.instance.currentUser != null) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AspiredTripDetailsScreen()));
+                } else if (_count == 10) {
+                  Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => AspiredTripDetailsScreen()));
+                      builder: (context) => SignupWithSocialMediaScreen(),
+                    ),
+                  );
+                } else {
+                  _count++;
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AspiredTripDetailsScreen()));
+                }
               },
               child: Container(
                 margin: EdgeInsets.all(10),

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TravelNew</string>
+    <string name="facebook_app_id">434996012167411</string>
+    <string name="fb_login_protocol_scheme">fb434996012167411</string>
+    <string name="facebook_client_token">794f13c15baed336a12df4942555fad9</string>
+</resources>

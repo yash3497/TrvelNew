@@ -1,11 +1,20 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:travel_app/views/home/festival_and_celebrations_screen.dart';
 import 'package:travel_app/views/humburger_flow/trip_library_screen.dart';
+import 'package:travel_app/views/start/sign_in_screen.dart';
+import 'package:travel_app/views/start/signup_with_social_media_screen.dart';
 
 import '../../utils/constant.dart';
 
 class UpcomingTripsScreen extends StatelessWidget {
   const UpcomingTripsScreen({super.key});
+  showSnackBar(BuildContext context, String str, [Color clr = Colors.black]) {
+    return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(str),
+      backgroundColor: clr,
+    ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,10 +42,18 @@ class UpcomingTripsScreen extends StatelessWidget {
               children: [
                 InkWell(
                   onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (ctx) => TripLibraryScreen()));
+                    if (FirebaseAuth.instance.currentUser != null) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (ctx) => TripLibraryScreen()));
+                    } else {
+                      showSnackBar(context, "Please Login First!", Colors.red);
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (ctx) => SignupWithSocialMediaScreen()));
+                    }
                   },
                   child: Container(
                     margin: EdgeInsets.only(right: 10),

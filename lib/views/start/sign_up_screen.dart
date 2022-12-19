@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -9,8 +11,80 @@ import 'package:travel_app/widget/my_bottom_navbar.dart';
 import '../../widget/custom_textfield.dart';
 import '../home/home_screen.dart';
 
-class SignUpScreen extends StatelessWidget {
-  const SignUpScreen({super.key});
+class SignUpScreen extends StatefulWidget {
+  SignUpScreen({super.key});
+
+  @override
+  State<SignUpScreen> createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends State<SignUpScreen> {
+  String email = "";
+
+  String password = "";
+
+  bool isButtonActive = true;
+  TextEditingController field0 = new TextEditingController();
+  TextEditingController field1 = new TextEditingController();
+  TextEditingController field2 = new TextEditingController();
+  TextEditingController field3 = new TextEditingController();
+  TextEditingController field4 = new TextEditingController();
+  registerUser() async {
+    final _fireStore = FirebaseFirestore.instance;
+    await _fireStore.collection("users").doc().set({
+      'fullName': field0.text,
+      'email': field1.text,
+      'dob': field2.text,
+      'mobNum': field3.text,
+    });
+  }
+
+  @override
+  void initstate() {
+    super.initState();
+    field0 = TextEditingController();
+    field0.addListener(() {
+      final isButtonActive = field0.text.isNotEmpty;
+      setState(() => this.isButtonActive = isButtonActive);
+    });
+    field1 = TextEditingController();
+    field1.addListener(() {
+      final isButtonActive = field1.text.isNotEmpty;
+      setState(() => this.isButtonActive = isButtonActive);
+    });
+    field2 = TextEditingController();
+    field2.addListener(() {
+      final isButtonActive = field2.text.isNotEmpty;
+      setState(() => this.isButtonActive = isButtonActive);
+    });
+    field3 = TextEditingController();
+    field3.addListener(() {
+      final isButtonActive = field3.text.isNotEmpty;
+      setState(() => this.isButtonActive = isButtonActive);
+    });
+    field4 = TextEditingController();
+    field4.addListener(() {
+      final isButtonActive = field4.text.isNotEmpty;
+      setState(() => this.isButtonActive = isButtonActive);
+    });
+  }
+
+  @override
+  void dispose() {
+    field0.dispose();
+    field1.dispose();
+    field2.dispose();
+    field3.dispose();
+    field4.dispose();
+    super.dispose();
+  }
+
+  showSnackBar(BuildContext context, String str, [Color clr = Colors.black]) {
+    return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(str),
+      backgroundColor: clr,
+    ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,30 +126,84 @@ class SignUpScreen extends StatelessWidget {
                     addVerticalSpace(height(context) * 0.09),
                     CustomTextFieldWidget(
                       labelText: 'Full Name',
+                      controller: field0,
                     ),
                     addVerticalSpace(15),
-                    CustomTextFieldWidget(
-                      labelText: 'Email Address',
-                      icon: Icon(
-                        Icons.help,
-                        color: primary,
+                    Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              keyboardType: TextInputType.emailAddress,
+                              textInputAction: TextInputAction.done,
+                              onChanged: (value) {
+                                email = value;
+                              },
+                              decoration: InputDecoration(
+                                prefixIcon: Icon(Icons.mail_outline),
+                                suffixIcon: IconButton(
+                                    onPressed: () {
+                                      showSnackBar(
+                                          context,
+                                          "We won’t post anything without your consent",
+                                          Colors.green);
+                                    },
+                                    icon: Icon(
+                                      Icons.help,
+                                      color: primary,
+                                    )),
+                                hintText: 'name@example.com',
+                                labelText: 'Email',
+                                border: OutlineInputBorder(),
+                              ),
+                              controller: field1,
+                            ),
+                          ),
+                          addHorizontalySpace(10),
+                        ],
                       ),
                     ),
                     addVerticalSpace(15),
                     CustomTextFieldWidget(
-                      labelText: 'DOB',
+                      icon: Icon(Icons.calendar_month_rounded),
+                      labelText: 'Date of birth',
+                      controller: field2,
                     ),
                     addVerticalSpace(15),
                     CustomTextFieldWidget(
+                      icon: Icon(Icons.perm_contact_cal_rounded),
                       labelText: 'Mobile Number',
+                      controller: field3,
                     ),
                     addVerticalSpace(15),
-                    CustomTextFieldWidget(
-                      labelText: 'Password',
-                      icon: Icon(
-                        Icons.remove_red_eye_rounded,
-                        color: primary,
+                    TextField(
+                      obscureText: true,
+                      onChanged: (value) {
+                        password = value;
+                      },
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.remove_red_eye_sharp),
+                        suffixIcon: IconButton(
+                            onPressed: () {
+                              showSnackBar(
+                                  context,
+                                  "Password should be at least 6 characters with one small and one big alphabet",
+                                  Colors.green);
+                            },
+                            icon: Icon(
+                              Icons.help,
+                              color: primary,
+                            )),
+                        hintText: 'Password',
+                        labelText: 'Password',
+                        border: OutlineInputBorder(),
                       ),
+                      controller: field4,
+                      // icon: Icon(
+                      //   Icons.remove_red_eye_rounded,
+                      //   color: primary,
+                      // ),
                     ),
                     Padding(
                       padding:
@@ -110,26 +238,68 @@ class SignUpScreen extends StatelessWidget {
                         Container(
                           height: height(context) * 0.06,
                           width: width(context) * 0.15,
-                          decoration: myOutlineBoxDecoration(1, primary, 15),
                           child: Center(
-                            child: Icon(
-                              Icons.refresh_sharp,
-                              color: primary,
-                              size: 30,
+                            child: Ink(
+                              decoration: const ShapeDecoration(
+                                shape: CircleBorder(),
+                              ),
+                              child: Visibility(
+                                visible: (field0.text.isNotEmpty ||
+                                        field1.text.isNotEmpty ||
+                                        field2.text.isNotEmpty ||
+                                        field3.text.isNotEmpty ||
+                                        field4.text.isNotEmpty)
+                                    ? true
+                                    : false,
+                                child: IconButton(
+                                    style: IconButton.styleFrom(
+                                        disabledBackgroundColor: primary),
+                                    icon: const Icon(Icons.refresh_sharp),
+                                    color: primary,
+                                    onPressed: () {
+                                      field0.clear();
+                                      field1.clear();
+                                      field2.clear();
+                                      field3.clear();
+                                      field4.clear();
+                                      setState(() {});
+                                    }),
+                              ),
                             ),
                           ),
                         ),
                         SizedBox(
-                            width: width(context) * 0.7,
-                            child: CustomButton(
-                                name: 'Sign up',
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: ((context) =>
-                                              MyBottomBar())));
-                                })),
+                          width: width(context) * 0.7,
+                          child: CustomButton(
+                            name: 'Sign up',
+                            onPressed: () async {
+                              registerUser();
+                              try {
+                                final credential = await FirebaseAuth.instance
+                                    .createUserWithEmailAndPassword(
+                                  email: email,
+                                  password: password,
+                                );
+                                showSnackBar(
+                                    context, "Signed Up", Colors.green);
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: ((context) =>
+                                            SignInScreen())));
+                              } on FirebaseAuthException catch (e) {
+                                if (e.code == 'weak-password') {
+                                  print('The password provided is too weak.');
+                                } else if (e.code == 'email-already-in-use') {
+                                  print(
+                                      'The account already exists for that email.');
+                                }
+                              } catch (e) {
+                                print(e);
+                              }
+                            },
+                          ),
+                        ),
                       ],
                     ),
                     addVerticalSpace(height(context) * 0.05),

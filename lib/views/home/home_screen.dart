@@ -1,9 +1,14 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:travel_app/model/home_model.dart';
 import 'package:travel_app/utils/constant.dart';
 import 'package:travel_app/views/home/festival_and_celebrations_screen.dart';
@@ -11,19 +16,82 @@ import 'package:travel_app/views/home/plan_trip_screen.dart';
 import 'package:travel_app/views/home/profile_feeds_screen.dart';
 import 'package:travel_app/views/home/quick_escape_screen.dart';
 import 'package:travel_app/views/prima/go_prima_screen.dart';
+import 'package:travel_app/views/start/sign_up_screen.dart';
+import 'package:travel_app/widget/my_bottom_navbar.dart';
+//import 'package:provider/provider.dart';
 import 'package:travel_app/widget/my_drawer.dart';
 
+import '../../providers/location_provider.dart';
 import '../../widget/custom_overlaping_widget.dart';
 import '../../widget/slider_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class HomeScreen extends StatelessWidget {
+import '../start/sign_in_screen.dart';
+import '../start/signup_with_social_media_screen.dart';
+
+String? finalEmail;
+
+class HomeScreen extends StatefulWidget {
   HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  showSnackBar(BuildContext context, String str, [Color clr = Colors.black]) {
+    return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(str),
+      backgroundColor: clr,
+    ));
+  }
+
+  registerUser() async {
+    LocationProvider _locationProvider = LocationProvider();
+    final _fireStore = FirebaseFirestore.instance;
+    await _fireStore.collection("users").doc().set({
+      'address': _locationProvider.currentAddress,
+      'lat': _locationProvider.newLatLongList,
+      'lng': _locationProvider.newLatLongList,
+    });
+  }
+
+  void screenNavigate(context) {}
 
   final List sliderImg = [
     'assets/images/slider1.png',
     'assets/images/slider1.png',
     'assets/images/slider1.png',
   ];
+  @override
+  void initState() {
+    LocationProvider _locationProvider = LocationProvider();
+    _locationProvider.fetchCurrentPosition();
+    getValidationData().whenComplete(() async {
+      Timer(Duration(seconds: 60), () {
+        if (finalEmail == null) {
+          Navigator.push(context,
+              MaterialPageRoute(builder: ((context) => SignInScreen())));
+        } else {
+          Navigator.push(context,
+              MaterialPageRoute(builder: ((context) => MyBottomBar())));
+        }
+      });
+    });
+
+    super.initState();
+  }
+
+  Future getValidationData() async {
+    final SharedPreferences sharedPreferences =
+        await SharedPreferences.getInstance();
+    var obtainEmail = sharedPreferences.getString('email');
+    setState(() {
+      finalEmail = obtainEmail;
+    });
+    print(finalEmail);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,8 +119,16 @@ class HomeScreen extends StatelessWidget {
                 addVerticalSpace(5),
                 InkWell(
                   onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (ctx) => PlanATrip()));
+                    if (FirebaseAuth.instance.currentUser != null) {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (ctx) => PlanATrip()));
+                    } else {
+                      showSnackBar(context, "Please Login First!", Colors.red);
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (ctx) => SignupWithSocialMediaScreen()));
+                    }
                   },
                   child: Container(
                     height: 35,
@@ -75,11 +151,24 @@ class HomeScreen extends StatelessWidget {
                       style: bodyText16w600(color: white),
                     ),
                     InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (ctx) => QuickEscapeScreen()));
+                      onTap: () async {
+                        if (FirebaseAuth.instance.currentUser != null) {
+                          LocationProvider _locationProvider =
+                              LocationProvider();
+                          await _locationProvider.fetchCurrentPosition();
+                          registerUser();
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (ctx) => QuickEscapeScreen()));
+                        } else {
+                          showSnackBar(
+                              context, "Please Login First!", Colors.red);
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (ctx) => SignupWithSocialMediaScreen()));
+                        }
                       },
                       child: Text(
                         'View all >',

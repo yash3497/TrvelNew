@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:travel_app/utils/constant.dart';
@@ -29,6 +30,12 @@ class _MyBottomBarState extends State<MyBottomBar>
     const InboxScreen(),
     const Text(''),
   ];
+  showSnackBar(BuildContext context, String str, [Color clr = Colors.black]) {
+    return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(str),
+      backgroundColor: clr,
+    ));
+  }
 
   @override
   void initState() {
@@ -61,10 +68,22 @@ class _MyBottomBarState extends State<MyBottomBar>
                     ),
                   ),
                 ),
-                const Tab(
-                  icon: ImageIcon(
-                    AssetImage(
-                      'assets/images/navbar2.png',
+                InkWell(
+                  onTap: () {
+                    if (FirebaseAuth.instance.currentUser != null) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (ctx) => const UpcomingTripsScreen()));
+                    } else {
+                      showSnackBar(context, "Please Login First!", Colors.red);
+                    }
+                  },
+                  child: const Tab(
+                    icon: ImageIcon(
+                      AssetImage(
+                        'assets/images/navbar2.png',
+                      ),
                     ),
                   ),
                 ),
@@ -87,10 +106,22 @@ class _MyBottomBarState extends State<MyBottomBar>
                     ),
                   ),
                 ),
-                const Tab(
-                  icon: ImageIcon(
-                    AssetImage(
-                      'assets/images/navbar4.png',
+                InkWell(
+                  onTap: () {
+                    if (FirebaseAuth.instance.currentUser != null) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (ctx) => const InboxScreen()));
+                    } else {
+                      showSnackBar(context, "Please Login First!", Colors.red);
+                    }
+                  },
+                  child: const Tab(
+                    icon: ImageIcon(
+                      AssetImage(
+                        'assets/images/navbar4.png',
+                      ),
                     ),
                   ),
                 ),
