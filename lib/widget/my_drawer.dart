@@ -1,4 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:travel_app/providers/location_provider.dart';
 
 import 'package:travel_app/utils/constant.dart';
 import 'package:travel_app/views/aspired_trip/aspired_trip2_screen.dart';
@@ -8,10 +12,11 @@ import 'package:travel_app/views/humburger_flow/my_account/my_account.dart';
 import 'package:travel_app/views/humburger_flow/my_account/my_trip_friends.dart';
 import 'package:travel_app/views/humburger_flow/my_saved_pins.dart';
 import 'package:travel_app/views/humburger_flow/prima_profile/create_prima_profile.dart';
-import 'package:travel_app/views/humburger_flow/prima_profile/prima_profile_screen.dart';
 import 'package:travel_app/views/humburger_flow/trip_library_screen.dart';
 import 'package:travel_app/views/humburger_flow/upcoming_trips.dart';
 import 'package:travel_app/views/publish%20your%20trip/publish_your_trip.dart';
+import 'package:travel_app/views/start/on_boarding_screen.dart';
+import 'package:travel_app/views/start/signup_with_social_media_screen.dart';
 
 class MyDrawer extends StatefulWidget {
   MyDrawer({super.key});
@@ -21,10 +26,35 @@ class MyDrawer extends StatefulWidget {
 }
 
 class _MyDrawerState extends State<MyDrawer> {
+  registerUser() async {
+    LocationProvider _locationProvider = LocationProvider();
+    final _fireStore = FirebaseFirestore.instance;
+    await _fireStore.collection("users").doc().set({
+      'address': _locationProvider.currentAddress,
+      'lat': _locationProvider.newLatLongList,
+      'lng': _locationProvider.newLatLongList,
+    });
+  }
+
+  showSnackBar(BuildContext context, String str, [Color clr = Colors.black]) {
+    return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(str),
+      backgroundColor: clr,
+    ));
+  }
+
   bool isExpand = false;
   bool isExpand1 = false;
   bool isExpand2 = false;
   bool isExpand3 = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    LocationProvider _locationProvider = LocationProvider();
+    _locationProvider.fetchCurrentPosition();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -348,9 +378,43 @@ class _MyDrawerState extends State<MyDrawer> {
               'Quick Escape',
               style: bodyText14w600(color: black),
             ),
-            onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => QuickEscapeScreen()));
+            onTap: () async {
+              final user = await FirebaseAuth.instance.currentUser;
+
+              // if (FirebaseAuth.instance.currentUser != null) {
+              //             LocationProvider _locationProvider =
+              //                 LocationProvider();
+              //             await _locationProvider.fetchCurrentPosition();
+              //             registerUser();
+              //             Navigator.push(
+              //                 context,
+              //                 MaterialPageRoute(
+              //                     builder: (ctx) => QuickEscapeScreen()));
+              //           } else {
+              //             showSnackBar(
+              //                 context, "Please Login First!", Colors.red);
+              //             Navigator.push(
+              //                 context,
+              //                 MaterialPageRoute(
+              //                     builder: (ctx) =>
+              //                         SignupWithSocialMediaScreen()));
+              //           }
+              if (user != null) {
+                LocationProvider _locationProvider = LocationProvider();
+                await _locationProvider.fetchCurrentPosition();
+                registerUser();
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (ctx) => QuickEscapeScreen()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => QuickEscapeScreen()));
+              } else {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SignupWithSocialMediaScreen()));
+              }
             },
           ),
           Theme(

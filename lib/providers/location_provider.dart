@@ -11,12 +11,12 @@ import 'package:http/http.dart' as http;
 
 class LocationProvider with ChangeNotifier {
   String currentAddress = 'My Address';
-  var locality ;
-  var country ;
-  var postalCode ;
+  var locality;
+  var country;
+  var postalCode;
   Position? currentPosition;
 
-  double? lat ;
+  double? lat;
   double? long;
 
   // fetching current position
@@ -45,7 +45,7 @@ class LocationProvider with ChangeNotifier {
     await Geolocator.getCurrentPosition().then((value) async {
       try {
         List<Placemark> placeMarks =
-        await placemarkFromCoordinates(value.latitude, value.longitude);
+            await placemarkFromCoordinates(value.latitude, value.longitude);
         lat = value.latitude;
         long = value.longitude;
 
@@ -53,7 +53,7 @@ class LocationProvider with ChangeNotifier {
 
         currentPosition = value;
         currentAddress =
-        "${place.locality}, ${place.postalCode}, ${place.country}";
+            "${place.locality}, ${place.postalCode}, ${place.country}";
         locality = place.locality!;
         postalCode = place.postalCode!;
         country = place.country!;
@@ -73,7 +73,8 @@ class LocationProvider with ChangeNotifier {
   // fetching latitude and longitude
   List<Location> newLatLongList = [];
 
-  Future<List<Location>> getLatLong(BuildContext context, String address) async {
+  Future<List<Location>> getLatLong(
+      BuildContext context, String address) async {
     await locationFromAddress(address).then((value) async {
       newLatLongList.clear();
       for (var data in value) {
@@ -82,7 +83,7 @@ class LocationProvider with ChangeNotifier {
         lat = newLatLongList.first.latitude;
         long = newLatLongList.first.longitude;
         getAddressFromLatLng(
-            newLatLongList.first.latitude, newLatLongList.first.longitude)
+                newLatLongList.first.latitude, newLatLongList.first.longitude)
             .then((value) {
           currentAddress = value!;
         });
@@ -114,7 +115,6 @@ class LocationProvider with ChangeNotifier {
       return null;
     }
   }
-
 
   // fetch user all locations
   var userLocationsList;

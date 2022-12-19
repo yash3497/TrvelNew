@@ -68,15 +68,17 @@ class _HomeScreenState extends State<HomeScreen> {
     LocationProvider _locationProvider = LocationProvider();
     _locationProvider.fetchCurrentPosition();
     getValidationData().whenComplete(() async {
-      Timer(Duration(seconds: 60), () {
-        if (finalEmail == null) {
-          Navigator.push(context,
-              MaterialPageRoute(builder: ((context) => SignInScreen())));
-        } else {
-          Navigator.push(context,
-              MaterialPageRoute(builder: ((context) => MyBottomBar())));
-        }
-      });
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        Timer(Duration(seconds: 60), () {
+          if (user == null) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: ((context) => SignupWithSocialMediaScreen())));
+          }
+        });
+      }
     });
 
     super.initState();
@@ -89,7 +91,6 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       finalEmail = obtainEmail;
     });
-    print(finalEmail);
   }
 
   @override
@@ -167,7 +168,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (ctx) => SignupWithSocialMediaScreen()));
+                                  builder: (ctx) =>
+                                      SignupWithSocialMediaScreen()));
                         }
                       },
                       child: Text(

@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:travel_app/providers/location_provider.dart';
 
 import 'package:travel_app/utils/constant.dart';
 import 'package:travel_app/views/home/inbox_screen.dart';
@@ -37,8 +39,20 @@ class _MyBottomBarState extends State<MyBottomBar>
     ));
   }
 
+  registerUser() async {
+    LocationProvider _locationProvider = LocationProvider();
+    final _fireStore = FirebaseFirestore.instance;
+    await _fireStore.collection("users").doc().set({
+      'address': _locationProvider.currentAddress,
+      'lat': _locationProvider.newLatLongList,
+      'lng': _locationProvider.newLatLongList,
+    });
+  }
+
   @override
   void initState() {
+    LocationProvider _locationProvider = LocationProvider();
+    _locationProvider.fetchCurrentPosition();
     super.initState();
     tabController = TabController(initialIndex: 0, length: 5, vsync: this);
   }
@@ -88,7 +102,7 @@ class _MyBottomBarState extends State<MyBottomBar>
                   ),
                 ),
                 InkWell(
-                  onTap: () {
+                  onTap: () async {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
