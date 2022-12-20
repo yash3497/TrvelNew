@@ -26,6 +26,68 @@ class _PrimaProfileScreenState extends State<PrimaProfileScreen> {
     'assets/images/Rectangle 111 (2).png',
     'assets/images/Rectangle 111 (3).png',
   ];
+
+  Widget EditAction() {
+    return Text.rich(TextSpan(children: [
+      WidgetSpan(
+          child: ImageIcon(
+        AssetImage("assets/images/editicon.png"),
+        color: Colors.yellow,
+      )),
+      WidgetSpan(
+          child: SizedBox(
+        width: 10,
+      )),
+      TextSpan(text: "Edit Profile")
+    ]));
+  }
+
+  Widget SubscriptionAction() {
+    return Text.rich(TextSpan(children: [
+      WidgetSpan(
+          child: ImageIcon(
+        AssetImage("assets/images/editicon.png"),
+        color: Colors.yellow,
+      )),
+      WidgetSpan(
+          child: SizedBox(
+        width: 10,
+      )),
+      TextSpan(text: "My prima subscriptiion")
+    ]));
+  }
+
+  Widget ShareProfileAction() {
+    return Text.rich(TextSpan(children: [
+      WidgetSpan(
+        child: Icon(
+          Icons.share,
+          color: Colors.yellow,
+        ),
+      ),
+      WidgetSpan(
+          child: SizedBox(
+        width: 10,
+      )),
+      TextSpan(text: "Share your profile")
+    ]));
+  }
+
+  Widget MyActionFeedAction() {
+    return Text.rich(TextSpan(children: [
+      WidgetSpan(
+          child: ImageIcon(
+        AssetImage("assets/images/editicon.png"),
+        color: Colors.yellow,
+      )),
+      WidgetSpan(
+          child: SizedBox(
+        width: 10,
+      )),
+      TextSpan(text: "My action feeds")
+    ]));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,22 +126,44 @@ class _PrimaProfileScreenState extends State<PrimaProfileScreen> {
                             style: bodyText20w700(color: white),
                           ),
                         ),
-                        Padding(
-                          padding: EdgeInsets.only(right: 20.0, top: 10),
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => PrimaMyAccount()));
+                        PopupMenuButton(
+                            // add icon, by default "3 dot" icon
+
+                            iconSize: 32,
+                            color: Colors.white,
+                            itemBuilder: (context) {
+                              return [
+                                PopupMenuItem<int>(
+                                  value: 0,
+                                  child: EditAction(),
+                                ),
+                                PopupMenuItem<int>(
+                                  value: 1,
+                                  child: SubscriptionAction(),
+                                ),
+                                PopupMenuItem<int>(
+                                  value: 2,
+                                  child: ShareProfileAction(),
+                                ),
+                                PopupMenuItem<int>(
+                                  value: 2,
+                                  child: MyActionFeedAction(),
+                                ),
+                              ];
                             },
-                            child: ImageIcon(
-                                color: white,
-                                const AssetImage(
-                                  'assets/images/editicon.png',
-                                )),
-                          ),
-                        )
+                            onSelected: (value) {
+                              if (value == 0) {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            PrimaMyAccount()));
+                              } else if (value == 1) {
+                                print("Settings menu is selected.");
+                              } else if (value == 2) {
+                                print("Logout menu is selected.");
+                              }
+                            })
                       ],
                     ),
                   ),
