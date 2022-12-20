@@ -73,7 +73,7 @@ class _EditPrimaTripScreenState extends State<EditPrimaTripScreen> {
                     style: bodyText16w600(color: black),
                   ),
                   addVerticalSpace(15),
-                  CustomTextFieldWidget(labelText: 'Edit Trip name'),
+                  CustomTextFieldWidget(labelText: 'Edit trip name'),
                   addVerticalSpace(15),
                   SizedBox(
                     // height: height(context) * 0.05,
