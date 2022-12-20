@@ -234,32 +234,29 @@ class MyAccountScreen extends StatelessWidget {
               ),
             ),
             addVerticalSpace(height(context) * 0.06),
-            Visibility(
-              //visible: if( FirebaseAuth.instance.currentUser != null),
-              child: InkWell(
-                onTap: () async {
-                  if( FirebaseAuth.instance.currentUser != null)
-                 { final SharedPreferences sharedPreferences =
-                      await SharedPreferences.getInstance();
-                  sharedPreferences.remove('email');
-                  await FirebaseAuth.instance.signOut();
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: ((context) => SignupWithSocialMediaScreen())));}
-                  // Navigator.push(context,MaterialPageRoute(builder: (ctx)=>));
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.logout_outlined),
-                    addHorizontalySpace(10),
-                    Text(
-                      'Log out',
-                      style: bodyText20w700(color: black),
-                    ),
-                  ],
-                ),
+            InkWell(
+              onTap: () async {
+                if( FirebaseAuth.instance.currentUser != null)
+               { final SharedPreferences sharedPreferences =
+                    await SharedPreferences.getInstance();
+                sharedPreferences.remove('email');
+                await FirebaseAuth.instance.signOut();
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: ((context) => SignupWithSocialMediaScreen())));}
+                // Navigator.push(context,MaterialPageRoute(builder: (ctx)=>));
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.logout_outlined),
+                  addHorizontalySpace(10),
+                  Text(
+                    'Log out',
+                    style: bodyText20w700(color: black),
+                  ),
+                ],
               ),
             ),
             addVerticalSpace(height(context) * 0.06),

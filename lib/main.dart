@@ -7,6 +7,7 @@ import 'package:travel_app/views/home/home_screen.dart';
 
 import 'package:travel_app/views/start/on_boarding_screen.dart';
 import 'package:travel_app/views/start/sign_up_screen.dart';
+import 'package:travel_app/widget/my_bottom_navbar.dart';
 
 import 'views/edit_prima_screen/edit_prima_trip_screen.dart';
 
@@ -44,7 +45,7 @@ class _MyAppState extends State<MyApp> {
                 ),
               );
             } else if (user.hasData) {
-              return HomeScreen();
+              return MyBottomBar();
               // return const SellScreen();
             } else {
               return OnBoardingScreen();

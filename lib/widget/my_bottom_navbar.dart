@@ -85,10 +85,11 @@ class _MyBottomBarState extends State<MyBottomBar>
                 InkWell(
                   onTap: () {
                     if (FirebaseAuth.instance.currentUser != null) {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (ctx) => const UpcomingTripsScreen()));
+                      tabController?.animateTo(1);
+                      // Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //         builder: (ctx) => const UpcomingTripsScreen()));
                     } else {
                       showSnackBar(context, "Please Login First!", Colors.red);
                     }

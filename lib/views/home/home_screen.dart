@@ -49,8 +49,8 @@ class _HomeScreenState extends State<HomeScreen> {
   registerUser() async {
     LocationProvider _locationProvider = LocationProvider();
     final _fireStore = FirebaseFirestore.instance;
-    await _fireStore.collection("users").doc().set({
-      'address': _locationProvider.currentAddress,
+    await _fireStore.collection("uLocation").doc().set({
+      'address': _locationProvider.fetchCurrentPosition(),
       'lat': _locationProvider.newLatLongList,
       'lng': _locationProvider.newLatLongList,
     });
@@ -67,31 +67,31 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     LocationProvider _locationProvider = LocationProvider();
     _locationProvider.fetchCurrentPosition();
-    getValidationData().whenComplete(() async {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user == null) {
-        Timer(Duration(seconds: 60), () {
-          if (user == null) {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: ((context) => SignupWithSocialMediaScreen())));
-          }
-        });
-      }
-    });
+   // getValidationData().whenComplete(() async {
+   //    final user = FirebaseAuth.instance.currentUser;
+   //    if (user == null) {
+   //      Timer(Duration(seconds: 60), () {
+   //        if (user == null) {
+   //          Navigator.push(
+   //              context,
+   //              MaterialPageRoute(
+   //                  builder: ((context) => SignupWithSocialMediaScreen())));
+   //        }
+   //      });
+   //    }
+   //  });
 
     super.initState();
   }
 
-  Future getValidationData() async {
-    final SharedPreferences sharedPreferences =
-        await SharedPreferences.getInstance();
-    var obtainEmail = sharedPreferences.getString('email');
-    setState(() {
-      finalEmail = obtainEmail;
-    });
-  }
+  // Future getValidationData() async {
+  //   final SharedPreferences sharedPreferences =
+  //       await SharedPreferences.getInstance();
+  //   var obtainEmail = sharedPreferences.getString('email');
+  //   setState(() {
+  //     finalEmail = obtainEmail;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {

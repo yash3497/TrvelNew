@@ -20,7 +20,7 @@ class LocationProvider with ChangeNotifier {
   double? long;
 
   // fetching current position
-  fetchCurrentPosition() async {
+  Future fetchCurrentPosition() async {
     bool serviceEnabled;
     LocationPermission permission;
 

@@ -7,6 +7,7 @@ import 'package:travel_app/utils/constant.dart';
 import 'package:travel_app/views/start/sign_in_screen.dart';
 import 'package:travel_app/widget/custom_button.dart';
 import 'package:travel_app/widget/my_bottom_navbar.dart';
+import 'package:intl/intl.dart';
 
 import '../../widget/custom_textfield.dart';
 import '../home/home_screen.dart';
@@ -166,8 +167,32 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     addVerticalSpace(15),
                     CustomTextFieldWidget(
-                      icon: Icon(Icons.calendar_month_rounded),
-                      labelText: 'Date of birth',
+                      labelText: 'Date Of Birth',
+                      icon: Icon(
+                        Icons.calendar_month_outlined,
+                        color: primary,
+                      ),
+                      onClick: () async {
+                        var pickedDate = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(2101));
+                        if (pickedDate != null) {
+                          print(pickedDate);
+                          String formattedDate =
+                          DateFormat('yyyy-MM-dd')
+                              .format(pickedDate);
+
+                          setState(() {
+                            field2.text = formattedDate;
+                          });
+                        } else {
+                          print("Date is not selected");
+                        }
+                      },
+                      // icon: Icon(Icons.calendar_month_rounded),
+                      // labelText: 'Date of birth',
                       controller: field2,
                     ),
                     addVerticalSpace(15),

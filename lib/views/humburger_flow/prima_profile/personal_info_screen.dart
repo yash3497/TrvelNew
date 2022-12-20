@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -8,6 +9,7 @@ import 'package:travel_app/widget/custom_textfield.dart';
 
 import '../../../utils/constant.dart';
 import '../../../widget/custom_dropdown_button.dart';
+import '../my_account/my_account.dart';
 import 'create_prima_profile.dart';
 
 class PersonalInformationScreen extends StatefulWidget {
@@ -21,12 +23,32 @@ class PersonalInformationScreen extends StatefulWidget {
 class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
   final TextEditingController dateOfBirth = TextEditingController();
   final TextEditingController annivarsaryDate = TextEditingController();
+  final TextEditingController firstName = new TextEditingController();
+  final TextEditingController lastName = new TextEditingController();
+  final TextEditingController profession = new TextEditingController();
+  final TextEditingController mobNum = new TextEditingController();
+  final TextEditingController emergencyNum = new TextEditingController();
+  final TextEditingController emailId = new TextEditingController();
+  detailUser() async {
+    final _fireStore = FirebaseFirestore.instance;
+    await _fireStore.collection("myAccount").doc().set({
+      'firstName': firstName.text,
+      'LastName': lastName.text,
+      'anniversary': annivarsaryDate.text,
+      'profession': profession.text,
+      'dob': dateOfBirth.text,
+      'emailId': emailId.text,
+      'emergencyNum': emergencyNum.text,
+      'mobNum': mobNum.text,
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
         child: SizedBox(
-          height: height(context) * 1.17,
+          height: height(context) * 1.28,
           child: Stack(
               // mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -93,14 +115,19 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                             Row(
                               children: [
                                 SizedBox(
-                                    width: width(context) * 0.45,
-                                    child: CustomTextFieldWidget(
-                                        labelText: 'First Name')),
+                                  width: width(context) * 0.45,
+                                  child: CustomTextFieldWidget(
+                                    labelText: 'First Name',
+                                    controller: firstName,
+                                  ),
+                                ),
                                 addHorizontalySpace(10),
                                 SizedBox(
                                     width: width(context) * 0.45,
                                     child: CustomTextFieldWidget(
-                                        labelText: 'Last Name'))
+                                      labelText: 'Last Name',
+                                      controller: lastName,
+                                    ))
                               ],
                             ),
                             addVerticalSpace(15),
@@ -170,8 +197,11 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                             ),
                             addVerticalSpace(15),
                             SizedBox(
-                                child: CustomTextFieldWidget(
-                                    labelText: 'Profession')),
+                              child: CustomTextFieldWidget(
+                                labelText: 'Profession',
+                                controller: profession,
+                              ),
+                            ),
                             addVerticalSpace(22),
                             Row(
                               children: [
@@ -227,8 +257,10 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                             addVerticalSpace(10),
                             SizedBox(
                               // height: 37,
-                              child:
-                                  CustomTextFieldWidget(labelText: 'Email Id'),
+                              child: CustomTextFieldWidget(
+                                labelText: 'Email Id',
+                                controller: emailId,
+                              ),
                             ),
                             addVerticalSpace(15),
                             Row(
@@ -236,13 +268,18 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                                 SizedBox(
                                     width: width(context) * 0.45,
                                     child: CustomTextFieldWidget(
-                                        labelText: 'Mobile number')),
+                                      labelText: 'Mobile number',
+                                      controller: mobNum,
+                                    )),
                                 addHorizontalySpace(10),
                                 SizedBox(
-                                    // height: 37,
-                                    width: width(context) * 0.45,
-                                    child: CustomTextFieldWidget(
-                                        labelText: 'Emergency number'))
+                                  // height: 37,
+                                  width: width(context) * 0.45,
+                                  child: CustomTextFieldWidget(
+                                    labelText: 'Emergency number',
+                                    controller: emergencyNum,
+                                  ),
+                                )
                               ],
                             ),
                             TextButton(
@@ -268,7 +305,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                             addVerticalSpace(5),
                             InkWell(
                               onTap: () {
-                                selectUplodDocument(context);
+                                selectUploadDocument(context);
                               },
                               child: Container(
                                 margin: const EdgeInsets.only(top: 8, left: 8),
@@ -287,6 +324,19 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                                 ),
                               ),
                             ),
+                            Divider(
+                              thickness: 5,
+                              color: black.withOpacity(0.05),
+                            ),
+                            addHorizontalySpace(20),
+                            CustomButton(
+                                name: 'Save',
+                                onPressed: () {
+                                  detailUser();
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: (ctx) => MyAccountScreen()));
+                                }),
+                            addHorizontalySpace(20),
                           ],
                         )))
               ]),
@@ -295,7 +345,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
     );
   }
 
-  Future<void> selectUplodDocument(BuildContext context) {
+  Future<void> selectUploadDocument(BuildContext context) {
     return showModalBottomSheet<void>(
       isScrollControlled: true,
       context: context,
@@ -363,7 +413,9 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                             );
                           })),
                   InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      //feature to be added to upload pdf
+                    },
                     child: Container(
                       margin: const EdgeInsets.only(top: 8, left: 0),
                       height: 30,
