@@ -1,16 +1,28 @@
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:travel_app/model/save_trip_model.dart';
 import 'package:travel_app/widget/custom_button.dart';
 import 'package:travel_app/widget/custom_textfield.dart';
-
+import 'package:travel_app/providers/image_provider.dart';
+import 'package:provider/provider.dart';
 import '../../../utils/constant.dart';
 import '../../../widget/custom_dropdown_button.dart';
 import '../my_account/my_account.dart';
 import 'create_prima_profile.dart';
+import 'package:path/path.dart' as j;
 
 class PersonalInformationScreen extends StatefulWidget {
   const PersonalInformationScreen({super.key});
@@ -22,29 +34,75 @@ class PersonalInformationScreen extends StatefulWidget {
 
 class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
   final TextEditingController dateOfBirth = TextEditingController();
-  final TextEditingController annivarsaryDate = TextEditingController();
+  final TextEditingController anniversaryDate = TextEditingController();
   final TextEditingController firstName = new TextEditingController();
   final TextEditingController lastName = new TextEditingController();
   final TextEditingController profession = new TextEditingController();
   final TextEditingController mobNum = new TextEditingController();
   final TextEditingController emergencyNum = new TextEditingController();
-  final TextEditingController emailId = new TextEditingController();
+  //final TextEditingController emailId = new TextEditingController();
   detailUser() async {
     final _fireStore = FirebaseFirestore.instance;
-    await _fireStore.collection("myAccount").doc().set({
+    await _fireStore
+        .collection("users")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .update({
+      'fullName': firstName.text + " " + lastName.text,
       'firstName': firstName.text,
       'LastName': lastName.text,
-      'anniversary': annivarsaryDate.text,
+      'anniversary': anniversaryDate.text,
       'profession': profession.text,
       'dob': dateOfBirth.text,
-      'emailId': emailId.text,
+      //'emailId': emailId.text,
       'emergencyNum': emergencyNum.text,
       'mobNum': mobNum.text,
+      'UID': FirebaseAuth.instance.currentUser!.uid,
+      "profileImg": img ?? "",
+      "document": url ??"",
     });
+  }
+ File? file;
+  UploadTask? task;
+  String url = "";
+  void getImage() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      var profile = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+      url = profile.data()?['profileImg'];
+      firstName.text = profile.data()?['firstName'];
+      dateOfBirth.text = profile.data()?['dob'];
+      anniversaryDate.text = profile.data()?['anniversary'];
+      profession.text = profile.data()?['profession'];
+      emergencyNum.text = profile.data()?['emergencyNum'];
+      lastName.text = profile.data()?['LastName'];
+      mobNum.text = profile.data()?['mobNum'];
+      setState(() {});
+    }
+  }
+
+  showSnackBar(BuildContext context, String str, [Color clr = Colors.black]) {
+    return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(str),
+      backgroundColor: clr,
+    ));
   }
 
   @override
+  void initState() {
+    getImage();
+    super.initState();
+  }
+
+  final ImagePicker picker = ImagePicker();
+  late ImageSource? imageSource;
+  String? img;
+  bool loading = true;
+  late PhotoProvider imageProvider;
+  @override
   Widget build(BuildContext context) {
+    final fileName = file!=null?j.basename(file!.path):'No file Selected';
     return Scaffold(
       body: SingleChildScrollView(
         child: SizedBox(
@@ -57,10 +115,14 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                   child: Container(
                     height: height(context) * 0.42,
                     width: width(context) * 1,
-                    decoration: const BoxDecoration(
-                        image: DecorationImage(
-                            fit: BoxFit.fill,
-                            image: AssetImage('assets/images/prima3.png'))),
+                    decoration: url == ""
+                        ? BoxDecoration(
+                            image: DecorationImage(
+                                fit: BoxFit.fill,
+                                image: AssetImage('assets/images/prima3.png')))
+                        : BoxDecoration(
+                            image: DecorationImage(
+                                fit: BoxFit.fill, image: NetworkImage(url))),
                     child: SafeArea(
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -82,13 +144,41 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(right: 12.0, top: 10),
-                            child: ImageIcon(
-                                color: white,
-                                const AssetImage(
-                                  'assets/images/editicon.png',
-                                )),
-                          )
+                              padding: EdgeInsets.only(right: 12.0, top: 10),
+                              child: IconButton(
+                                onPressed: () async {
+                                  selectFile();
+                                  // ImagePicker imagePicker = ImagePicker();
+                                  // XFile? url = await imagePicker.pickImage(
+                                  //     source: ImageSource.camera);
+                                  // print("${url?.path}");
+                                  // try {
+                                  //   setState(() {
+                                  //     loading = true;
+                                  //   });
+                                  //   await imageProvider.selectPhoto(context);
+                                  //   if (imageProvider.imageSource != null) {
+                                  //     File file = await imageProvider
+                                  //         .getImage(imageProvider.imageSource!);
+                                  //     img = await imageProvider.uploadToStorage(
+                                  //         file, "material");
+                                  //     setState(() {
+                                  //       loading = false;
+                                  //     });
+                                  //   }
+                                  // } catch (e) {
+                                  //   setState(() {
+                                  //     loading = false;
+                                  //   });
+                                  // }
+                                },
+                                icon: ImageIcon(
+                                  color: white,
+                                  const AssetImage(
+                                    'assets/images/editicon.png',
+                                  ),
+                                ),
+                              ))
                         ],
                       ),
                     ),
@@ -166,7 +256,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                                 SizedBox(
                                     width: width(context) * 0.45,
                                     child: CustomTextFieldWidget(
-                                      controller: annivarsaryDate,
+                                      controller: anniversaryDate,
                                       labelText: 'Anniversary dates',
                                       icon: Icon(
                                         Icons.calendar_month_outlined,
@@ -185,7 +275,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                                                   .format(pickedDate);
 
                                           setState(() {
-                                            annivarsaryDate.text =
+                                            anniversaryDate.text =
                                                 formattedDate;
                                           });
                                         } else {
@@ -212,7 +302,9 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                                     itemList: const [
                                       'Single',
                                       'Married',
-                                      'Commited',
+                                      'Divorced',
+                                      'Separated',
+                                      'Widowed',
                                     ],
                                     lableText: 'Marital Status',
                                   ),
@@ -225,7 +317,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                                     itemList: const [
                                       'Male',
                                       'Female',
-                                      'Other',
+                                      'Prefer not to say',
                                     ],
                                     lableText: 'Gender',
                                   ),
@@ -234,7 +326,12 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                             ),
                             addVerticalSpace(10),
                             InkWell(
-                                onTap: () {},
+                                onTap: () {
+                                  showSnackBar(
+                                      context,
+                                      "This helps in listing your profile while searching by other travelers",
+                                      Colors.green);
+                                },
                                 child: Text(
                                   'Why is this required?',
                                   style: TextStyle(
@@ -259,7 +356,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                               // height: 37,
                               child: CustomTextFieldWidget(
                                 labelText: 'Email Id',
-                                controller: emailId,
+                                //controller: emailId,
                               ),
                             ),
                             addVerticalSpace(15),
@@ -283,7 +380,12 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                               ],
                             ),
                             TextButton(
-                                onPressed: () {},
+                                onPressed: () async {
+                                  await showSnackBar(
+                                      context,
+                                      "For quotes and booking and for Emergency use ",
+                                      Colors.green);
+                                },
                                 child: Text(
                                   'Why is this required?',
                                   style: TextStyle(
@@ -333,8 +435,11 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                                 name: 'Save',
                                 onPressed: () {
                                   detailUser();
-                                  Navigator.push(context,
-                                      MaterialPageRoute(builder: (ctx) => MyAccountScreen()));
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (ctx) => MyAccountScreen()));
+                                  showSnackBar(context, "Added", Colors.green);
                                 }),
                             addHorizontalySpace(20),
                           ],
@@ -414,6 +519,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                           })),
                   InkWell(
                     onTap: () {
+                      selectFile();
                       //feature to be added to upload pdf
                     },
                     child: Container(
@@ -446,6 +552,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                       child: CustomButton(
                           name: 'Submit',
                           onPressed: () {
+                            uploadFile();
                             Navigator.pop(context);
                           }),
                     ),
@@ -456,4 +563,36 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
       },
     );
   }
+  Future uploadFile() async {
+    if(file==null)return;
+    final fileName= j.basename(file!.path);
+    final destination='files/$fileName';
+   task= FireBaseApi.uploadFile(destination, file!);
+
+   if(task == null) return;
+   final snapshot = await task!.whenComplete((){});
+   final urlDownload = await snapshot.ref.getDownloadURL();
+  }
+
+  Future selectFile() async {
+    final result = await FilePicker.platform.pickFiles(allowMultiple: false);
+
+    if (result == null) return;
+    final path = result.files.single.path!;
+    setState(){
+      file = File(path);
+    }
+  }
 }
+
+class FireBaseApi {
+  static UploadTask? uploadFile(String destination,File file){
+   try{ final ref = FirebaseStorage.instance.ref(destination);
+    return ref.putFile(file);}
+       on FirebaseException catch (e){
+     print(e);
+       }
+  }
+}
+
+

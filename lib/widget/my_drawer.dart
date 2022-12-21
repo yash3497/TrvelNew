@@ -26,14 +26,31 @@ class MyDrawer extends StatefulWidget {
 }
 
 class _MyDrawerState extends State<MyDrawer> {
-  registerUser() async {
+  void registerUser() async {
     LocationProvider _locationProvider = LocationProvider();
     final _fireStore = FirebaseFirestore.instance;
-    await _fireStore.collection("users").doc().set({
+    await _fireStore
+        .collection("users")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .update({
       'address': _locationProvider.currentAddress,
       'lat': _locationProvider.newLatLongList,
       'lng': _locationProvider.newLatLongList,
     });
+  }
+
+  String url = "";
+  String userName = "";
+  void getDetails() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      var profile = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+      url = profile.data()?['profileImg'];
+      userName = profile.data()?['fullName'];
+      setState(() {});
+    }
   }
 
   showSnackBar(BuildContext context, String str, [Color clr = Colors.black]) {
@@ -50,7 +67,8 @@ class _MyDrawerState extends State<MyDrawer> {
 
   @override
   void initState() {
-    // TODO: implement initState
+    getDetails();
+    registerUser();
     LocationProvider _locationProvider = LocationProvider();
     _locationProvider.fetchCurrentPosition();
     super.initState();
@@ -66,13 +84,14 @@ class _MyDrawerState extends State<MyDrawer> {
             width: width(context),
             decoration: BoxDecoration(gradient: yellowBlackGradient()),
             child: Row(
+              // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                addHorizontalySpace(10),
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 50,
                   backgroundColor: Colors.transparent,
-                  backgroundImage: AssetImage('assets/images/menu1.png'),
+                  backgroundImage: NetworkImage(url),
                 ),
+                addHorizontalySpace(5),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -80,7 +99,7 @@ class _MyDrawerState extends State<MyDrawer> {
                     Row(
                       children: [
                         Text(
-                          'Hii, Alexander',
+                          'Hii, $userName',
                           style: bodyText22w700(color: white),
                         ),
                         addHorizontalySpace(3),
@@ -117,10 +136,20 @@ class _MyDrawerState extends State<MyDrawer> {
                       padding: const EdgeInsets.only(left: 2.0),
                       child: InkWell(
                           onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => MyAccountScreen()));
+                            if (FirebaseAuth.instance.currentUser != null) {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => MyAccountScreen()));
+                            } else {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          SignupWithSocialMediaScreen()));
+                              showSnackBar(
+                                  context, "Please Login First!", Colors.red);
+                            }
                           },
                           child: Text(
                             'View/ Edit account',

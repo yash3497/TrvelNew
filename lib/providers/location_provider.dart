@@ -10,7 +10,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 
 class LocationProvider with ChangeNotifier {
-  String currentAddress = 'My Address';
+  String currentAddress = " ";
   var locality;
   var country;
   var postalCode;
@@ -57,11 +57,12 @@ class LocationProvider with ChangeNotifier {
         locality = place.locality!;
         postalCode = place.postalCode!;
         country = place.country!;
-        //log(currentAddress);
-        // log(value.latitude.toString());
-        // log(value.longitude.toString());
+        log(currentAddress);
+        log(lat.toString());
+        log(value.longitude.toString());
+        log(place.toString());
         notifyListeners();
-        return currentAddress;
+        return Placemark;
       } catch (e) {
         log(e.toString());
       }
@@ -76,7 +77,7 @@ class LocationProvider with ChangeNotifier {
   Future<List<Location>> getLatLong(
       BuildContext context, String address) async {
     await locationFromAddress(address).then((value) async {
-      newLatLongList.clear();
+      //newLatLongList.clear();
       for (var data in value) {
         newLatLongList.add(data);
         log(newLatLongList.toString());
@@ -110,27 +111,11 @@ class LocationProvider with ChangeNotifier {
       String formattedAddress = data["results"][0]["formatted_address"];
       log("response ==== $formattedAddress");
       currentAddress = formattedAddress;
-      return currentAddress;
+      //return currentAddress;
     } else {
       return null;
     }
   }
-
-  // fetch user all locations
-  var userLocationsList;
-
-  Future<void> fetchUserAllLocations() async {
-    await FirebaseFirestore.instance
-        .collection("users")
-        .doc(FirebaseAuth.instance.currentUser!.uid.substring(0, 20))
-        .get()
-        .then((value) {
-      userLocationsList = value.data();
-      log(userLocationsList.toString());
-    });
-    notifyListeners();
-  }
-
   // delete user location
   Future<void> deleteLocations(List<dynamic> list) async {
     await FirebaseFirestore.instance

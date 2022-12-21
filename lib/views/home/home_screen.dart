@@ -49,10 +49,10 @@ class _HomeScreenState extends State<HomeScreen> {
   registerUser() async {
     LocationProvider _locationProvider = LocationProvider();
     final _fireStore = FirebaseFirestore.instance;
-    await _fireStore.collection("uLocation").doc().set({
+    await _fireStore.collection("users").doc().update({
       'address': _locationProvider.fetchCurrentPosition(),
-      'lat': _locationProvider.newLatLongList,
-      'lng': _locationProvider.newLatLongList,
+      'lat': _locationProvider.lat.toString(),
+      'lng': _locationProvider.long.toString(),
     });
   }
 
