@@ -1,15 +1,18 @@
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 import 'package:intl/intl.dart';
 import 'package:travel_app/views/humburger_flow/my_account/trip_intrest_screen.dart';
 import 'package:travel_app/views/humburger_flow/prima_profile/prima_my_account_screen.dart';
 import 'package:travel_app/views/humburger_flow/prima_profile/prima_profile_screen.dart';
-import 'package:travel_app/views/humburger_flow/prima_profile/tripometer_manage_screen.dart';
 import 'package:travel_app/widget/custom_appbar.dart';
 import 'package:travel_app/widget/custom_button.dart';
 import 'package:travel_app/widget/custom_dropdown_button.dart';
 import 'package:travel_app/widget/custom_textfield.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../utils/constant.dart';
 
 class CreatePrimaProfile extends StatefulWidget {
@@ -22,7 +25,107 @@ class CreatePrimaProfile extends StatefulWidget {
 class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
   final TextEditingController dateOfBirth = TextEditingController();
   final TextEditingController annivarsaryDate = TextEditingController();
+  final TextEditingController firstnameController = TextEditingController();
+  final TextEditingController lastnameController = TextEditingController();
+  final TextEditingController professionController = TextEditingController();
+  final TextEditingController emailId = TextEditingController();
+  final TextEditingController mobilenumber = TextEditingController();
+  final TextEditingController emergencynumber = TextEditingController();
+  final TextEditingController userInterestController = TextEditingController();
+  final TextEditingController destination = TextEditingController();
+
   int _currentStep = 0;
+
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  CollectionReference primaAccount =
+      FirebaseFirestore.instance.collection('primaAccounts');
+  File? _image;
+  final user = FirebaseAuth.instance.currentUser;
+
+  Future pickImage() async {
+    try {
+      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (image == null) {
+        final snackbar = SnackBar(content: Text("No Image Selected"));
+        ScaffoldMessenger.of(context).showSnackBar(snackbar);
+        return;
+      }
+      final imagepath = File(image.path);
+      setState(() {
+        _image = imagepath;
+      });
+    } catch (e) {
+      final snackbar = SnackBar(content: Text(e.toString()));
+      ScaffoldMessenger.of(context).showSnackBar(snackbar);
+    }
+  }
+
+  String? url;
+  Future uploadImage(File _image) async {
+    String imgid = DateTime.now().microsecondsSinceEpoch.toString();
+    Reference ref =
+        FirebaseStorage.instance.ref().child('images').child('users$imgid');
+    await ref.putFile(_image);
+    url = await ref.getDownloadURL();
+    print(url);
+  }
+
+  File? pdfFile;
+  String? _filename;
+  Future pickIdProof() async {
+    try {
+      final Id = await FilePicker.platform
+          .pickFiles(type: FileType.custom, allowedExtensions: ['pdf']);
+      if (Id == null) {
+        return;
+      }
+      final filepath = Id.files.single.path;
+      final filename = Id.files.single.name;
+      setState(() {
+        pdfFile = File(filepath!);
+        _filename = filename;
+        print(filename);
+      });
+    } catch (e) {
+      final snackbar = SnackBar(content: Text(e.toString()));
+      ScaffoldMessenger.of(context).showSnackBar(snackbar);
+    }
+  }
+
+  String? IdUrl;
+  Future uploadId(File pdfFile) async {
+    String imgid = DateTime.now().microsecondsSinceEpoch.toString();
+    Reference ref =
+        FirebaseStorage.instance.ref().child('pdfs').child('users$imgid');
+    await ref.putFile(pdfFile);
+    IdUrl = await ref.getDownloadURL();
+    print(url);
+  }
+
+  Future<void> addPrimaAccountDetails() {
+    // Call the user's CollectionReference to add a new user
+    return primaAccount
+        .add({
+          "General Details": {
+            "imageUrl": url,
+            "firstname": firstnameController.text.toString(),
+            "lastname": lastnameController.text.toString(),
+            "DOB": dateOfBirth.text.toString(),
+            "Annivarsary": annivarsaryDate.text.toString(),
+            'profession': professionController.text.toString(),
+          }, // John Doe
+          "governmentId": IdUrl, // 42
+          "Contact Details": {
+            "emailId": emailId.text.toString(),
+            "mobileNumber": mobilenumber.text.toString(),
+            "emergencyNumber": emergencynumber.text.toString(),
+          },
+          "userInterest": userInterestController.text.toString(),
+        })
+        .then((value) => print("User Added"))
+        .catchError((error) => print("Failed to add user: $error"));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,16 +152,26 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(25),
                     child: SizedBox(
-                      height: height(context) * 0.15,
-                      width: width(context) * 0.3,
-                      child: Image.asset(
-                        'assets/images/prima3.png',
-                        fit: BoxFit.fill,
-                      ),
-                    ),
+                        height: height(context) * 0.15,
+                        width: width(context) * 0.3,
+                        child: _image != null
+                            ? Image.file(
+                                _image!,
+                                width: width(context) * 0.3,
+                                height: height(context) * 0.15,
+                                fit: BoxFit.fill,
+                              )
+                            : Image.asset(
+                                'assets/images/prima3.png',
+                                fit: BoxFit.fill,
+                              )),
                   ),
                   InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      pickImage().whenComplete(() {
+                        uploadImage(_image!);
+                      });
+                    },
                     child: Container(
                       margin: const EdgeInsets.only(top: 13, left: 5),
                       height: 25,
@@ -72,7 +185,7 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
                             Icons.edit_note_outlined,
                             size: 22,
                           ),
-                          Text('Edit Profile Picture')
+                          Text('Add Profile Picture')
                         ],
                       ),
                     ),
@@ -85,12 +198,18 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
                   SizedBox(
                       height: 37,
                       width: width(context) * 0.45,
-                      child: CustomTextFieldWidget(labelText: 'First Name')),
+                      child: CustomTextFieldWidget(
+                        labelText: 'First Name',
+                        controller: firstnameController,
+                      )),
                   addHorizontalySpace(10),
                   SizedBox(
                       height: 37,
                       width: width(context) * 0.45,
-                      child: CustomTextFieldWidget(labelText: 'Last Name'))
+                      child: CustomTextFieldWidget(
+                        labelText: 'Last Name',
+                        controller: lastnameController,
+                      ))
                 ],
               ),
               addVerticalSpace(12),
@@ -250,27 +369,39 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
                 thickness: 1,
               ),
               addVerticalSpace(7),
-              const Text(
+              // ignore: prefer_const_constructors
+              Text(
                 'Government IDs',
                 style: TextStyle(
                   fontSize: 20,
                 ),
               ),
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  pickIdProof().whenComplete(() {
+                    uploadId(pdfFile!);
+                  });
+                },
                 child: Container(
                   margin: const EdgeInsets.only(top: 8, left: 2),
                   height: 40,
-                  width: width(context) * 0.55,
+                  width: pdfFile != null
+                      ? width(context) * 0.9
+                      : width(context) * 0.55,
                   decoration:
                       myFillBoxDecoration(0, black.withOpacity(0.1), 10),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        'Address Proof',
-                        style: bodyText16w600(color: black),
-                      ),
+                      pdfFile != null
+                          ? Text.rich(TextSpan(children: [
+                              WidgetSpan(child: Icon(Icons.picture_as_pdf)),
+                              TextSpan(text: _filename)
+                            ]))
+                          : Text(
+                              'Address Proof',
+                              style: bodyText16w600(color: black),
+                            ),
                       addHorizontalySpace(12),
                       const Icon(
                         Icons.edit_note_outlined,
@@ -329,6 +460,7 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
                 width: width(context) * 0.94,
                 // height: height(context) * 0.15,
                 child: TextField(
+                    controller: userInterestController,
                     onTap: () {},
                     maxLines: 3,
                     decoration: InputDecoration(
@@ -396,10 +528,10 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
               CustomButton(
                   name: 'Create my profile',
                   onPressed: () {
-                    Navigator.push(
+                    addPrimaAccountDetails().whenComplete(() => Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (ctx) => PrimaProfileScreen()));
+                            builder: (ctx) => PrimaProfileScreen())));
                   }),
               addVerticalSpace(15)
             ],
@@ -478,8 +610,29 @@ class _TripometerWidgetState extends State<TripometerWidget> {
   }
 }
 
-class UploadTravelsPhotos extends StatelessWidget {
+class UploadTravelsPhotos extends StatefulWidget {
   const UploadTravelsPhotos({super.key});
+
+  @override
+  State<UploadTravelsPhotos> createState() => _UploadTravelsPhotosState();
+}
+
+class _UploadTravelsPhotosState extends State<UploadTravelsPhotos> {
+  File? _image1;
+  File? _image2;
+  File? _image3;
+  File? _image4;
+
+  Future pickImage() async {
+    final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (image == null) {
+      return;
+    }
+    final imagepath = File(image.path);
+    setState(() {
+      _image1 = imagepath;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -501,16 +654,28 @@ class UploadTravelsPhotos extends StatelessWidget {
             spacing: 10,
             runSpacing: 10,
             children: List.generate(4, (i) {
-              return Container(
-                height: height(context) * 0.15,
-                width: width(context) * 0.35,
-                decoration:
-                    myOutlineBoxDecoration(1, black.withOpacity(0.3), 10),
-                child: Center(
-                    child: Icon(
-                  Icons.image,
-                  color: black.withOpacity(0.3),
-                )),
+              return InkWell(
+                onTap: () {
+                  pickImage();
+                },
+                child: _image1 != null
+                    ? Image.file(
+                        _image1!,
+                        height: height(context) * 0.15,
+                        width: width(context) * 0.35,
+                        fit: BoxFit.cover,
+                      )
+                    : Container(
+                        height: height(context) * 0.15,
+                        width: width(context) * 0.35,
+                        decoration: myOutlineBoxDecoration(
+                            1, black.withOpacity(0.3), 10),
+                        child: Center(
+                            child: Icon(
+                          Icons.image,
+                          color: black.withOpacity(0.3),
+                        )),
+                      ),
               );
             }),
           ),

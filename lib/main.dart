@@ -46,13 +46,10 @@ class _MyAppState extends State<MyApp> {
               );
             } else if (user.hasData) {
               return MyBottomBar();
-              // return const SellScreen();
             } else {
               return OnBoardingScreen();
             }
           }),
-
-      // home: PrimaTrip1To4Screens(),
     );
   }
 }
