@@ -60,9 +60,8 @@ class LocationProvider with ChangeNotifier {
         log(currentAddress);
         log(lat.toString());
         log(value.longitude.toString());
-        log(place.toString());
         notifyListeners();
-        return Placemark;
+        return currentAddress ;
       } catch (e) {
         log(e.toString());
       }
