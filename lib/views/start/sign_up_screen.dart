@@ -32,11 +32,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
   TextEditingController field4 = new TextEditingController();
   registerUser() async {
     final _fireStore = FirebaseFirestore.instance;
-    await _fireStore.collection("users").doc().set({
+    await _fireStore
+        .collection("users")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .set({
       'fullName': field0.text,
       'email': field1.text,
       'dob': field2.text,
       'mobNum': field3.text,
+      'UID': FirebaseAuth.instance.currentUser!.uid,
     });
   }
 
@@ -181,8 +185,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         if (pickedDate != null) {
                           print(pickedDate);
                           String formattedDate =
-                          DateFormat('yyyy-MM-dd')
-                              .format(pickedDate);
+                              DateFormat('yyyy-MM-dd').format(pickedDate);
 
                           setState(() {
                             field2.text = formattedDate;
@@ -298,13 +301,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           child: CustomButton(
                             name: 'Sign up',
                             onPressed: () async {
-                              registerUser();
                               try {
                                 final credential = await FirebaseAuth.instance
                                     .createUserWithEmailAndPassword(
                                   email: email,
                                   password: password,
                                 );
+                                registerUser();
                                 showSnackBar(
                                     context, "Signed Up", Colors.green);
                                 Navigator.push(

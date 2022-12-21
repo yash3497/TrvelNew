@@ -23,6 +23,12 @@ class FirebaseServices {
     }
   }
 
+  //getting UID
+ Future<String> getCurrentUID() async{
+    return(await _auth.currentUser!).uid;
+ }
+
+
   signInWithFacebook() async {
     try {
       final LoginResult loginResult = await FacebookAuth.instance.login();

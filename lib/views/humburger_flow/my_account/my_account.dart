@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -23,8 +24,27 @@ import 'package:travel_app/widget/custom_textfield.dart';
 
 import '../../../widget/custom_button.dart';
 
-class MyAccountScreen extends StatelessWidget {
+class MyAccountScreen extends StatefulWidget {
   MyAccountScreen({super.key});
+
+  @override
+  State<MyAccountScreen> createState() => _MyAccountScreenState();
+}
+
+class _MyAccountScreenState extends State<MyAccountScreen> {
+  String url = "";
+ String userName = "";
+  void getDetails() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      var profile = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+      url = profile.data()?['profileImg'];
+      userName =profile.data()?['fullName'];
+      setState(() {});
+    }
+  }
 
   final List listTileList = [
     {
@@ -37,6 +57,12 @@ class MyAccountScreen extends StatelessWidget {
     {'title': 'Help', 'subTitle': 'FAOs, Support'},
     {'title': 'Travel Safety', 'subTitle': 'Information you need to be safe'},
   ];
+  @override
+  void initState() {
+    getDetails();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,11 +103,25 @@ class MyAccountScreen extends StatelessWidget {
             Row(
               children: [
                 addHorizontalySpace(10),
-                const CircleAvatar(
-                  radius: 50,
-                  backgroundColor: Colors.transparent,
-                  backgroundImage: AssetImage('assets/images/menu1.png'),
+                Container(
+
+                  child: CircleAvatar(
+                    // child: Container( decoration: url == ""
+                    //     ?  BoxDecoration(
+                    //     borderRadius: BorderRadius.circular(3),
+                    //     image: DecorationImage(
+                    //         fit: BoxFit.cover,
+                    //         image: AssetImage('assets/images/prima3.png')))
+                    //     : BoxDecoration(
+                    //   borderRadius: BorderRadius.circular(3),
+                    //     image: DecorationImage(
+                    //         fit: BoxFit.fill, image: NetworkImage(url))),),
+                    radius: 50,
+                    backgroundColor: Colors.transparent,
+                    backgroundImage: NetworkImage(url),
+                  ),
                 ),
+                addHorizontalySpace(10),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -89,8 +129,9 @@ class MyAccountScreen extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          'Alexander Doe',
-                          style: bodyText20w700(color: black),
+                          "$userName",
+                          style: TextStyle(fontStyle: FontStyle.normal,fontWeight: FontWeight.bold ),
+                          //style: bodyText20w700(color: black),
                         ),
                       ],
                     ),
@@ -168,13 +209,13 @@ class MyAccountScreen extends StatelessWidget {
                                 listTileList[i]['subTitle'],
                               ),
                               trailing: Icon(Icons.arrow_forward_ios),
-                              onTap: () {
+                              onTap: () async {
                                 if (i == 0) {
-                                  Navigator.push(
+                                 await Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                           builder: (ctx) =>
-                                              PersonalInformationScreen()));
+                                           PersonalInformationScreen()));
                                 } else if (i == 1) {
                                   Navigator.push(
                                       context,
@@ -245,7 +286,6 @@ class MyAccountScreen extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                         builder: ((context) => SignupWithSocialMediaScreen())));}
-                // Navigator.push(context,MaterialPageRoute(builder: (ctx)=>));
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
