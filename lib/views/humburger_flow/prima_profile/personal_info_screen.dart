@@ -58,10 +58,11 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
       'mobNum': mobNum.text,
       'UID': FirebaseAuth.instance.currentUser!.uid,
       "profileImg": img ?? "",
-      "document": url ??"",
+      "document": url ?? "",
     });
   }
- File? file;
+
+  File? file;
   UploadTask? task;
   String url = "";
   void getImage() async {
@@ -102,7 +103,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
   late PhotoProvider imageProvider;
   @override
   Widget build(BuildContext context) {
-    final fileName = file!=null?j.basename(file!.path):'No file Selected';
+    final fileName = file != null ? j.basename(file!.path) : 'No file Selected';
     return Scaffold(
       body: SingleChildScrollView(
         child: SizedBox(
@@ -563,15 +564,16 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
       },
     );
   }
-  Future uploadFile() async {
-    if(file==null)return;
-    final fileName= j.basename(file!.path);
-    final destination='files/$fileName';
-   task= FireBaseApi.uploadFile(destination, file!);
 
-   if(task == null) return;
-   final snapshot = await task!.whenComplete((){});
-   final urlDownload = await snapshot.ref.getDownloadURL();
+  Future uploadFile() async {
+    if (file == null) return;
+    final fileName = j.basename(file!.path);
+    final destination = 'files/$fileName';
+    task = FireBaseApi.uploadFile(destination, file!);
+
+    if (task == null) return;
+    final snapshot = await task!.whenComplete(() {});
+    final urlDownload = await snapshot.ref.getDownloadURL();
   }
 
   Future selectFile() async {
@@ -579,20 +581,19 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
 
     if (result == null) return;
     final path = result.files.single.path!;
-    setState(){
+    setState() {
       file = File(path);
     }
   }
 }
 
 class FireBaseApi {
-  static UploadTask? uploadFile(String destination,File file){
-   try{ final ref = FirebaseStorage.instance.ref(destination);
-    return ref.putFile(file);}
-       on FirebaseException catch (e){
-     print(e);
-       }
+  static UploadTask? uploadFile(String destination, File file) {
+    try {
+      final ref = FirebaseStorage.instance.ref(destination);
+      return ref.putFile(file);
+    } on FirebaseException catch (e) {
+      print(e);
+    }
   }
 }
-
-
