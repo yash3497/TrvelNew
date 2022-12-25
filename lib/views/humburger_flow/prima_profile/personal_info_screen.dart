@@ -65,13 +65,15 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
   File? file;
   UploadTask? task;
   String url = "";
+  String img = "";
   void getImage() async {
     if (FirebaseAuth.instance.currentUser != null) {
       var profile = await FirebaseFirestore.instance
           .collection('users')
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .get();
-      url = profile.data()?['profileImg'];
+      img = profile.data()?['profileImg'];
+      url = profile.data()?['document'];
       firstName.text = profile.data()?['firstName'];
       dateOfBirth.text = profile.data()?['dob'];
       anniversaryDate.text = profile.data()?['anniversary'];
@@ -98,7 +100,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
 
   final ImagePicker picker = ImagePicker();
   late ImageSource? imageSource;
-  String? img;
+
   bool loading = true;
   late PhotoProvider imageProvider;
   @override
@@ -116,14 +118,14 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                   child: Container(
                     height: height(context) * 0.42,
                     width: width(context) * 1,
-                    decoration: url == ""
+                    decoration: img == ""
                         ? BoxDecoration(
                         image: DecorationImage(
                             fit: BoxFit.fill,
                             image: AssetImage('assets/images/prima3.png')))
                         : BoxDecoration(
                         image: DecorationImage(
-                            fit: BoxFit.fill, image: NetworkImage(url))),
+                            fit: BoxFit.fill, image: NetworkImage(img))),
                     child: SafeArea(
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -498,7 +500,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                           })),
                   InkWell(
                     onTap: () {
-                      selectFile();
+                      PickUploadDocument();
                       //feature to be added to upload pdf
                     },
                     child: Container(
@@ -575,7 +577,6 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
       print(value);
       setState(() {
         img = value;
-        url = value;
       });
     });
   }
@@ -591,6 +592,20 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
       print(value);
       setState(() {
         img = value;
+      });
+    });
+  }
+  void PickUploadDocument() async{
+    final image = await ImagePicker().pickImage(source: ImageSource.gallery,
+        maxWidth: MediaQuery.of(context).size.width,
+        maxHeight: MediaQuery.of(context).size.height,
+        imageQuality: 75);
+    Reference ref = FirebaseStorage.instance.ref().child('document');
+
+    await ref.putFile(File(image!.path));
+    ref.getDownloadURL().then((value){
+      print(value);
+      setState(() {
         url = value;
       });
     });
