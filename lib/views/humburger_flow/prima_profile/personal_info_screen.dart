@@ -65,13 +65,15 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
   File? file;
   UploadTask? task;
   String url = "";
+  String img = "";
   void getImage() async {
     if (FirebaseAuth.instance.currentUser != null) {
       var profile = await FirebaseFirestore.instance
           .collection('users')
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .get();
-      url = profile.data()?['profileImg'];
+      img = profile.data()?['profileImg'];
+      url = profile.data()?['document'];
       firstName.text = profile.data()?['firstName'];
       dateOfBirth.text = profile.data()?['dob'];
       anniversaryDate.text = profile.data()?['anniversary'];
@@ -98,7 +100,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
 
   final ImagePicker picker = ImagePicker();
   late ImageSource? imageSource;
-  String? img;
+
   bool loading = true;
   late PhotoProvider imageProvider;
   @override
@@ -109,21 +111,21 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
         child: SizedBox(
           height: height(context) * 1.28,
           child: Stack(
-              // mainAxisAlignment: MainAxisAlignment.start,
+            // mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Positioned(
                   top: 0,
                   child: Container(
                     height: height(context) * 0.42,
                     width: width(context) * 1,
-                    decoration: url == ""
+                    decoration: img == ""
                         ? BoxDecoration(
-                            image: DecorationImage(
-                                fit: BoxFit.fill,
-                                image: AssetImage('assets/images/prima3.png')))
+                        image: DecorationImage(
+                            fit: BoxFit.fill,
+                            image: AssetImage('assets/images/prima3.png')))
                         : BoxDecoration(
-                            image: DecorationImage(
-                                fit: BoxFit.fill, image: NetworkImage(url))),
+                        image: DecorationImage(
+                            fit: BoxFit.fill, image: NetworkImage(img))),
                     child: SafeArea(
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -147,31 +149,8 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                           Padding(
                               padding: EdgeInsets.only(right: 12.0, top: 10),
                               child: IconButton(
-                                onPressed: () async {
-                                  selectFile();
-                                  // ImagePicker imagePicker = ImagePicker();
-                                  // XFile? url = await imagePicker.pickImage(
-                                  //     source: ImageSource.camera);
-                                  // print("${url?.path}");
-                                  // try {
-                                  //   setState(() {
-                                  //     loading = true;
-                                  //   });
-                                  //   await imageProvider.selectPhoto(context);
-                                  //   if (imageProvider.imageSource != null) {
-                                  //     File file = await imageProvider
-                                  //         .getImage(imageProvider.imageSource!);
-                                  //     img = await imageProvider.uploadToStorage(
-                                  //         file, "material");
-                                  //     setState(() {
-                                  //       loading = false;
-                                  //     });
-                                  //   }
-                                  // } catch (e) {
-                                  //   setState(() {
-                                  //     loading = false;
-                                  //   });
-                                  // }
+                                onPressed: () {
+                                  showModalBottomSheet(context: context, builder: ((builder)=>bottomSheet()));
                                 },
                                 icon: ImageIcon(
                                   color: white,
@@ -185,6 +164,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                     ),
                   ),
                 ),
+
                 Positioned(
                     top: height(context) * 0.38,
                     child: Container(
@@ -242,8 +222,8 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                                         if (pickedDate != null) {
                                           print(pickedDate);
                                           String formattedDate =
-                                              DateFormat('yyyy-MM-dd')
-                                                  .format(pickedDate);
+                                          DateFormat('yyyy-MM-dd')
+                                              .format(pickedDate);
 
                                           setState(() {
                                             dateOfBirth.text = formattedDate;
@@ -272,8 +252,8 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                                         if (pickedDate != null) {
                                           print(pickedDate);
                                           String formattedDate =
-                                              DateFormat('yyyy-MM-dd')
-                                                  .format(pickedDate);
+                                          DateFormat('yyyy-MM-dd')
+                                              .format(pickedDate);
 
                                           setState(() {
                                             anniversaryDate.text =
@@ -504,11 +484,11 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                                       onChanged: (value) {
                                         setState(() {
                                           for (var element
-                                              in selectDocumentList) {
+                                          in selectDocumentList) {
                                             element.isSelected = false;
                                           }
                                           selectDocumentList[i].isSelected =
-                                              value!;
+                                          value!;
                                         });
                                       },
                                     ),
@@ -520,7 +500,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                           })),
                   InkWell(
                     onTap: () {
-                      selectFile();
+                      PickUploadDocument();
                       //feature to be added to upload pdf
                     },
                     child: Container(
@@ -534,7 +514,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                           Text(
                             '+ Upload ',
                             style:
-                                bodyText14w600(color: black.withOpacity(0.5)),
+                            bodyText14w600(color: black.withOpacity(0.5)),
                           ),
                         ],
                       ),
@@ -584,6 +564,95 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
     setState() {
       file = File(path);
     }
+  }
+  void pickUploadImage() async{
+    final image = await ImagePicker().pickImage(source: ImageSource.gallery,
+        maxWidth: MediaQuery.of(context).size.width,
+        maxHeight: MediaQuery.of(context).size.height,
+        imageQuality: 75);
+    Reference ref = FirebaseStorage.instance.ref().child('profileImg');
+
+    await ref.putFile(File(image!.path));
+    ref.getDownloadURL().then((value){
+      print(value);
+      setState(() {
+        img = value;
+      });
+    });
+  }
+  void cameraPickUploadImage() async{
+    final image = await ImagePicker().pickImage(source: ImageSource.camera,
+        maxWidth: MediaQuery.of(context).size.width,
+        maxHeight: MediaQuery.of(context).size.height,
+        imageQuality: 75);
+    Reference ref = FirebaseStorage.instance.ref().child('profileImg');
+
+    await ref.putFile(File(image!.path));
+    ref.getDownloadURL().then((value){
+      print(value);
+      setState(() {
+        img = value;
+      });
+    });
+  }
+  void PickUploadDocument() async{
+    final image = await ImagePicker().pickImage(source: ImageSource.gallery,
+        maxWidth: MediaQuery.of(context).size.width,
+        maxHeight: MediaQuery.of(context).size.height,
+        imageQuality: 75);
+    Reference ref = FirebaseStorage.instance.ref().child('document');
+
+    await ref.putFile(File(image!.path));
+    ref.getDownloadURL().then((value){
+      print(value);
+      setState(() {
+        url = value;
+      });
+    });
+  }
+  Widget bottomSheet(){
+    return Container(
+      height: 100,
+      width: MediaQuery.of(context).size.width,
+      margin: EdgeInsets.symmetric(
+        horizontal: 20,
+        vertical: 20,
+      ),
+      child: Column(
+        children: [
+          Text('Choose Profile photo',style: TextStyle(fontSize: 20),),
+          SizedBox(height: 20,),
+          Row(
+            children: <Widget>[
+
+              InkWell(
+                onTap: (){
+                  cameraPickUploadImage();
+                },
+                child: Icon(Icons.camera),
+              ),
+              SizedBox(width: 10,),
+              InkWell(
+                  onTap: (){cameraPickUploadImage();},
+                  child: Text('Camera',style: TextStyle(fontSize: 20),)),
+              SizedBox(width: 100,),
+              InkWell(
+                onTap: (){
+                  pickUploadImage();
+                },
+                child: Icon(Icons.image),
+              ),
+              SizedBox(width: 10,),
+              InkWell(
+                  onTap: (){
+                    pickUploadImage();
+                  },
+                  child: Text('Gallery',style: TextStyle(fontSize: 20),)),
+            ],
+          )
+        ],
+      ),
+    );
   }
 }
 
