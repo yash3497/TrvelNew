@@ -333,12 +333,16 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                               ),
                             ),
                             addVerticalSpace(10),
-                            SizedBox(
-                              // height: 37,
-                              child: CustomTextFieldWidget(
-                                labelText: 'Email Id',
-                                //controller: emailId,
+                            Row(
+                              children: [SizedBox(
+                                // height: 37,
+                                  child: Text('Email ID:')
                               ),
+                                SizedBox(
+                                  // height: 37,
+                                  child: Text(FirebaseAuth.instance.currentUser!.email.toString())
+                                ),
+                              ],
                             ),
                             addVerticalSpace(15),
                             Row(

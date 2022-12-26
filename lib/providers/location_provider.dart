@@ -94,7 +94,7 @@ class LocationProvider with ChangeNotifier {
         locadd = currentAddress;
         local = place.locality!;
         notifyListeners();
-        return currentAddress ;
+        //return currentAddress ;
       } catch (e) {
         log(e.toString());
       }
