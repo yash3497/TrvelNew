@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:travel_app/providers/location_provider.dart';
 
 import 'package:travel_app/utils/constant.dart';
@@ -11,6 +12,7 @@ import 'package:travel_app/widget/custom_tab_indicator.dart';
 import 'package:travel_app/widget/prima_bottom_navbar.dart';
 
 import '../views/home/home_screen.dart';
+import '../views/prima/go_prima_screen.dart';
 import 'my_drawer.dart';
 
 class MyBottomBar extends StatefulWidget {
@@ -32,6 +34,12 @@ class _MyBottomBarState extends State<MyBottomBar>
     const InboxScreen(),
     const Text(''),
   ];
+
+  var _counT = 0;
+  void getCounT(_counT) async {
+    SharedPreferences counter = await SharedPreferences.getInstance();
+    counter.setInt('counT', _counT);
+  }
   showSnackBar(BuildContext context, String str, [Color clr = Colors.black]) {
     return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(str),
@@ -103,11 +111,16 @@ class _MyBottomBarState extends State<MyBottomBar>
                   ),
                 ),
                 InkWell(
-                  onTap: () async {
+                  onTap: () async { if(_counT==0){
+                    _counT++;
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (ctx) => const PrimaMyBottomBar()));
+                            builder: (ctx) => const GoPrimaSubscriptionScreen()));
+                  } else{                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (ctx) => const PrimaMyBottomBar()));}
                   },
                   child: const Tab(
                     icon: SizedBox(

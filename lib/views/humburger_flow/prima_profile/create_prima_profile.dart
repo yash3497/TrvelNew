@@ -672,7 +672,7 @@ class _UploadTravelsPhotosState extends State<UploadTravelsPhotos> {
                             1, black.withOpacity(0.3), 10),
                         child: Center(
                             child: Icon(
-                          Icons.image,
+                          Icons.add,
                           color: black.withOpacity(0.3),
                         )),
                       ),

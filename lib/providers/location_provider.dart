@@ -61,7 +61,7 @@ class LocationProvider with ChangeNotifier {
         log(lat.toString());
         log(value.longitude.toString());
         notifyListeners();
-        return currentAddress ;
+        //return currentAddress ;
       } catch (e) {
         log(e.toString());
       }
