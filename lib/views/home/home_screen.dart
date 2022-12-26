@@ -46,10 +46,13 @@ class _HomeScreenState extends State<HomeScreen> {
     ));
   }
 
+
   registerUser() async {
+
     LocationProvider _locationProvider = LocationProvider();
     final _fireStore = FirebaseFirestore.instance;
     print('test');
+
     print(_locationProvider.lat);
     print(_locationProvider.long);
     await _fireStore.collection("users").doc(FirebaseAuth.instance.currentUser!.uid).update({
@@ -68,21 +71,23 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
   @override
   void initState() {
+
     LocationProvider _locationProvider = LocationProvider();
     _locationProvider.fetchCurrentPosition();
-   // getValidationData().whenComplete(() async {
-   //    final user = FirebaseAuth.instance.currentUser;
-   //    if (user == null) {
-   //      Timer(Duration(seconds: 60), () {
-   //        if (user == null) {
-   //          Navigator.push(
-   //              context,
-   //              MaterialPageRoute(
-   //                  builder: ((context) => SignupWithSocialMediaScreen())));
-   //        }
-   //      });
-   //    }
-   //  });
+    _locationProvider.getLocation();
+    // getValidationData().whenComplete(() async {
+    //    final user = FirebaseAuth.instance.currentUser;
+    //    if (user == null) {
+    //      Timer(Duration(seconds: 60), () {
+    //        if (user == null) {
+    //          Navigator.push(
+    //              context,
+    //              MaterialPageRoute(
+    //                  builder: ((context) => SignupWithSocialMediaScreen())));
+    //        }
+    //      });
+    //    }
+    //  });
 
     super.initState();
   }
@@ -101,392 +106,396 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: SingleChildScrollView(
           child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 10),
-            height: height(context) * 0.6,
-            width: width(context),
-            decoration: const BoxDecoration(
-                image: DecorationImage(
-                    fit: BoxFit.fill,
-                    image: AssetImage('assets/images/home1.png'))),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Spacer(),
-                Text(
-                  'Discover \nTravelNew',
-                  style: TextStyle(
-                      fontSize: 40, color: white, fontWeight: FontWeight.w600),
-                ),
-                addVerticalSpace(5),
-                InkWell(
-                  onTap: () {
-                    if (FirebaseAuth.instance.currentUser != null) {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (ctx) => PlanATrip()));
-                    } else {
-                      showSnackBar(context, "Please Login First!", Colors.red);
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (ctx) => SignupWithSocialMediaScreen()));
-                    }
-                  },
-                  child: Container(
-                    height: 35,
-                    width: 109,
-                    decoration: myFillBoxDecoration(0, primary, 8),
-                    child: Center(
-                      child: Text(
-                        'Plan a trip',
-                        style: bodyText14w600(color: black),
-                      ),
-                    ),
-                  ),
-                ),
-                addVerticalSpace(height(context) * 0.1),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                height: height(context) * 0.6,
+                width: width(context),
+                decoration: const BoxDecoration(
+                    image: DecorationImage(
+                        fit: BoxFit.fill,
+                        image: AssetImage('assets/images/home1.png'))),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Spacer(),
                     Text(
-                      'Quick Escape',
-                      style: bodyText16w600(color: white),
+                      'Discover \nTravelNew',
+                      style: TextStyle(
+                          fontSize: 40, color: white, fontWeight: FontWeight.w600),
                     ),
+                    addVerticalSpace(5),
                     InkWell(
-                      onTap: () async {
+                      onTap: () {
                         if (FirebaseAuth.instance.currentUser != null) {
-                          LocationProvider _locationProvider =
-                              LocationProvider();
-                          await _locationProvider.fetchCurrentPosition();
-                          registerUser();
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (ctx) => QuickEscapeScreen()));
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (ctx) => PlanATrip()));
                         } else {
-                          showSnackBar(
-                              context, "Please Login First!", Colors.red);
+                          showSnackBar(context, "Please Login First!", Colors.red);
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (ctx) =>
-                                      SignupWithSocialMediaScreen()));
+                                  builder: (ctx) => SignupWithSocialMediaScreen()));
                         }
                       },
-                      child: Text(
-                        'View all >',
-                        style: bodyText14w600(color: white),
+                      child: Container(
+                        height: 35,
+                        width: 109,
+                        decoration: myFillBoxDecoration(0, primary, 8),
+                        child: Center(
+                          child: Text(
+                            'Plan a trip',
+                            style: bodyText14w600(color: black),
+                          ),
+                        ),
                       ),
                     ),
-                  ],
-                ),
-                addVerticalSpace(5),
-                SizedBox(
-                  height: height(context) * 0.1,
-                  child: ListView.builder(
-                      itemCount: quickEscapeList.length,
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) {
-                        return Column(
-                          children: [
-                            CircleAvatar(
-                              radius: 30,
-                              backgroundColor: Colors.transparent,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(60),
-                                child: Image.asset(
-                                  quickEscapeList[index]['img'],
-                                  fit: BoxFit.fill,
-                                ),
-                              ),
-                            ),
-                            Text(
-                              quickEscapeList[index]['name'],
-                              style: bodyText12Small(color: white),
-                            )
-                          ],
-                        );
-                      }),
-                )
-              ],
-            ),
-          ),
-          addVerticalSpace(5),
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Festivals & Events',
-                  style: bodyText20w700(color: black),
-                ),
-                InkWell(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (ctx) => FestivalAndCelebrationsScreen()));
-                  },
-                  child: Text(
-                    'View all >',
-                    style: bodyText14w600(color: black),
-                  ),
-                )
-              ],
-            ),
-          ),
-          addVerticalSpace(5),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: SizedBox(
-              height: height(context) * 0.205,
-              child: ListView.builder(
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: 6,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (ctx, i) {
-                    return i == 5
-                        ? Stack(
-                            children: [
-                              Container(
-                                margin: EdgeInsets.only(right: 12),
-                                height: height(context) * 0.2,
-                                width: 208,
-                                child: Card(
-                                  elevation: 2,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      SizedBox(
-                                        height: height(context) * 0.13,
-                                        width: width(context),
-                                        child: Image.asset(
-                                          'assets/images/festival1.png',
-                                          fit: BoxFit.fill,
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 6.0, right: 8, top: 10),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  'Nagaur Festival',
-                                                  style: bodyText16w600(
-                                                      color: black),
-                                                ),
-                                                Text(
-                                                  'February 25, 2022',
-                                                  style: bodyText12Small(
-                                                      color: black),
-                                                )
-                                              ],
-                                            ),
-                                            OverlapingImageCustomWidget(
-                                                overlap: overlap)
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                  top: 4,
-                                  left: 4,
-                                  child: InkWell(
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (ctx) =>
-                                                  FestivalAndCelebrationsScreen()));
-                                    },
-                                    child: Container(
-                                      height: height(context) * 0.13,
-                                      color: black.withOpacity(0.5),
-                                      width: width(context) * 0.55,
-                                      child: Center(
-                                          child: Text(
-                                        'View all >',
-                                        style: bodyText16w600(color: white),
-                                      )),
-                                    ),
-                                  ))
-                            ],
-                          )
-                        : Container(
-                            margin: EdgeInsets.only(right: 12),
-                            height: height(context) * 0.2,
-                            width: 208,
-                            child: Card(
-                              elevation: 2,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    height: height(context) * 0.13,
-                                    width: width(context),
+                    addVerticalSpace(height(context) * 0.1),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+
+                        Text(
+                          'Quick Escape',
+                          style: bodyText16w600(color: white),
+                        ),
+
+                        InkWell(
+                          onTap: () async {
+
+                            if (FirebaseAuth.instance.currentUser != null) {
+                              LocationProvider _locationProvider =
+                              LocationProvider();
+                              await _locationProvider.fetchCurrentPosition();
+                              registerUser();
+                              await _locationProvider.locationDeatials();
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (ctx) => QuickEscapeScreen()));
+                            } else {
+                              showSnackBar(
+                                  context, "Please Login First!", Colors.red);
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (ctx) =>
+                                          SignupWithSocialMediaScreen()));
+                            }
+                          },
+                          child: Text(
+                            'View all >',
+                            style: bodyText14w600(color: white),
+                          ),
+                        ),
+                      ],
+                    ),
+                    addVerticalSpace(5),
+                    SizedBox(
+                      height: height(context) * 0.1,
+                      child: ListView.builder(
+                          itemCount: quickEscapeList.length,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) {
+                            return Column(
+                              children: [
+                                CircleAvatar(
+                                  radius: 30,
+                                  backgroundColor: Colors.transparent,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(60),
                                     child: Image.asset(
-                                      'assets/images/festival1.png',
+                                      quickEscapeList[index]['img'],
                                       fit: BoxFit.fill,
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 6.0, right: 8, top: 10),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'Nagaur Festival',
-                                              style:
-                                                  bodyText16w600(color: black),
-                                            ),
-                                            Text(
-                                              'February 25, 2022',
-                                              style:
-                                                  bodyText12Small(color: black),
-                                            )
-                                          ],
-                                        ),
-                                        OverlapingImageCustomWidget(
-                                            overlap: overlap)
-                                      ],
+                                ),
+                                Text(
+                                  quickEscapeList[index]['name'],
+                                  style: bodyText12Small(color: white),
+                                )
+                              ],
+                            );
+                          }),
+                    )
+                  ],
+                ),
+              ),
+              addVerticalSpace(5),
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Festivals & Events',
+                      style: bodyText20w700(color: black),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (ctx) => FestivalAndCelebrationsScreen()));
+                      },
+                      child: Text(
+                        'View all >',
+                        style: bodyText14w600(color: black),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              addVerticalSpace(5),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: SizedBox(
+                  height: height(context) * 0.205,
+                  child: ListView.builder(
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: 6,
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (ctx, i) {
+                        return i == 5
+                            ? Stack(
+                          children: [
+                            Container(
+                              margin: EdgeInsets.only(right: 12),
+                              height: height(context) * 0.2,
+                              width: 208,
+                              child: Card(
+                                elevation: 2,
+                                child: Column(
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      height: height(context) * 0.13,
+                                      width: width(context),
+                                      child: Image.asset(
+                                        'assets/images/festival1.png',
+                                        fit: BoxFit.fill,
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 6.0, right: 8, top: 10),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Column(
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Nagaur Festival',
+                                                style: bodyText16w600(
+                                                    color: black),
+                                              ),
+                                              Text(
+                                                'February 25, 2022',
+                                                style: bodyText12Small(
+                                                    color: black),
+                                              )
+                                            ],
+                                          ),
+                                          OverlapingImageCustomWidget(
+                                              overlap: overlap)
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          );
-                  }),
-            ),
-          ),
-          addVerticalSpace(15),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Profile Feeds',
-                  style: bodyText20w700(color: black),
-                ),
-                InkWell(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (ctx) => ProfileFeedScreen()));
-                  },
-                  child: Text(
-                    'View all >',
-                    style: bodyText14w600(color: black),
-                  ),
-                )
-              ],
-            ),
-          ),
-          addVerticalSpace(5),
-          ProfileFeedWidget(overlap: overlap),
-          GoPrimaSubscriptionsWidget(),
-          addVerticalSpace(12),
-          Padding(
-            padding: const EdgeInsets.only(left: 12.0),
-            child: Text(
-              'Aspired Trips ',
-              style: bodyText20w700(color: black),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 12.0),
-            child: Text(
-              'Trips grouped together',
-              style: bodyText12Small(color: black.withOpacity(0.5)),
-            ),
-          ),
-          addVerticalSpace(5),
-          SliderWidget(
-            imageList: sliderImg,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 12.0, bottom: 10, top: 10),
-            child: Text(
-              'Featured',
-              style: bodyText20w700(color: black),
-            ),
-          ),
-          Stack(
-            children: [
-              Container(
-                  height: height(context) * 0.48,
-                  width: width(context),
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
-                        fit: BoxFit.fill,
-                        image: AssetImage(
-                          'assets/images/featurepage.png',
-                        )),
-                  )),
-              Positioned(
-                  top: height(context) * 0.06,
-                  left: 14,
-                  child: SizedBox(
-                    width: width(context) * 0.8,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-                          style: TextStyle(
-                              height: 1.3,
-                              fontSize: 28,
-                              fontWeight: FontWeight.w600,
-                              color: white),
-                        ),
-                        addVerticalSpace(5),
-                        Text(
-                          'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-                          style: TextStyle(
-                              height: 1.5,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w400,
-                              color: white),
-                        ),
-                        addVerticalSpace(height(context) * 0.07),
-                        Container(
-                          height: 40,
-                          width: width(context) * 0.35,
-                          decoration: myFillBoxDecoration(0, white, 30),
-                          child: Center(
-                            child: Text(
-                              'Explore',
-                              style: bodyText16w600(color: black),
+                            Positioned(
+                                top: 4,
+                                left: 4,
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (ctx) =>
+                                                FestivalAndCelebrationsScreen()));
+                                  },
+                                  child: Container(
+                                    height: height(context) * 0.13,
+                                    color: black.withOpacity(0.5),
+                                    width: width(context) * 0.55,
+                                    child: Center(
+                                        child: Text(
+                                          'View all >',
+                                          style: bodyText16w600(color: white),
+                                        )),
+                                  ),
+                                ))
+                          ],
+                        )
+                            : Container(
+                          margin: EdgeInsets.only(right: 12),
+                          height: height(context) * 0.2,
+                          width: 208,
+                          child: Card(
+                            elevation: 2,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  height: height(context) * 0.13,
+                                  width: width(context),
+                                  child: Image.asset(
+                                    'assets/images/festival1.png',
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 6.0, right: 8, top: 10),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Column(
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Nagaur Festival',
+                                            style:
+                                            bodyText16w600(color: black),
+                                          ),
+                                          Text(
+                                            'February 25, 2022',
+                                            style:
+                                            bodyText12Small(color: black),
+                                          )
+                                        ],
+                                      ),
+                                      OverlapingImageCustomWidget(
+                                          overlap: overlap)
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        )
-                      ],
+                        );
+                      }),
+                ),
+              ),
+              addVerticalSpace(15),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Profile Feeds',
+                      style: bodyText20w700(color: black),
                     ),
-                  ))
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (ctx) => ProfileFeedScreen()));
+                      },
+                      child: Text(
+                        'View all >',
+                        style: bodyText14w600(color: black),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              addVerticalSpace(5),
+              ProfileFeedWidget(overlap: overlap),
+              GoPrimaSubscriptionsWidget(),
+              addVerticalSpace(12),
+              Padding(
+                padding: const EdgeInsets.only(left: 12.0),
+                child: Text(
+                  'Aspired Trips ',
+                  style: bodyText20w700(color: black),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 12.0),
+                child: Text(
+                  'Trips grouped together',
+                  style: bodyText12Small(color: black.withOpacity(0.5)),
+                ),
+              ),
+              addVerticalSpace(5),
+              SliderWidget(
+                imageList: sliderImg,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 12.0, bottom: 10, top: 10),
+                child: Text(
+                  'Featured',
+                  style: bodyText20w700(color: black),
+                ),
+              ),
+              Stack(
+                children: [
+                  Container(
+                      height: height(context) * 0.48,
+                      width: width(context),
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                            fit: BoxFit.fill,
+                            image: AssetImage(
+                              'assets/images/featurepage.png',
+                            )),
+                      )),
+                  Positioned(
+                      top: height(context) * 0.06,
+                      left: 14,
+                      child: SizedBox(
+                        width: width(context) * 0.8,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                              style: TextStyle(
+                                  height: 1.3,
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.w600,
+                                  color: white),
+                            ),
+                            addVerticalSpace(5),
+                            Text(
+                              'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                              style: TextStyle(
+                                  height: 1.5,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w400,
+                                  color: white),
+                            ),
+                            addVerticalSpace(height(context) * 0.07),
+                            Container(
+                              height: 40,
+                              width: width(context) * 0.35,
+                              decoration: myFillBoxDecoration(0, white, 30),
+                              child: Center(
+                                child: Text(
+                                  'Explore',
+                                  style: bodyText16w600(color: black),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ))
+                ],
+              )
             ],
-          )
-        ],
-      )),
+          )),
     );
   }
 }
@@ -659,4 +668,5 @@ class ProfileFeedWidget extends StatelessWidget {
           }),
     );
   }
+
 }
