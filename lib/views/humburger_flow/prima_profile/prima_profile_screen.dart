@@ -487,6 +487,7 @@ class _PrimaProfileScreenState extends State<PrimaProfileScreen> {
                           CustomDropDownButton(
                               itemList: locationList,
                               lableText: '  Trip Invitation  '),
+
                           Text(
                             'Trips requesting for new trip friends are only listed here',
                             style: bodyText12Small(color: black),
