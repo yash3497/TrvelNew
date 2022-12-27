@@ -628,28 +628,22 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
           SizedBox(height: 20,),
           Row(
             children: <Widget>[
-
-              InkWell(
-                onTap: (){
-                  cameraPickUploadImage();
-                },
-                child: Icon(Icons.camera),
-              ),
+                Icon(Icons.camera),
               SizedBox(width: 10,),
               InkWell(
-                  onTap: (){cameraPickUploadImage();},
+                  onTap: (){
+                    cameraPickUploadImage();
+                    Navigator.pop(context);
+                    },
                   child: Text('Camera',style: TextStyle(fontSize: 20),)),
               SizedBox(width: 100,),
-              InkWell(
-                onTap: (){
-                  pickUploadImage();
-                },
-                child: Icon(Icons.image),
-              ),
+                Icon(Icons.image),
+
               SizedBox(width: 10,),
               InkWell(
                   onTap: (){
                     pickUploadImage();
+                    Navigator.pop(context);
                   },
                   child: Text('Gallery',style: TextStyle(fontSize: 20),)),
             ],
