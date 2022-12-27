@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../utils/constant.dart';
 
 class CustomDropDownButton extends StatefulWidget {
-  CustomDropDownButton({super.key, required this.itemList, this.lableText});
+  CustomDropDownButton({super.key, required this.itemList, this.lableText,TextEditingController? controller});
   final List<String> itemList;
 
   final lableText;

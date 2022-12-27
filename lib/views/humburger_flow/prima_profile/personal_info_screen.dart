@@ -40,6 +40,8 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
   final TextEditingController profession = new TextEditingController();
   final TextEditingController mobNum = new TextEditingController();
   final TextEditingController emergencyNum = new TextEditingController();
+  final TextEditingController genderController = new TextEditingController();
+  final TextEditingController statusController = new TextEditingController();
   //final TextEditingController emailId = new TextEditingController();
   detailUser() async {
     final _fireStore = FirebaseFirestore.instance;
@@ -56,6 +58,8 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
       //'emailId': emailId.text,
       'emergencyNum': emergencyNum.text,
       'mobNum': mobNum.text,
+      'gender':genderController.text,
+      'maritalStatus': statusController.text,
       'UID': FirebaseAuth.instance.currentUser!.uid,
       "profileImg": img ?? "",
       "document": url ?? "",
@@ -66,7 +70,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
   UploadTask? task;
   String url = "";
   String img = "";
-  void getImage() async {
+  void getDetails() async {
     if (FirebaseAuth.instance.currentUser != null) {
       var profile = await FirebaseFirestore.instance
           .collection('users')
@@ -94,7 +98,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
 
   @override
   void initState() {
-    getImage();
+    getDetails();
     super.initState();
   }
 
@@ -288,6 +292,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                                       'Widowed',
                                     ],
                                     lableText: 'Marital Status',
+                                    controller: statusController,
                                   ),
                                 ),
                                 addHorizontalySpace(10),
@@ -301,6 +306,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                                       'Prefer not to say',
                                     ],
                                     lableText: 'Gender',
+                                    controller: genderController,
                                   ),
                                 ),
                               ],
