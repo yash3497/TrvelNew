@@ -3,15 +3,23 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:travel_app/views/humburger_flow/my_account/my_following_trip_friends.dart';
 import 'package:travel_app/views/humburger_flow/my_account/report_incorrect_user_screen.dart';
+import 'package:travel_app/views/start/sign_in_screen.dart';
 import 'package:travel_app/widget/custom_appbar.dart';
 
 import '../../../utils/constant.dart';
 import '../../../widget/custom_button.dart';
 
-class MyTripFriendsScreen extends StatelessWidget {
+class MyTripFriendsScreen extends StatefulWidget {
   MyTripFriendsScreen({required this.title});
   String title;
+
+  @override
+  State<MyTripFriendsScreen> createState() => _MyTripFriendsScreenState();
+}
+
+class _MyTripFriendsScreenState extends State<MyTripFriendsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,8 +36,23 @@ class MyTripFriendsScreen extends StatelessWidget {
               color: black,
             )),
         title: Text(
-          title,
+          widget.title,
           style: bodyText20w700(color: black),
+        ),
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(15),
+          child: InkWell(
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>MyfollowingFriendScreen()));
+            },
+            child: const Text(
+              'You have trip friend request',
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.normal,
+                  ),
+            ),
+          ),
         ),
         actions: [
           InkWell(
