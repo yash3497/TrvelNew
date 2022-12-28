@@ -64,12 +64,12 @@ class _PrimaMyBottomBarState extends State<PrimaMyBottomBar>
                   ),
                 ),
                 const Tab(
-                  icon: ImageIcon(
-                    AssetImage(
-                      'assets/images/navbar5.png',
-                    ),
+                  icon: Icon(Icons.person_search_sharp)
+                  // ImageIcon(
+                  //   // AssetImage(
+                  //   //   'assets/images/navbar5.png',
+                  //   ),
                   ),
-                ),
                 const Tab(
                   icon: ImageIcon(
                     AssetImage(

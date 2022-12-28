@@ -14,6 +14,7 @@ import 'package:travel_app/widget/custom_dropdown_button.dart';
 import 'package:travel_app/widget/custom_textfield.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../utils/constant.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 class CreatePrimaProfile extends StatefulWidget {
   const CreatePrimaProfile({super.key});
@@ -29,16 +30,106 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
   final TextEditingController lastnameController = TextEditingController();
   final TextEditingController professionController = TextEditingController();
   final TextEditingController emailId = TextEditingController();
-  final TextEditingController mobilenumber = TextEditingController();
-  final TextEditingController emergencynumber = TextEditingController();
+  // final TextEditingController statusController = TextEditingController();
+  // final TextEditingController genderController = TextEditingController();
+  final TextEditingController mobileNumber = TextEditingController();
+  final TextEditingController emergencyNumber = TextEditingController();
   final TextEditingController userInterestController = TextEditingController();
   final TextEditingController destination = TextEditingController();
+  final TextEditingController aboutMeController = TextEditingController();
+
+  addPrimaAccountDetails() async {
+    // Call the user's CollectionReference to add a new user
+
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    users
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection("primaAccount")
+        .doc("profile")
+        .set({
+          "General Details": {
+            "imageUrl": url,
+            "fullName":
+                firstnameController.text + " " + lastnameController.text,
+            "firstName": firstnameController.text,
+            "lastName": lastnameController.text,
+            "DOB": dateOfBirth.text,
+            "Annivarsary": annivarsaryDate.text,
+            'profession': professionController.text,
+            // "maritalStatus": statusController,
+            // "gender": genderController,
+          }, // John Doe
+          "governmentId": IdUrl, // 42
+          "Contact Details": {
+            "emailId": emailId.text,
+            "mobileNumber": mobileNumber.text,
+            "emergencyNumber": emergencyNumber.text,
+          },
+          "userInterest": userInterestController.text,
+        })
+        .then((value) => print("User Added"))
+        .catchError((error) => print("Failed to add user: $error"));
+  }
+
+  updatePrimaAccountDetails() async {
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    users
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection("primaAccount")
+        .doc("profile")
+        .update({
+          "General Details": {
+            "imageUrl": url,
+            "fullName":
+                firstnameController.text + " " + lastnameController.text,
+            "firstName": firstnameController.text,
+            "lastName": lastnameController.text,
+            "DOB": dateOfBirth.text,
+            "Annivarsary": annivarsaryDate.text,
+            'profession': professionController.text,
+            // "maritalStatus": statusController,
+            // "gender": genderController,
+          }, // John Doe
+          "governmentId": IdUrl, // 42
+          "Contact Details": {
+            "emailId": emailId.text,
+            "mobileNumber": mobileNumber.text,
+            "emergencyNumber": emergencyNumber.text,
+          },
+          "userInterest": userInterestController.text,
+        })
+        .then((value) => print("Details Updated"))
+        .catchError((error) => print("Failed to Update users Details: $error"));
+  }
+
+  void getDetails() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      var profile = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection("primaAccount")
+          .doc("profile")
+          .get();
+      _image = profile.data()?['imageUrl'];
+      url = profile.data()?['document'];
+      firstnameController.text = profile.data()?['firstName'];
+      dateOfBirth.text = profile.data()?['DOB'];
+      annivarsaryDate.text = profile.data()?['Annivarsary'];
+      professionController.text = profile.data()?['profession'];
+      emergencyNumber.text = profile.data()?['emergencyNumber'];
+      lastnameController.text = profile.data()?['lastName'];
+      mobileNumber.text = profile.data()?['mobileNumber'];
+      // statusController.text = profile.data()?['maritalStatus'];
+      // genderController.text = profile.data()?['gender'];
+      setState(() {});
+    }
+  }
 
   int _currentStep = 0;
 
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
-  CollectionReference primaAccount =
-      FirebaseFirestore.instance.collection('primaAccounts');
+  // FirebaseFirestore firestore = FirebaseFirestore.instance;
+  // CollectionReference primaAccount =
+  //     FirebaseFirestore.instance.collection('primaAccounts');
   File? _image;
   final user = FirebaseAuth.instance.currentUser;
 
@@ -102,28 +193,13 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
     print(url);
   }
 
-  Future<void> addPrimaAccountDetails() {
-    // Call the user's CollectionReference to add a new user
-    return primaAccount
-        .add({
-          "General Details": {
-            "imageUrl": url,
-            "firstname": firstnameController.text.toString(),
-            "lastname": lastnameController.text.toString(),
-            "DOB": dateOfBirth.text.toString(),
-            "Annivarsary": annivarsaryDate.text.toString(),
-            'profession': professionController.text.toString(),
-          }, // John Doe
-          "governmentId": IdUrl, // 42
-          "Contact Details": {
-            "emailId": emailId.text.toString(),
-            "mobileNumber": mobilenumber.text.toString(),
-            "emergencyNumber": emergencynumber.text.toString(),
-          },
-          "userInterest": userInterestController.text.toString(),
-        })
-        .then((value) => print("User Added"))
-        .catchError((error) => print("Failed to add user: $error"));
+  void initState() {
+    getDetails();
+    addPrimaAccountDetails();
+    ;
+    updatePrimaAccountDetails();
+    ;
+    super.initState();
   }
 
   @override
@@ -279,7 +355,10 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
               addVerticalSpace(10),
               SizedBox(
                   height: 37,
-                  child: CustomTextFieldWidget(labelText: 'Profession')),
+                  child: CustomTextFieldWidget(
+                    labelText: 'Profession',
+                    controller: professionController,
+                  )),
               addVerticalSpace(22),
               Row(
                 children: [
@@ -293,6 +372,7 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
                         'Commited',
                       ],
                       lableText: 'Marital Status',
+                      // controller: statusController,
                     ),
                   ),
                   addHorizontalySpace(10),
@@ -306,6 +386,7 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
                         'Other',
                       ],
                       lableText: 'Gender',
+                      // controller: genderController,
                     ),
                   ),
                 ],
@@ -336,7 +417,10 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
               addVerticalSpace(10),
               SizedBox(
                 height: 37,
-                child: CustomTextFieldWidget(labelText: 'Email Id'),
+                child: CustomTextFieldWidget(
+                  labelText: 'Email Id',
+                  controller: emailId,
+                ),
               ),
               addVerticalSpace(10),
               Row(
@@ -344,13 +428,18 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
                   SizedBox(
                       height: 37,
                       width: width(context) * 0.45,
-                      child: CustomTextFieldWidget(labelText: 'Mobile number')),
+                      child: CustomTextFieldWidget(
+                        labelText: 'Mobile number',
+                        controller: mobileNumber,
+                      )),
                   addHorizontalySpace(10),
                   SizedBox(
                       height: 37,
                       width: width(context) * 0.45,
-                      child:
-                          CustomTextFieldWidget(labelText: 'Emergency number'))
+                      child: CustomTextFieldWidget(
+                        labelText: 'Emergency number',
+                        controller: emergencyNumber,
+                      ))
                 ],
               ),
               SizedBox(
@@ -432,12 +521,8 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
                 width: width(context) * 0.94,
                 // height: height(context) * 0.15,
                 child: TextField(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (ctx) => PrimaMyAccount()));
-                    },
+                    controller: aboutMeController,
+                    onTap: () {},
                     maxLines: 3,
                     decoration: InputDecoration(
                         border: InputBorder.none,
@@ -528,10 +613,41 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
               CustomButton(
                   name: 'Create my profile',
                   onPressed: () {
-                    addPrimaAccountDetails().whenComplete(() => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (ctx) => PrimaProfileScreen())));
+                    showDialog<String>(
+                      context: context,
+                      builder: (BuildContext context) => AlertDialog(
+                        title: const Text(' Are You Ready to be a Prima Member!'),
+                        content: const Text(
+                            ' You will be directed to payment Gateway fill free to click on Confirm '),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              if (FirebaseAuth.instance.currentUser!.uid !=
+                                  null) {
+                                updatePrimaAccountDetails();
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (ctx) =>
+                                            PrimaProfileScreen()));
+                              } else {
+                                addPrimaAccountDetails().whenComplete(() =>
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (ctx) =>
+                                                PrimaProfileScreen())));
+                              }
+                            },
+                            child: const Text('Confirm'),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, 'CANCEL'),
+                            child: const Text('Cancel'),
+                          ),
+                        ],
+                      ),
+                    );
                   }),
               addVerticalSpace(15)
             ],
@@ -631,6 +747,9 @@ class _UploadTravelsPhotosState extends State<UploadTravelsPhotos> {
     final imagepath = File(image.path);
     setState(() {
       _image1 = imagepath;
+      _image2 = imagepath;
+      _image3 = imagepath;
+      _image4 = imagepath;
     });
   }
 
@@ -665,33 +784,55 @@ class _UploadTravelsPhotosState extends State<UploadTravelsPhotos> {
                         width: width(context) * 0.35,
                         fit: BoxFit.cover,
                       )
-                    : Container(
-                        height: height(context) * 0.15,
-                        width: width(context) * 0.35,
-                        decoration: myOutlineBoxDecoration(
-                            1, black.withOpacity(0.3), 10),
-                        child: Center(
-                            child: Icon(
-                          Icons.image,
-                          color: black.withOpacity(0.3),
-                        )),
-                      ),
+                    : _image2 != null
+                        ? Image.file(
+                            _image2!,
+                            height: height(context) * 0.15,
+                            width: width(context) * 0.35,
+                            fit: BoxFit.cover,
+                          )
+                        : _image3 != null
+                            ? Image.file(
+                                _image3!,
+                                height: height(context) * 0.15,
+                                width: width(context) * 0.35,
+                                fit: BoxFit.cover,
+                              )
+                            : _image4 != null
+                                ? Image.file(
+                                    _image4!,
+                                    height: height(context) * 0.15,
+                                    width: width(context) * 0.35,
+                                    fit: BoxFit.cover,
+                                  )
+                                : Container(
+                                    height: height(context) * 0.15,
+                                    width: width(context) * 0.35,
+                                    decoration: myOutlineBoxDecoration(
+                                        1, black.withOpacity(0.3), 10),
+                                    child: Center(
+                                        child: Icon(
+                                      Icons.add,
+                                      color: black.withOpacity(0.3),
+                                    )),
+                                  ),
               );
             }),
           ),
         ),
         addVerticalSpace(15),
         Container(
-            decoration: myOutlineBoxDecoration(1, black.withOpacity(0.4), 9),
-            width: width(context) * 0.94,
-            // height: height(context) * 0.08,
-            child: TextField(
-                maxLines: 2,
-                decoration: InputDecoration(
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.all(10),
-                    hintStyle: bodyText13normal(color: black),
-                    hintText: 'Mention destination of above travel photos'))),
+          decoration: myOutlineBoxDecoration(1, black.withOpacity(0.4), 9),
+          width: width(context) * 0.94,
+          child: TextField(
+            maxLines: 2,
+            decoration: InputDecoration(
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.all(10),
+                hintStyle: bodyText13normal(color: black),
+                hintText: 'Mention destination of above travel photos'),
+          ),
+        ),
       ],
     );
   }
@@ -710,38 +851,61 @@ class WhatExcitesYouWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
         height: height(context) * 0.15,
-        child: ListView.builder(
-            itemCount: whatExcitesYou.length,
-            scrollDirection: Axis.horizontal,
-            itemBuilder: (ctx, i) {
-              return Column(
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(10),
-                    margin: EdgeInsets.only(right: 10),
-                    height: height(context) * 0.14,
-                    width: width(context) * 0.32,
-                    decoration:
-                        myFillBoxDecoration(0, black.withOpacity(0.1), 10),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          whatExcitesYou[i]['title'],
-                          style: bodyText16w600(color: black),
-                        ),
-                        SizedBox(
-                            width: width(context) * 0.3,
-                            child: Text(
-                              whatExcitesYou[i]['subTitle'],
-                            ))
-                      ],
+        child: CarouselSlider(
+          options: CarouselOptions(height: 400.0),
+          items: [0, 1, 2].map((i) {
+            return Builder(
+              builder: (BuildContext context) {
+                return Column(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(10),
+                      margin: EdgeInsets.only(right: 10),
+                      height: height(context) * 0.13,
+                      width: width(context) * 1.32,
+                      decoration:
+                          myFillBoxDecoration(0, black.withOpacity(0.1), 10),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            whatExcitesYou[i]['title'],
+                            style: bodyText16w600(color: black),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              SizedBox(
+                                  width: width(context) * 0.3,
+                                  child: Text(
+                                    whatExcitesYou[i]['subTitle'],
+                                  )),
+                              TextButton(
+                                  onPressed: () {
+                                    //trip type all activities
+                                  },
+                                  child: Text(
+                                    'View all',
+                                    style: bodyText14w600(color: black),
+                                  ))
+                            ],
+                          ),
+                          // TextButton(
+                          //     onPressed: () {},
+                          //     child: Text(
+                          //       'View all',
+                          //       style: bodyText14w600(color: black),
+                          //     ))
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              );
-            }));
+                  ],
+                );
+              },
+            );
+          }).toList(),
+        ));
   }
 }
 
