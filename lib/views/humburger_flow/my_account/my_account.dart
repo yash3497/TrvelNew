@@ -34,7 +34,6 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
   String url = "";
   String userName = "";
   String place = "";
-  // new function
   void getDetails() async {
     if (FirebaseAuth.instance.currentUser != null) {
       var profile = await FirebaseFirestore.instance

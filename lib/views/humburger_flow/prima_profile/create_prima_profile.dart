@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -48,7 +50,7 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
         .doc("profile")
         .set({
           "General Details": {
-            "imageUrl": url,
+            "imageUrl": _image,
             "fullName":
                 firstnameController.text + " " + lastnameController.text,
             "firstName": firstnameController.text,
@@ -79,7 +81,7 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
         .doc("profile")
         .update({
           "General Details": {
-            "imageUrl": url,
+            "imageUrl": _image ?? "",
             "fullName":
                 firstnameController.text + " " + lastnameController.text,
             "firstName": firstnameController.text,
@@ -101,7 +103,7 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
         .then((value) => print("Details Updated"))
         .catchError((error) => print("Failed to Update users Details: $error"));
   }
-
+String _image ="";
   void getDetails() async {
     if (FirebaseAuth.instance.currentUser != null) {
       var profile = await FirebaseFirestore.instance
@@ -111,7 +113,7 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
           .doc("profile")
           .get();
       _image = profile.data()?['imageUrl'];
-      url = profile.data()?['document'];
+     // url = profile.data()?['document'];
       firstnameController.text = profile.data()?['firstName'];
       dateOfBirth.text = profile.data()?['DOB'];
       annivarsaryDate.text = profile.data()?['Annivarsary'];
@@ -130,35 +132,23 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
   // FirebaseFirestore firestore = FirebaseFirestore.instance;
   // CollectionReference primaAccount =
   //     FirebaseFirestore.instance.collection('primaAccounts');
-  File? _image;
+
   final user = FirebaseAuth.instance.currentUser;
 
-  Future pickImage() async {
-    try {
-      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-      if (image == null) {
-        final snackbar = SnackBar(content: Text("No Image Selected"));
-        ScaffoldMessenger.of(context).showSnackBar(snackbar);
-        return;
-      }
-      final imagepath = File(image.path);
-      setState(() {
-        _image = imagepath;
-      });
-    } catch (e) {
-      final snackbar = SnackBar(content: Text(e.toString()));
-      ScaffoldMessenger.of(context).showSnackBar(snackbar);
-    }
-  }
+  void pickUploadImage() async{
+    final image = await ImagePicker().pickImage(source: ImageSource.gallery,
+        maxWidth: MediaQuery.of(context).size.width,
+        maxHeight: MediaQuery.of(context).size.height,
+        imageQuality: 75);
+    Reference ref = FirebaseStorage.instance.ref().child('profileImg');
 
-  String? url;
-  Future uploadImage(File _image) async {
-    String imgid = DateTime.now().microsecondsSinceEpoch.toString();
-    Reference ref =
-        FirebaseStorage.instance.ref().child('images').child('users$imgid');
-    await ref.putFile(_image);
-    url = await ref.getDownloadURL();
-    print(url);
+    await ref.putFile(File(image!.path));
+    ref.getDownloadURL().then((value){
+      print(value);
+      setState(() {
+        _image = value;
+      });
+    });
   }
 
   File? pdfFile;
@@ -190,15 +180,15 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
         FirebaseStorage.instance.ref().child('pdfs').child('users$imgid');
     await ref.putFile(pdfFile);
     IdUrl = await ref.getDownloadURL();
-    print(url);
+    print(IdUrl);
   }
 
   void initState() {
     getDetails();
-    addPrimaAccountDetails();
-    ;
-    updatePrimaAccountDetails();
-    ;
+    //addPrimaAccountDetails();
+
+  //  updatePrimaAccountDetails();
+
     super.initState();
   }
 
@@ -227,26 +217,23 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(25),
-                    child: SizedBox(
+                    child:
+                      Container(
                         height: height(context) * 0.15,
                         width: width(context) * 0.3,
-                        child: _image != null
-                            ? Image.file(
-                                _image!,
-                                width: width(context) * 0.3,
-                                height: height(context) * 0.15,
+                        decoration: _image== ""
+                            ? BoxDecoration(
+                            image: DecorationImage(
                                 fit: BoxFit.fill,
-                              )
-                            : Image.asset(
-                                'assets/images/prima3.png',
-                                fit: BoxFit.fill,
-                              )),
+                                image: AssetImage('assets/images/prima3.png')))
+                            : BoxDecoration(
+                            image: DecorationImage(
+                                fit: BoxFit.fill, image: NetworkImage(_image))),
+                      ),
                   ),
                   InkWell(
                     onTap: () {
-                      pickImage().whenComplete(() {
-                        uploadImage(_image!);
-                      });
+                      pickUploadImage();
                     },
                     child: Container(
                       margin: const EdgeInsets.only(top: 13, left: 5),
@@ -583,6 +570,44 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
               const Divider(
                 thickness: 1,
               ),
+              Text(
+                'Show my other interest to',
+                style: bodyText14w600(color: black),
+              ),
+              SizedBox(
+                  height: height(context) * 0.06,
+                  child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: selectOtherInterestList.length,
+                      padding: EdgeInsets.zero,
+                      itemBuilder: (ctx, i) {
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 15.0),
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 30,
+                                child: Checkbox(
+                                  activeColor: primary,
+                                  checkColor: black,
+                                  value: selectOtherInterestList[i].isSelected,
+                                  onChanged: (value) {
+                                   setState(() {
+                                      for (var element
+                                      in selectOtherInterestList) {
+                                        element.isSelected = false;
+                                      }
+                                      selectOtherInterestList[i].isSelected =
+                                      value!;
+                                 });
+                                },
+                                ),
+                              ),
+                              Text(selectOtherInterestList[i].name)
+                            ],
+                          ),
+                        );
+                      })),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -625,6 +650,8 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
                               if (FirebaseAuth.instance.currentUser!.uid !=
                                   null) {
                                 updatePrimaAccountDetails();
+                                TripometerWidget trip = TripometerWidget();
+                             // trip.updateTripometerDetails();
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -674,7 +701,59 @@ class _TripometerWidgetState extends State<TripometerWidget> {
     {'name': 'City', 'value': 60.0},
     {'name': 'Nature', 'value': 80.0},
   ];
-  double _value = 50;
+
+ var city;
+ var nature;
+ var adventure;
+ double _value = 50;
+
+  addTripometerDetails() async {
+    // Call the user's CollectionReference to add a new user
+
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    users
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection("tripoMeter")
+        .doc("profile")
+        .set({
+      "Adventure" : adventure,
+      "City" : city,
+      "Nature" : nature,
+    });
+  }
+  updateTripometerDetails() async {
+    // Call the user's CollectionReference to add a new user
+
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    users
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection("tripoMeter")
+        .doc("profile")
+        .update({
+      "Adventure" : adventure ?? "",
+      "City" : city ?? "",
+      "Nature" : nature ?? "",
+    });
+  }
+  void getTripometerDetails() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      var profile = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection("tripoMeter")
+          .doc("profile")
+          .get();
+      adventure = profile.data()?['Adventure'];
+      city = profile.data()?['City'];
+      nature = profile.data()?['Nature'];
+      setState(() {});
+    }
+  }
+  @override
+  void initState() {
+    getTripometerDetails();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -682,6 +761,7 @@ class _TripometerWidgetState extends State<TripometerWidget> {
       children: [
         Row(
           children: [
+
             SizedBox(
               height: height(context) * 0.28,
               width: width(context) * 0.95,
@@ -700,7 +780,12 @@ class _TripometerWidgetState extends State<TripometerWidget> {
                               value: tripoMeterList[i]['value'],
                               onChanged: (value) {
                                 tripoMeterList[i]['value'] = value;
-                                setState(() {});
+                                print(tripoMeterList[i]['value']);
+                                setState(() {
+                                  adventure = tripoMeterList[0]['value'];
+                                  city = tripoMeterList[1]['value'];
+                                  nature = tripoMeterList[2]['value'];
+                                });
                               },
                               max: 100,
                               min: 0,
@@ -713,14 +798,16 @@ class _TripometerWidgetState extends State<TripometerWidget> {
                                 fontSize: 10,
                                 fontWeight: FontWeight.w600,
                                 color: black),
-                          )
+                          ),
+
                         ],
                       ),
                     );
                   }),
-            )
+            ),
           ],
         ),
+
       ],
     );
   }
@@ -846,6 +933,11 @@ class WhatExcitesYouWidget extends StatelessWidget {
     {'title': 'Nature', 'subTitle': 'Hill area Safari Wildlife Sa'},
     {'title': 'City', 'subTitle': 'Shopping Nightlife Water sports'},
   ];
+  final List ViewFunction = [
+    {'function': YourAdventureInterest()},
+    {'function': YourNatureInterest()},
+    {'function': YourCityInterest()}
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -883,7 +975,8 @@ class WhatExcitesYouWidget extends StatelessWidget {
                                   )),
                               TextButton(
                                   onPressed: () {
-                                    //trip type all activities
+                                   Navigator.push(context, MaterialPageRoute(builder:
+                                   (context)=> ViewFunction[i]['function']));
                                   },
                                   child: Text(
                                     'View all',
@@ -907,7 +1000,18 @@ class WhatExcitesYouWidget extends StatelessWidget {
           }).toList(),
         ));
   }
+
 }
+class SelectOtherInterest {
+  String name;
+  bool isSelected;
+  SelectOtherInterest({required this.name, required this.isSelected});
+}
+List<SelectOtherInterest> selectOtherInterestList = [
+  SelectOtherInterest(name: 'My trip friends', isSelected: true),
+  SelectOtherInterest(name: 'Everyone', isSelected: true),
+  SelectOtherInterest(name: 'Myself', isSelected: true),
+];
 
 class StepperWidget extends StatefulWidget {
   const StepperWidget({super.key});
