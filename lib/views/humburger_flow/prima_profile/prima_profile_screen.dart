@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -20,13 +22,32 @@ class PrimaProfileScreen extends StatefulWidget {
 }
 
 class _PrimaProfileScreenState extends State<PrimaProfileScreen> {
+@override
+  void initState() {
+    getDetails();
+    super.initState();
+  }
   List travelPhoto = [
     'assets/images/Rectangle 111.png',
     'assets/images/Rectangle 111 (1).png',
     'assets/images/Rectangle 111 (2).png',
     'assets/images/Rectangle 111 (3).png',
   ];
-
+  String Name ="";
+  String image = "";
+  void getDetails() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      var profile = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection('primaAccount')
+          .doc('profile')
+          .get(); 
+      image = profile.data()?['imageUrl'];
+      Name = profile.data()?['fullName'];
+      setState(() {});
+    }
+  }
   Widget EditAction() {
     return Text.rich(TextSpan(children: [
       WidgetSpan(
@@ -102,10 +123,14 @@ class _PrimaProfileScreenState extends State<PrimaProfileScreen> {
                 child: Container(
                   height: height(context) * 0.42,
                   width: width(context) * 1,
-                  decoration: const BoxDecoration(
+                  decoration: image== ""
+                      ? BoxDecoration(
                       image: DecorationImage(
                           fit: BoxFit.fill,
-                          image: AssetImage('assets/images/prima3.png'))),
+                          image: AssetImage('assets/images/prima3.png')))
+                      : BoxDecoration(
+                      image: DecorationImage(
+                          fit: BoxFit.fill, image: NetworkImage(image))),
                   child: SafeArea(
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -189,7 +214,7 @@ class _PrimaProfileScreenState extends State<PrimaProfileScreen> {
                       addVerticalSpace(10),
                       Center(
                         child: Text(
-                          'Alexander Doe',
+                          '$Name',
                           style: bodyText30W600(color: black),
                         ),
                       ),

@@ -106,6 +106,225 @@ class _YourTripInterestState extends State<YourTripInterest> {
   }
 }
 
+class YourNatureInterest extends StatefulWidget {
+  @override
+  _YourNatureInterestState createState() => _YourNatureInterestState();
+}
+
+class _YourNatureInterestState extends State<YourNatureInterest> {
+  List chipList = [
+    {'name': "Camping", 'isSelect': false},
+    {'name': "Waterfalls", 'isSelect': false},
+    {'name': "Hills and Trek", 'isSelect': false},
+    {'name': "Biking", 'isSelect': false},
+    {'name': "Safari", 'isSelect': false},
+    {'name': "Water Sports", 'isSelect': false},
+    {'name': "Mangroves", 'isSelect': false},
+    {'name': "Tribal", 'isSelect': false},
+    {'name': "Ropeways", 'isSelect': false},
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Scaffold(
+      appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(50),
+          child: CustomAppBar(title: 'Trip Interest')),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      "What excites you?",
+                      style: bodyText20w700(color: black),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Nature ',
+                        style: bodyText18w600(color: black),
+                      ),
+                      InkWell(onTap: () {}, child: Text('Select all')),
+                    ],
+                  ),
+                ),
+                filterChipWidget(chipName: chipList),
+                addVerticalSpace(height(context) * 0.2)
+              ],
+            ),
+          ),
+          Positioned(
+            bottom: 30,
+            left: width(context) * 0.25,
+            child: Center(
+              child: SizedBox(
+                width: width(context) * 0.5,
+                child: CustomButton(name: 'Save', onPressed: () {}),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+class YourAdventureInterest extends StatefulWidget {
+  @override
+  _YourAdventureInterestState createState() => _YourAdventureInterestState();
+}
+
+class _YourAdventureInterestState extends State<YourAdventureInterest> {
+  List chipList = [
+    {'name': "Camping", 'isSelect': false},
+    {'name': "Waterfalls", 'isSelect': false},
+    {'name': "Hills and Trek", 'isSelect': false},
+    {'name': "Biking", 'isSelect': false},
+    {'name': "Safari", 'isSelect': false},
+    {'name': "Water Sports", 'isSelect': false},
+    {'name': "Mangroves", 'isSelect': false},
+    {'name': "Tribal", 'isSelect': false},
+    {'name': "Ropeways", 'isSelect': false},
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Scaffold(
+      appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(50),
+          child: CustomAppBar(title: 'Trip Interest')),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      "What excites you?",
+                      style: bodyText20w700(color: black),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Adventure',
+                        style: bodyText18w600(color: black),
+                      ),
+                      InkWell(onTap: () {}, child: Text('Select all')),
+                    ],
+                  ),
+                ),
+                filterChipWidget(chipName: chipList),
+                addVerticalSpace(height(context) * 0.2)
+              ],
+            ),
+          ),
+          Positioned(
+            bottom: 30,
+            left: width(context) * 0.25,
+            child: Center(
+              child: SizedBox(
+                width: width(context) * 0.5,
+                child: CustomButton(name: 'Save', onPressed: () {}),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+class YourCityInterest extends StatefulWidget {
+  @override
+  _YourCityInterestState createState() => _YourCityInterestState();
+}
+
+class _YourCityInterestState extends State<YourCityInterest> {
+  List chipList = [
+    {'name': "Camping", 'isSelect': false},
+    {'name': "Waterfalls", 'isSelect': false},
+    {'name': "Hills and Trek", 'isSelect': false},
+    {'name': "Biking", 'isSelect': false},
+    {'name': "Safari", 'isSelect': false},
+    {'name': "Water Sports", 'isSelect': false},
+    {'name': "Mangroves", 'isSelect': false},
+    {'name': "Tribal", 'isSelect': false},
+    {'name': "Ropeways", 'isSelect': false},
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Scaffold(
+      appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(50),
+          child: CustomAppBar(title: 'Trip Interest')),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      "What excites you?",
+                      style: bodyText20w700(color: black),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'City',
+                        style: bodyText18w600(color: black),
+                      ),
+                      InkWell(onTap: () {}, child: Text('Select all')),
+                    ],
+                  ),
+                ),
+                filterChipWidget(chipName: chipList),
+                addVerticalSpace(height(context) * 0.2)
+              ],
+            ),
+          ),
+          Positioned(
+            bottom: 30,
+            left: width(context) * 0.25,
+            child: Center(
+              child: SizedBox(
+                width: width(context) * 0.5,
+                child: CustomButton(name: 'Save', onPressed: () {}),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
 class filterChipWidget extends StatefulWidget {
   final List chipName;
 
