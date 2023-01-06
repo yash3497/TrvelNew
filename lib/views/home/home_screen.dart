@@ -46,6 +46,44 @@ class _HomeScreenState extends State<HomeScreen> {
     ));
   }
 
+  festivalsdetail() async {
+    final _fireStore = FirebaseFirestore.instance;
+    await _fireStore
+        .collection("festivals")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .set({
+      'UID': FirebaseAuth.instance.currentUser!.uid,
+
+    });
+  }
+
+  DateTime _date = DateTime.now();
+  String _image ="";
+  String _festivalname ="";
+
+
+  updatefestivalsdetail() async {
+    final _fireStore = FirebaseFirestore.instance;
+    await _fireStore
+        .collection("festivals")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .update({
+      "Date": _date ?? "",
+      "festivalname": _festivalname ?? "",
+      "imageUrl": _image ?? "",
+    });
+  }
+  void getfestivals() async{
+    if (FirebaseAuth.instance.currentUser != null) {
+      var festival = await FirebaseFirestore.instance
+          .collection('festivals')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+      _festivalname = festival.data()?['festivalname'];
+      _image = festival.data()?['imageUrl'];
+      _date = festival.data()?['Date'].toDate();
+    }
+  }
 
   registerUser() async {
 
@@ -71,6 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
   @override
   void initState() {
+    getfestivals();
 
     LocationProvider _locationProvider = LocationProvider();
     _locationProvider.fetchCurrentPosition();
@@ -233,7 +272,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: bodyText20w700(color: black),
                     ),
                     InkWell(
-                      onTap: () {
+                      onTap: () async{
+                        if (FirebaseAuth.instance.currentUser != null)
+                        {
+                          updatefestivalsdetail();
+                        }else{
+                          festivalsdetail();
+                        }
                         Navigator.push(
                             context,
                             MaterialPageRoute(
