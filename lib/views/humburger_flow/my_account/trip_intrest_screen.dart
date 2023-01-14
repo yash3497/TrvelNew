@@ -737,6 +737,7 @@ class _AdventurefilterChipWidgetState extends State<AdventurefilterChipWidget> {
       setState(() {});
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(

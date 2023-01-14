@@ -102,6 +102,7 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
         .catchError((error) => print("Failed to Update users Details: $error"));
   }
   String _image ="";
+
   void getDetails() async {
     if (FirebaseAuth.instance.currentUser != null) {
       var profile = await FirebaseFirestore.instance
