@@ -139,8 +139,8 @@ class _FestivalsDataListState extends State<FestivalsDataList> {
       _image = festival.data()?['imageUrl'];
       _date = festival.data()?['Date'].toDate().toString().split(" ").first;
       _address = festival.data()?['locality'];
-      cartime = festival.data()?['CarTime'];
-      traintime = festival.data()?['TrainTime'];
+      cartime = festival.data()?['CarTime'].toInt();
+      traintime = festival.data()?['TrainTime'].toInt();
     }
   }
   @override
