@@ -86,7 +86,8 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
             InkWell(
               onTap: () {
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (ctx) => PrimaProfileScreen()));
+                    MaterialPageRoute(builder: (ctx) =>
+                        PrimaProfileScreen()));
               },
               child: SizedBox(
                   width: width(context) * 0.1,

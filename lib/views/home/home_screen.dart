@@ -73,6 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
       "imageUrl": _image ?? "",
     });
   }
+
   void getfestivals() async{
     if (FirebaseAuth.instance.currentUser != null) {
       var festival = await FirebaseFirestore.instance
@@ -82,9 +83,26 @@ class _HomeScreenState extends State<HomeScreen> {
       _festivalname = festival.data()?['festivalname'];
       _image = festival.data()?['imageUrl'];
       _date = festival.data()?['Date'].toDate();
+
     }
   }
+  festivalslocation() async {
 
+    festivalLocationProvider _locationProvider = festivalLocationProvider();
+    final _fireStore = FirebaseFirestore.instance;
+    print('test');
+
+    print(_locationProvider.lat);
+    print(_locationProvider.long);
+    await _fireStore.collection("festivals").doc(FirebaseAuth.instance.currentUser!.uid).update({
+      "address": _locationProvider.fetchCurrentPosition(),
+      "lat": _locationProvider.lat,
+      "lng": _locationProvider.long,
+      "CarTime": _locationProvider.cartime,
+      "TrainTime": _locationProvider.traintime
+
+    });
+  }
   registerUser() async {
 
     LocationProvider _locationProvider = LocationProvider();
@@ -275,6 +293,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () async{
                         if (FirebaseAuth.instance.currentUser != null)
                         {
+                          festivalLocationProvider _locationProvider =
+                          festivalLocationProvider();
+                          await _locationProvider.fetchCurrentPosition();
+                          await _locationProvider.locationDeatials();
+                          festivalslocation();
                           updatefestivalsdetail();
                         }else{
                           festivalsdetail();

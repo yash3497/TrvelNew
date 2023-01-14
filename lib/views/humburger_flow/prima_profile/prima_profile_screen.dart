@@ -22,44 +22,63 @@ class PrimaProfileScreen extends StatefulWidget {
 }
 
 class _PrimaProfileScreenState extends State<PrimaProfileScreen> {
-// @override
-//   void initState() {
-//     getDetails();
-//     super.initState();
-//   }
+@override
+  void initState() {
+    getDetails();
+    getlocationDetails();
+    super.initState();
+  }
   List travelPhoto = [
     'assets/images/Rectangle 111.png',
-    'assets/images/Rectangle 111 (1).png',
+    'assets/  images/Rectangle 111 (1).png',
     'assets/images/Rectangle 111 (2).png',
     'assets/images/Rectangle 111 (3).png',
   ];
-  //  String Name ="";
-  //  String image = "";
-  //  void getDetails() async {
-  //    if (FirebaseAuth.instance.currentUser != null) {
-  //      var profile = await FirebaseFirestore.instance
-  //          .collection('users')
-  //          .doc(FirebaseAuth.instance.currentUser!.uid)
-  //          .collection('primaAccount')
-  //          .doc('profile')
-  //          .get();
-  //      image = profile.data()?['imageUrl'];
-  //      Name = profile.data()?['fullName'];
-  //  //    setState(() {});
-  //   // }
-  // // }
+   String Name ="";
+   String image = "";
+   String _profession = "";
+   String _aboutme = "";
+   String _otherintrest = "";
+   void getDetails() async {
+     if (FirebaseAuth.instance.currentUser != null) {
+       var profile = await FirebaseFirestore.instance
+           .collection('users')
+           .doc(FirebaseAuth.instance.currentUser!.uid)
+           .collection('primaAccount')
+           .doc('profile')
+           .get();
+       image = profile.data()?['imageUrl'];
+       Name = profile.data()?['fullName'];
+       Name = profile.data()?['fullName'];
+       _profession = profile.data()?['profession'];
+       _aboutme = profile.data()?['aboutme'];
+       _otherintrest = profile.data()?['userInterest'];
+      setState(() {});
+    }
+  }
+  String _address = "";
+  void getlocationDetails() async {
+  if (FirebaseAuth.instance.currentUser != null) {
+    var profile = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get();
+       _address = profile.data()?['locality'];
+    setState(() {});
+  }
+}
   Widget EditAction() {
     return Text.rich(TextSpan(children: [
       WidgetSpan(
           child: Icon(
-        Icons.share,
+        Icons.edit,
         color: Colors.yellow,
       )),
       WidgetSpan(
           child: SizedBox(
         width: 10,
       )),
-      TextSpan(text: "Share profile")
+      TextSpan(text: "Edit Profile")
     ]));
   }
 
@@ -74,11 +93,26 @@ class _PrimaProfileScreenState extends State<PrimaProfileScreen> {
           child: SizedBox(
         width: 10,
       )),
-      TextSpan(text: "About this profile")
+      TextSpan(text: "My Prima Subscriptions")
     ]));
   }
 
   Widget ShareProfileAction() {
+    return Text.rich(TextSpan(children: [
+      WidgetSpan(
+        child: Icon(
+          Icons.share,
+          color: Colors.yellow,
+        ),
+      ),
+      WidgetSpan(
+          child: SizedBox(
+        width: 10,
+      )),
+      TextSpan(text: "Share Profile")
+    ]));
+  }
+  Widget ActivityProfileAction() {
     return Text.rich(TextSpan(children: [
       WidgetSpan(
         child: Icon(
@@ -88,9 +122,9 @@ class _PrimaProfileScreenState extends State<PrimaProfileScreen> {
       ),
       WidgetSpan(
           child: SizedBox(
-        width: 10,
-      )),
-      TextSpan(text: "Report incorrect")
+            width: 10,
+          )),
+      TextSpan(text: "My activity feeds")
     ]));
   }
 
@@ -108,15 +142,15 @@ class _PrimaProfileScreenState extends State<PrimaProfileScreen> {
                 child: Container(
                   height: height(context) * 0.42,
                   width: width(context) * 1,
-                  decoration: // image== ""
-                      //?
+                  decoration:  image== ""
+                      ?
                       BoxDecoration(
                           image: DecorationImage(
                               fit: BoxFit.fill,
-                              image: AssetImage('assets/images/prima3.png'))),
-                  // : BoxDecoration(
-                  // image: DecorationImage(
-                  //     fit: BoxFit.fill, image: NetworkImage(image))),
+                              image: AssetImage('assets/images/prima3.png')))
+                  : BoxDecoration(
+                  image: DecorationImage(
+                      fit: BoxFit.fill, image: NetworkImage(image))),
                   child: SafeArea(
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -156,6 +190,10 @@ class _PrimaProfileScreenState extends State<PrimaProfileScreen> {
                                   value: 2,
                                   child: ShareProfileAction(),
                                 ),
+                                PopupMenuItem<int>(
+                                    value: 3,
+                                    child: ActivityProfileAction()                                     
+                                )
                               ];
                             },
                             onSelected: (value) {
@@ -196,15 +234,15 @@ class _PrimaProfileScreenState extends State<PrimaProfileScreen> {
                       addVerticalSpace(10),
                       Center(
                         child: Text(
-                          'Alexander',
+                          '$Name',
                           style: bodyText30W600(color: black),
                         ),
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
+                        children:  [
                           Icon(Icons.location_on_outlined),
-                          Text('Mumbai, Maharashtras')
+                          Text('$_address',style: TextStyle(fontSize: 20),)
                         ],
                       ),
                       addVerticalSpace(15),
@@ -278,7 +316,7 @@ class _PrimaProfileScreenState extends State<PrimaProfileScreen> {
                       ),
                       addVerticalSpace(15),
                       Text(
-                        'About Alexander',
+                        'About  $Name',
                         style: bodyText22w700(color: black),
                       ),
                       addVerticalSpace(10),
@@ -287,7 +325,7 @@ class _PrimaProfileScreenState extends State<PrimaProfileScreen> {
                           Image.asset('assets/images/Vector (1).png'),
                           addHorizontalySpace(8),
                           Text(
-                            'Software Developer',
+                            '$_profession',
                             style: TextStyle(fontSize: 18, color: black),
                           )
                         ],
@@ -318,12 +356,12 @@ class _PrimaProfileScreenState extends State<PrimaProfileScreen> {
                       ),
                       addVerticalSpace(14),
                       Text(
-                        'I am alexander lorem ipsum Lorem ipsum lorem ipsum Lorem ipsum lorem ipsum Lorem ipsum lorem ipsum Lorem ipsum lorem ipsum Lorem ipsum lorem ipsum',
+                        '$_aboutme',
                         style: bodyText16normal(spacing: 1.5, color: black),
                       ),
                       addVerticalSpace(15),
                       Text(
-                        'Tripometer of Alexander',
+                        'Tripometer of  $Name',
                         style: bodyText20w700(color: black),
                       ),
                       addVerticalSpace(15),
@@ -333,7 +371,7 @@ class _PrimaProfileScreenState extends State<PrimaProfileScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Alexander’s Friends',
+                            '$Name  Friends',
                             style: bodyText20w700(color: black),
                           ),
                           TextButton(
@@ -350,7 +388,7 @@ class _PrimaProfileScreenState extends State<PrimaProfileScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Travel Photos of Alexander',
+                            'Travel Photos of  $Name',
                             style: bodyText20w700(color: black),
                           ),
                           TextButton(
@@ -405,8 +443,9 @@ class _PrimaProfileScreenState extends State<PrimaProfileScreen> {
                         'Other Interests',
                         style: bodyText20w700(color: black),
                       ),
+
                       Text(
-                        'Loves to cook, workout, read fiction and philosophy, listens to classical music, travel and talk',
+                        '$_otherintrest',
                         style: bodyText13normal(spacing: 1.4, color: black),
                       )
                     ],
@@ -859,11 +898,48 @@ class _TripFriendsAndMutualFriendsWidgetState
   }
 }
 
-class TripometerCircleWidget extends StatelessWidget {
+class TripometerCircleWidget extends StatefulWidget {
   TripometerCircleWidget({
     Key? key,
   }) : super(key: key);
-  final List tripoMeter = ['Adventure', 'Religious', 'Nature', 'City'];
+
+  @override
+  State<TripometerCircleWidget> createState() => _TripometerCircleWidgetState();
+}
+
+class _TripometerCircleWidgetState extends State<TripometerCircleWidget> {
+  final List tripoMeter = ['Adventure', 'City', 'Nature', 'Religious'];
+  List tripoMeterValue = [12.0,32.1,78.4,90.6];
+
+  double city=0.0;
+  double nature=0.0;
+  double adventure=0.0;
+  double religlous=0.0;
+
+  @override
+  void initState() {
+  getTripometerDetails();
+    super.initState();
+  }
+
+  void getTripometerDetails() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      var profile = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection("tripoMeter")
+          .doc("profile")
+          .get();
+      adventure = profile.data()?['Adventure'];
+      city = profile.data()?['City'];
+      nature = profile.data()?['Nature'];
+      religlous = profile.data()?['Religlous'];
+      setState(() {
+        tripoMeterValue = [adventure, city, nature, religlous];
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Wrap(
@@ -898,7 +974,7 @@ class TripometerCircleWidget extends StatelessWidget {
                           ranges: <GaugeRange>[
                             GaugeRange(
                               startValue: 0,
-                              endValue: 78,
+                              endValue: tripoMeterValue[i],
                               color: primary,
                               startWidth: 8,
                               endWidth: 8,
@@ -910,7 +986,7 @@ class TripometerCircleWidget extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  "85%",
+                                  "${tripoMeterValue[i]}%",
                                   style: bodytext12Bold(color: Colors.black),
                                 ),
                               ],

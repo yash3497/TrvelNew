@@ -120,14 +120,14 @@ class _FestivalsDataListState extends State<FestivalsDataList> {
   @override
   void initState() {
     getfestivals();
-    getloction();
     super.initState();
   }
   String _address = "";
   var _date;
   String _image ="";
   String _festivalname = "";
-
+  var cartime;
+  var traintime;
 
   void getfestivals() async{
     if (FirebaseAuth.instance.currentUser != null) {
@@ -138,16 +138,9 @@ class _FestivalsDataListState extends State<FestivalsDataList> {
       _festivalname = festival.data()?['festivalname'];
       _image = festival.data()?['imageUrl'];
       _date = festival.data()?['Date'].toDate().toString().split(" ").first;
-
-    }
-  }
-  void getloction() async {
-    if (FirebaseAuth.instance.currentUser != null) {
-      var location = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .get();
-      _address = location.data()?['locality'];
+      _address = festival.data()?['locality'];
+      cartime = festival.data()?['CarTime'];
+      traintime = festival.data()?['TrainTime'];
     }
   }
   @override
@@ -276,7 +269,7 @@ class _FestivalsDataListState extends State<FestivalsDataList> {
                                 SizedBox(
                                   width: width(context) * 0.15,
                                   child: Text(
-                                    '12 Hours drive',
+                                    '$cartime hours',
                                     style: bodytext12Bold(color: black),
                                   ),
                                 ),
@@ -291,7 +284,7 @@ class _FestivalsDataListState extends State<FestivalsDataList> {
                                 SizedBox(
                                   width: width(context) * 0.15,
                                   child: Text(
-                                    '16 Hours journey',
+                                    '$traintime hours',
                                     style: bodytext12Bold(color: black),
                                   ),
                                 ),
