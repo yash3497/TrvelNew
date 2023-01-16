@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 
@@ -24,10 +25,9 @@ class FirebaseServices {
   }
 
   //getting UID
- Future<String> getCurrentUID() async{
-    return(await _auth.currentUser!).uid;
- }
-
+  Future<String> getCurrentUID() async {
+    return (await _auth.currentUser!).uid;
+  }
 
   signInWithFacebook() async {
     try {
@@ -44,4 +44,16 @@ class FirebaseServices {
   //  await _auth.signOut();
   //  await _googleSignIn.signOut();
   // }
+
+  //-----Password-Reset-----//
+
+  Future<void> passwordReset(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+      Fluttertoast.showToast(msg: "Password reset link sent to : " + email);
+    } on FirebaseAuthException catch (e) {
+      print(e);
+      Fluttertoast.showToast(msg: e.message.toString());
+    }
+  }
 }

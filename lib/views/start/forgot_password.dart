@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:travel_app/services/firebase_services.dart';
 import 'package:travel_app/utils/constant.dart';
 import 'package:travel_app/views/start/create_new_password.dart';
 import 'package:travel_app/views/start/sign_up_screen.dart';
@@ -8,7 +10,9 @@ import 'package:travel_app/widget/custom_button.dart';
 import 'package:travel_app/widget/custom_textfield.dart';
 
 class ForgotPassword extends StatelessWidget {
-  const ForgotPassword({super.key});
+  ForgotPassword({super.key});
+
+  TextEditingController _controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +60,10 @@ class ForgotPassword extends StatelessWidget {
                   ),
                 ),
                 addVerticalSpace(height(context) * 0.09),
-                CustomTextFieldWidget(labelText: 'Email Address'),
+                CustomTextFieldWidget(
+                  labelText: 'Email Address',
+                  controller: _controller,
+                ),
                 addVerticalSpace(12),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -91,10 +98,17 @@ class ForgotPassword extends StatelessWidget {
                 CustomButton(
                     name: 'Send',
                     onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: ((context) => CreateNewPassword())));
+                      // Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //         builder: ((context) => CreateNewPassword())));
+
+                      //Send-Password-Reset-Link//
+                      if (_controller.text == null) {
+                        Fluttertoast.showToast(
+                            msg: "Please enter email address");
+                      }
+                      FirebaseServices().passwordReset(_controller.text);
                     })
               ],
             ),
