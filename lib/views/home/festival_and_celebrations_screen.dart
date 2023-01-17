@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:travel_app/views/aspired_trip/save_trip_and_get_qoute.dart';
@@ -25,8 +26,11 @@ class _FestivalAndCelebrationsScreenState
     extends State<FestivalAndCelebrationsScreen> with TickerProviderStateMixin {
   TabController? _tabController;
 
+
+
   @override
   void initState() {
+
     _tabController = TabController(length: 4, vsync: this);
     super.initState();
   }
@@ -101,11 +105,44 @@ class _FestivalAndCelebrationsScreenState
   }
 }
 
-class FestivalsDataList extends StatelessWidget {
+class FestivalsDataList extends StatefulWidget {
   const FestivalsDataList({
     Key? key,
   }) : super(key: key);
 
+  @override
+  State<FestivalsDataList> createState() => _FestivalsDataListState();
+
+ }
+
+class _FestivalsDataListState extends State<FestivalsDataList> {
+
+  @override
+  void initState() {
+    getfestivals();
+    super.initState();
+  }
+  String _address = "";
+  var _date;
+  String _image ="";
+  String _festivalname = "";
+  var cartime;
+  var traintime;
+
+  void getfestivals() async{
+    if (FirebaseAuth.instance.currentUser != null) {
+      var festival = await FirebaseFirestore.instance
+          .collection('festivals')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+      _festivalname = festival.data()?['festivalname'];
+      _image = festival.data()?['imageUrl'];
+      _date = festival.data()?['Date'].toDate().toString().split(" ").first;
+      _address = festival.data()?['locality'];
+      cartime = festival.data()?['CarTime'].toInt();
+      traintime = festival.data()?['TrainTime'].toInt();
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -146,11 +183,10 @@ class FestivalsDataList extends StatelessWidget {
                     children: [
                       Stack(
                         children: [
-                          ClipRRect(
-                              borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(15),
-                                  topRight: Radius.circular(15)),
-                              child: Image.asset('assets/images/beach.png')),
+                         Container(
+                             height: 200,
+                              width: 700,
+                              child: Image.network(_image)),
                           Positioned(
                               top: -5,
                               right: -5,
@@ -181,7 +217,7 @@ class FestivalsDataList extends StatelessWidget {
                                         ),
                                         addHorizontalySpace(5),
                                         Text(
-                                          '6th Feb 2022',
+                                          '$_date',
                                           style: TextStyle(
                                               fontWeight: FontWeight.w500,
                                               color: white),
@@ -197,7 +233,7 @@ class FestivalsDataList extends StatelessWidget {
                                         ),
                                         addHorizontalySpace(5),
                                         Text(
-                                          'Udupi, Karnataka',
+                                          '$_address',
                                           style: TextStyle(
                                               fontWeight: FontWeight.w500,
                                               color: white),
@@ -215,7 +251,7 @@ class FestivalsDataList extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Nagaur Cattle Festival',
+                              '$_festivalname',
                               style: bodyText22w700(color: black),
                             ),
                             Text(
@@ -233,7 +269,7 @@ class FestivalsDataList extends StatelessWidget {
                                 SizedBox(
                                   width: width(context) * 0.15,
                                   child: Text(
-                                    '12 Hours drive',
+                                    '$cartime hours',
                                     style: bodytext12Bold(color: black),
                                   ),
                                 ),
@@ -248,7 +284,7 @@ class FestivalsDataList extends StatelessWidget {
                                 SizedBox(
                                   width: width(context) * 0.15,
                                   child: Text(
-                                    '16 Hours journey',
+                                    '$traintime hours',
                                     style: bodytext12Bold(color: black),
                                   ),
                                 ),

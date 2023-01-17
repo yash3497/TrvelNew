@@ -33,7 +33,7 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
   final TextEditingController professionController = TextEditingController();
   final TextEditingController emailId = TextEditingController();
   // final TextEditingController statusController = TextEditingController();
-  // final TextEditingController genderController = TextEditingController();
+   final TextEditingController genderController = TextEditingController();
   final TextEditingController mobileNumber = TextEditingController();
   final TextEditingController emergencyNumber = TextEditingController();
   final TextEditingController userInterestController = TextEditingController();
@@ -49,26 +49,25 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
         .collection("primaAccount")
         .doc("profile")
         .set({
-          "General Details": {
-            "imageUrl": _image,
-            "fullName":
-                firstnameController.text + " " + lastnameController.text,
-            "firstName": firstnameController.text,
-            "lastName": lastnameController.text,
-            "DOB": dateOfBirth.text,
-            "Annivarsary": annivarsaryDate.text,
-            'profession': professionController.text,
-            // "maritalStatus": statusController,
-            // "gender": genderController,
-          }, // John Doe
-          "governmentId": IdUrl, // 42
-          "Contact Details": {
-            "emailId": emailId.text,
-            "mobileNumber": mobileNumber.text,
-            "emergencyNumber": emergencyNumber.text,
-          },
-          "userInterest": userInterestController.text,
-        })
+        "imageUrl": _image,
+        "fullName":
+        firstnameController.text + " " + lastnameController.text,
+        "firstName": firstnameController.text,
+        "lastName": lastnameController.text,
+        "DOB": dateOfBirth.text,
+        "Annivarsary": annivarsaryDate.text,
+        'profession': professionController.text,
+        // "maritalStatus": statusController,
+        // "gender": genderController,
+   // John Doe
+      "governmentId": IdUrl, // 42
+
+        "emailId": emailId.text,
+        "mobileNumber": mobileNumber.text,
+        "emergencyNumber": emergencyNumber.text,
+         "aboutme":   aboutMeController.text,
+      "userInterest": userInterestController.text,
+    })
         .then((value) => print("User Added"))
         .catchError((error) => print("Failed to add user: $error"));
   }
@@ -80,30 +79,30 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
         .collection("primaAccount")
         .doc("profile")
         .update({
-          "General Details": {
-            "imageUrl": _image ?? "",
-            "fullName":
-                firstnameController.text + " " + lastnameController.text,
-            "firstName": firstnameController.text,
-            "lastName": lastnameController.text,
-            "DOB": dateOfBirth.text,
-            "Annivarsary": annivarsaryDate.text,
-            'profession': professionController.text,
-            // "maritalStatus": statusController,
-            // "gender": genderController,
-          }, // John Doe
-          "governmentId": IdUrl, // 42
-          "Contact Details": {
-            "emailId": emailId.text,
-            "mobileNumber": mobileNumber.text,
-            "emergencyNumber": emergencyNumber.text,
-          },
-          "userInterest": userInterestController.text,
-        })
+        "imageUrl": _image ?? "",
+        "fullName":
+        firstnameController.text + "" + lastnameController.text,
+        "firstName": firstnameController.text,
+        "lastName": lastnameController.text,
+        "DOB": dateOfBirth.text,
+        "Annivarsary": annivarsaryDate.text,
+        'profession': professionController.text,
+        // "maritalStatus": statusController,
+      "gender": FieldValue.arrayRemove([genderController]),
+       // John Doe
+      //"governmentId": IdUrl, // 42
+      "aboutme":   aboutMeController.text,
+      "emailId": emailId.text,
+        "mobileNumber": mobileNumber.text,
+        "emergencyNumber": emergencyNumber.text,
+
+      "userInterest": userInterestController.text,
+    })
         .then((value) => print("Details Updated"))
         .catchError((error) => print("Failed to Update users Details: $error"));
   }
-String _image ="";
+  String _image ="";
+
   void getDetails() async {
     if (FirebaseAuth.instance.currentUser != null) {
       var profile = await FirebaseFirestore.instance
@@ -113,7 +112,7 @@ String _image ="";
           .doc("profile")
           .get();
       _image = profile.data()?['imageUrl'];
-     // url = profile.data()?['document'];
+      // url = profile.data()?['document'];
       firstnameController.text = profile.data()?['firstName'];
       dateOfBirth.text = profile.data()?['DOB'];
       annivarsaryDate.text = profile.data()?['Annivarsary'];
@@ -121,6 +120,9 @@ String _image ="";
       emergencyNumber.text = profile.data()?['emergencyNumber'];
       lastnameController.text = profile.data()?['lastName'];
       mobileNumber.text = profile.data()?['mobileNumber'];
+      aboutMeController.text = profile.data()?['aboutme'];
+      emailId.text = profile.data()?['emailId'];
+      userInterestController.text = profile.data()?['userInterest'];
       // statusController.text = profile.data()?['maritalStatus'];
       // genderController.text = profile.data()?['gender'];
       setState(() {});
@@ -150,7 +152,6 @@ String _image ="";
       });
     });
   }
-
   File? pdfFile;
   String? _filename;
   Future pickIdProof() async {
@@ -172,26 +173,21 @@ String _image ="";
       ScaffoldMessenger.of(context).showSnackBar(snackbar);
     }
   }
-
   String? IdUrl;
   Future uploadId(File pdfFile) async {
     String imgid = DateTime.now().microsecondsSinceEpoch.toString();
     Reference ref =
-        FirebaseStorage.instance.ref().child('pdfs').child('users$imgid');
+    FirebaseStorage.instance.ref().child('pdfs').child('users$imgid');
     await ref.putFile(pdfFile);
     IdUrl = await ref.getDownloadURL();
     print(IdUrl);
   }
-
   void initState() {
     getDetails();
     //addPrimaAccountDetails();
-
-  //  updatePrimaAccountDetails();
-
-    super.initState();
+    //  updatePrimaAccountDetails();
+   super.initState();
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -218,18 +214,18 @@ String _image ="";
                   ClipRRect(
                     borderRadius: BorderRadius.circular(25),
                     child:
-                      Container(
-                        height: height(context) * 0.15,
-                        width: width(context) * 0.3,
-                        decoration: _image== ""
-                            ? BoxDecoration(
-                            image: DecorationImage(
-                                fit: BoxFit.fill,
-                                image: AssetImage('assets/images/prima3.png')))
-                            : BoxDecoration(
-                            image: DecorationImage(
-                                fit: BoxFit.fill, image: NetworkImage(_image))),
-                      ),
+                    Container(
+                      height: height(context) * 0.15,
+                      width: width(context) * 0.3,
+                      decoration: _image== ""
+                          ? BoxDecoration(
+                          image: DecorationImage(
+                              fit: BoxFit.fill,
+                              image: AssetImage('assets/images/prima3.png')))
+                          : BoxDecoration(
+                          image: DecorationImage(
+                              fit: BoxFit.fill, image: NetworkImage(_image))),
+                    ),
                   ),
                   InkWell(
                     onTap: () {
@@ -240,7 +236,7 @@ String _image ="";
                       height: 25,
                       width: width(context) * 0.43,
                       decoration:
-                          myFillBoxDecoration(0, black.withOpacity(0.1), 6),
+                      myFillBoxDecoration(0, black.withOpacity(0.1), 6),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: const [
@@ -297,7 +293,7 @@ String _image ="";
                           if (pickedDate != null) {
                             print(pickedDate);
                             String formattedDate =
-                                DateFormat('yyyy-MM-dd').format(pickedDate);
+                            DateFormat('yyyy-MM-dd').format(pickedDate);
 
                             setState(() {
                               dateOfBirth.text = formattedDate;
@@ -327,7 +323,7 @@ String _image ="";
                           if (pickedDate != null) {
                             print(pickedDate);
                             String formattedDate =
-                                DateFormat('yyyy-MM-dd').format(pickedDate);
+                            DateFormat('yyyy-MM-dd').format(pickedDate);
 
                             setState(() {
                               annivarsaryDate.text = formattedDate;
@@ -373,7 +369,7 @@ String _image ="";
                         'Other',
                       ],
                       lableText: 'Gender',
-                      // controller: genderController,
+                       controller: genderController,
                     ),
                   ),
                 ],
@@ -465,19 +461,19 @@ String _image ="";
                       ? width(context) * 0.9
                       : width(context) * 0.55,
                   decoration:
-                      myFillBoxDecoration(0, black.withOpacity(0.1), 10),
+                  myFillBoxDecoration(0, black.withOpacity(0.1), 10),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       pdfFile != null
                           ? Text.rich(TextSpan(children: [
-                              WidgetSpan(child: Icon(Icons.picture_as_pdf)),
-                              TextSpan(text: _filename)
-                            ]))
+                        WidgetSpan(child: Icon(Icons.picture_as_pdf)),
+                        TextSpan(text: _filename)
+                      ]))
                           : Text(
-                              'Address Proof',
-                              style: bodyText16w600(color: black),
-                            ),
+                        'Address Proof',
+                        style: bodyText16w600(color: black),
+                      ),
                       addHorizontalySpace(12),
                       const Icon(
                         Icons.edit_note_outlined,
@@ -515,9 +511,9 @@ String _image ="";
                         border: InputBorder.none,
                         contentPadding: EdgeInsets.all(10),
                         hintStyle:
-                            bodyText16normal(color: black.withOpacity(0.5)),
+                        bodyText16normal(color: black.withOpacity(0.5)),
                         hintText:
-                            'Whats amazing about me? \nWhy I’m on travel new?')),
+                        'Whats amazing about me? \nWhy I’m on travel new?')),
               ),
               addVerticalSpace(15),
               const Text(
@@ -539,34 +535,11 @@ String _image ="";
                         border: InputBorder.none,
                         contentPadding: EdgeInsets.all(10),
                         hintStyle:
-                            bodyText16normal(color: black.withOpacity(0.5)),
+                        bodyText16normal(color: black.withOpacity(0.5)),
                         hintText:
-                            'Example: Loves to cook, workout, books etc')),
+                        'Example: Loves to cook, workout, books etc')),
               ),
               addVerticalSpace(10),
-              const Divider(
-                thickness: 1,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'What excites you?',
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),
-                  ),
-                  IconButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (ctx) => YourTripInterest()));
-                      },
-                      icon: Icon(Icons.edit_note))
-                ],
-              ),
-              WhatExcitesYouWidget(),
               const Divider(
                 thickness: 1,
               ),
@@ -592,15 +565,15 @@ String _image ="";
                                   checkColor: black,
                                   value: selectOtherInterestList[i].isSelected,
                                   onChanged: (value) {
-                                   setState(() {
+                                    setState(() {
                                       for (var element
                                       in selectOtherInterestList) {
                                         element.isSelected = false;
                                       }
                                       selectOtherInterestList[i].isSelected =
                                       value!;
-                                 });
-                                },
+                                    });
+                                  },
                                 ),
                               ),
                               Text(selectOtherInterestList[i].name)
@@ -608,6 +581,30 @@ String _image ="";
                           ),
                         );
                       })),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'What excites you?',
+                    style: TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                  IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (ctx) => YourTripInterest()));
+                      },
+                      icon: Icon(Icons.edit_note))
+                ],
+              ),
+              WhatExcitesYouWidget(),
+              const Divider(
+                thickness: 1,
+              ),
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -650,8 +647,6 @@ String _image ="";
                               if (FirebaseAuth.instance.currentUser!.uid !=
                                   null) {
                                 updatePrimaAccountDetails();
-                                TripometerWidget trip = TripometerWidget();
-                             // trip.updateTripometerDetails();
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -693,19 +688,19 @@ class TripometerWidget extends StatefulWidget {
 }
 
 class _TripometerWidgetState extends State<TripometerWidget> {
-  final List tripoMeterList = [
+      List tripoMeterList = [
     {'name': 'Adventure', 'value': 30.0},
     {'name': 'City', 'value': 60.0},
     {'name': 'Nature', 'value': 80.0},
-    {'name': 'Adventure', 'value': 30.0},
-    {'name': 'City', 'value': 60.0},
-    {'name': 'Nature', 'value': 80.0},
+    {'name': 'Religlous', 'value': 30.0},
+
   ];
 
- var city;
- var nature;
- var adventure;
- double _value = 50;
+  double city=0.0;
+  double nature=0.0;
+  double adventure=0.0;
+  double religlous=0.0;
+  double _value = 50;
 
   addTripometerDetails() async {
     // Call the user's CollectionReference to add a new user
@@ -719,6 +714,7 @@ class _TripometerWidgetState extends State<TripometerWidget> {
       "Adventure" : adventure,
       "City" : city,
       "Nature" : nature,
+      "Religlous" : religlous
     });
   }
   updateTripometerDetails() async {
@@ -730,10 +726,12 @@ class _TripometerWidgetState extends State<TripometerWidget> {
         .collection("tripoMeter")
         .doc("profile")
         .update({
-      "Adventure" : adventure ?? "",
-      "City" : city ?? "",
-      "Nature" : nature ?? "",
-    });
+
+      "Adventure" : adventure,
+      "City" : city,
+      "Nature" : nature,
+      "Religlous": religlous
+        });
   }
   void getTripometerDetails() async {
     if (FirebaseAuth.instance.currentUser != null) {
@@ -746,7 +744,15 @@ class _TripometerWidgetState extends State<TripometerWidget> {
       adventure = profile.data()?['Adventure'];
       city = profile.data()?['City'];
       nature = profile.data()?['Nature'];
-      setState(() {});
+      religlous = profile.data()?['Religlous'];
+      setState(() {
+        tripoMeterList = [
+          {'name': 'Adventure', 'value': adventure},
+          {'name': 'City', 'value': city},
+          {'name': 'Nature', 'value': nature},
+          {'name': 'Religlous', 'value': religlous},
+        ];
+      });
     }
   }
   @override
@@ -771,7 +777,7 @@ class _TripometerWidgetState extends State<TripometerWidget> {
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (ctx, i) {
                     return Padding(
-                      padding: const EdgeInsets.only(right: 12.0),
+                      padding: const EdgeInsets.only(right: 23,left: 23),
                       child: Column(
                         children: [
                           RotatedBox(
@@ -779,13 +785,18 @@ class _TripometerWidgetState extends State<TripometerWidget> {
                             child: Slider(
                               value: tripoMeterList[i]['value'],
                               onChanged: (value) {
+                               //tripoMeterList1[i]['value'] = value;
                                 tripoMeterList[i]['value'] = value;
                                 print(tripoMeterList[i]['value']);
                                 setState(() {
                                   adventure = tripoMeterList[0]['value'];
                                   city = tripoMeterList[1]['value'];
                                   nature = tripoMeterList[2]['value'];
+                                  religlous = tripoMeterList[3]['value'];
                                 });
+                              //  addTripometerDetails();
+                                updateTripometerDetails();
+                                getTripometerDetails();
                               },
                               max: 100,
                               min: 0,
@@ -795,7 +806,7 @@ class _TripometerWidgetState extends State<TripometerWidget> {
                           Text(
                             tripoMeterList[i]['name'],
                             style: TextStyle(
-                                fontSize: 10,
+                                fontSize: 14,
                                 fontWeight: FontWeight.w600,
                                 color: black),
                           ),
@@ -866,43 +877,43 @@ class _UploadTravelsPhotosState extends State<UploadTravelsPhotos> {
                 },
                 child: _image1 != null
                     ? Image.file(
-                        _image1!,
-                        height: height(context) * 0.15,
-                        width: width(context) * 0.35,
-                        fit: BoxFit.cover,
-                      )
+                  _image1!,
+                  height: height(context) * 0.15,
+                  width: width(context) * 0.35,
+                  fit: BoxFit.cover,
+                )
                     : _image2 != null
-                        ? Image.file(
-                            _image2!,
-                            height: height(context) * 0.15,
-                            width: width(context) * 0.35,
-                            fit: BoxFit.cover,
-                          )
-                        : _image3 != null
-                            ? Image.file(
-                                _image3!,
-                                height: height(context) * 0.15,
-                                width: width(context) * 0.35,
-                                fit: BoxFit.cover,
-                              )
-                            : _image4 != null
-                                ? Image.file(
-                                    _image4!,
-                                    height: height(context) * 0.15,
-                                    width: width(context) * 0.35,
-                                    fit: BoxFit.cover,
-                                  )
-                                : Container(
-                                    height: height(context) * 0.15,
-                                    width: width(context) * 0.35,
-                                    decoration: myOutlineBoxDecoration(
-                                        1, black.withOpacity(0.3), 10),
-                                    child: Center(
-                                        child: Icon(
-                                      Icons.add,
-                                      color: black.withOpacity(0.3),
-                                    )),
-                                  ),
+                    ? Image.file(
+                  _image2!,
+                  height: height(context) * 0.15,
+                  width: width(context) * 0.35,
+                  fit: BoxFit.cover,
+                )
+                    : _image3 != null
+                    ? Image.file(
+                  _image3!,
+                  height: height(context) * 0.15,
+                  width: width(context) * 0.35,
+                  fit: BoxFit.cover,
+                )
+                    : _image4 != null
+                    ? Image.file(
+                  _image4!,
+                  height: height(context) * 0.15,
+                  width: width(context) * 0.35,
+                  fit: BoxFit.cover,
+                )
+                    : Container(
+                  height: height(context) * 0.15,
+                  width: width(context) * 0.35,
+                  decoration: myOutlineBoxDecoration(
+                      1, black.withOpacity(0.3), 10),
+                  child: Center(
+                      child: Icon(
+                        Icons.add,
+                        color: black.withOpacity(0.3),
+                      )),
+                ),
               );
             }),
           ),
@@ -932,11 +943,13 @@ class WhatExcitesYouWidget extends StatelessWidget {
     {'title': 'Adventure', 'subTitle': 'Camping Waterfalls Hills and Trek'},
     {'title': 'Nature', 'subTitle': 'Hill area Safari Wildlife Sa'},
     {'title': 'City', 'subTitle': 'Shopping Nightlife Water sports'},
+    {'title': 'Religlous','subTitle': 'A religion is a set of beliefs regarding the purpose of existence'}
   ];
   final List ViewFunction = [
     {'function': YourAdventureInterest()},
     {'function': YourNatureInterest()},
-    {'function': YourCityInterest()}
+    {'function': YourCityInterest()},
+    {'function': YourReliglousInterst()}
   ];
 
   @override
@@ -945,7 +958,7 @@ class WhatExcitesYouWidget extends StatelessWidget {
         height: height(context) * 0.15,
         child: CarouselSlider(
           options: CarouselOptions(height: 400.0),
-          items: [0, 1, 2].map((i) {
+          items: [0, 1, 2,3].map((i) {
             return Builder(
               builder: (BuildContext context) {
                 return Column(
@@ -956,7 +969,7 @@ class WhatExcitesYouWidget extends StatelessWidget {
                       height: height(context) * 0.13,
                       width: width(context) * 1.32,
                       decoration:
-                          myFillBoxDecoration(0, black.withOpacity(0.1), 10),
+                      myFillBoxDecoration(0, black.withOpacity(0.1), 10),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -975,8 +988,8 @@ class WhatExcitesYouWidget extends StatelessWidget {
                                   )),
                               TextButton(
                                   onPressed: () {
-                                   Navigator.push(context, MaterialPageRoute(builder:
-                                   (context)=> ViewFunction[i]['function']));
+                                    Navigator.push(context, MaterialPageRoute(builder:
+                                        (context)=> ViewFunction[i]['function']));
                                   },
                                   child: Text(
                                     'View all',
@@ -1066,33 +1079,33 @@ class _StepperWidgetState extends State<StepperWidget> {
     ),
   ];
   List<Step> stepList() => [
-        Step(
-            state: _activeCurrentStep <= 1
-                ? StepState.editing
-                : StepState.complete,
-            isActive: _activeCurrentStep >= 0,
-            label: const Text('Account'),
-            title: const SizedBox(),
-            content: SizedBox()),
-        Step(
-            state: StepState.complete,
-            isActive: _activeCurrentStep >= 1,
-            label: const Text('Travel Photos'),
-            title: const SizedBox(),
-            content: SizedBox()),
-        Step(
-            state: StepState.complete,
-            isActive: _activeCurrentStep >= 2,
-            label: const Text('About'),
-            title: const SizedBox(),
-            content: SizedBox()),
-        Step(
-            state: StepState.complete,
-            isActive: _activeCurrentStep >= 3,
-            label: const Text('Tripometer'),
-            title: const SizedBox(),
-            content: SizedBox())
-      ];
+    Step(
+        state: _activeCurrentStep <= 1
+            ? StepState.editing
+            : StepState.complete,
+        isActive: _activeCurrentStep >= 0,
+        label: const Text('Account'),
+        title: const SizedBox(),
+        content: SizedBox()),
+    Step(
+        state: StepState.complete,
+        isActive: _activeCurrentStep >= 1,
+        label: const Text('Travel Photos'),
+        title: const SizedBox(),
+        content: SizedBox()),
+    Step(
+        state: StepState.complete,
+        isActive: _activeCurrentStep >= 2,
+        label: const Text('About'),
+        title: const SizedBox(),
+        content: SizedBox()),
+    Step(
+        state: StepState.complete,
+        isActive: _activeCurrentStep >= 3,
+        label: const Text('Tripometer'),
+        title: const SizedBox(),
+        content: SizedBox())
+  ];
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -1100,8 +1113,8 @@ class _StepperWidgetState extends State<StepperWidget> {
       child: Theme(
         data: ThemeData(
           colorScheme: Theme.of(context).colorScheme.copyWith(
-                primary: primary,
-              ),
+            primary: primary,
+          ),
         ),
         child: Stepper(
           elevation: 0,

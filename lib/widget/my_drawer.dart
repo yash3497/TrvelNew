@@ -507,10 +507,12 @@ class _MyDrawerState extends State<MyDrawer> {
                 const AssetImage(
                   'assets/images/menu7.png',
                 )),
-            title: Text(
-              'Rate us on App Store',
-              style: bodyText14w600(color: black),
-            ),
+            title:
+               Text(
+                'Rate us on App Store',
+                style: bodyText14w600(color: black),
+              ),
+
           ),
           const Divider(
             thickness: 1,
