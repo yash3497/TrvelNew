@@ -108,7 +108,7 @@ class ForgotPassword extends StatelessWidget {
                         Fluttertoast.showToast(
                             msg: "Please enter email address");
                       }
-                      FirebaseServices().passwordReset(_controller.text);
+                      FirebaseServices().sendOtp(_controller.text, context);
                     })
               ],
             ),

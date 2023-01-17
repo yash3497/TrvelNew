@@ -1,7 +1,13 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:email_auth/email_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:travel_app/views/start/create_new_password.dart';
 
 class FirebaseServices {
   final _auth = FirebaseAuth.instance;
@@ -54,6 +60,18 @@ class FirebaseServices {
     } on FirebaseAuthException catch (e) {
       print(e);
       Fluttertoast.showToast(msg: e.message.toString());
+    }
+  }
+
+  Future<void> sendOtp(String email, BuildContext context) async {
+    try {
+      var res = await EmailAuth(sessionName: 'Forget Password')
+          .sendOtp(recipientMail: email);
+      Fluttertoast.showToast(msg: "OTP has sent to : " + email);
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (_) => const CreateNewPassword()));
+    } catch (e) {
+      print(e);
     }
   }
 }
