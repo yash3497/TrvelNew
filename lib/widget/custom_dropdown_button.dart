@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import '../utils/constant.dart';
 
 class CustomDropDownButton extends StatefulWidget {
-  CustomDropDownButton({super.key, required this.itemList, this.lableText,TextEditingController? controller});
+  CustomDropDownButton({super.key, required this.itemList, this.lableText,TextEditingController? controller, this.value});
   final List<String> itemList;
-
+  final value;
   final lableText;
   @override
   State<CustomDropDownButton> createState() => _CustomDropDownButtonState();
@@ -55,6 +55,7 @@ class _CustomDropDownButtonState extends State<CustomDropDownButton> {
                       child: Text(value),
                     ))
             .toList(),
+        value: selectedItem,
         onChanged: (newValue) {
           setState(() {
             selectedItem = newValue!;

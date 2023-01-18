@@ -58,8 +58,8 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
       //'emailId': emailId.text,
       'emergencyNum': emergencyNum.text,
       'mobNum': mobNum.text,
-      'gender':genderController.text,
-      'maritalStatus': statusController.text,
+      'gender':Gendervalue,
+      'maritalStatus': statusvalue,
       'UID': FirebaseAuth.instance.currentUser!.uid,
       "profileImg": img ?? "",
       "document": url ?? "",
@@ -85,6 +85,8 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
       emergencyNum.text = profile.data()?['emergencyNum'];
       lastName.text = profile.data()?['LastName'];
       mobNum.text = profile.data()?['mobNum'];
+      Gendervalue = profile.data()?['gender'];
+      statusvalue = profile.data()?['maritalStatus'];
       setState(() {});
     }
   }
@@ -104,6 +106,9 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
 
   final ImagePicker picker = ImagePicker();
   late ImageSource? imageSource;
+
+  String Gendervalue = "Single";
+  String statusvalue = "male";
 
   bool loading = true;
   late PhotoProvider imageProvider;
@@ -291,6 +296,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                                       'Separated',
                                       'Widowed',
                                     ],
+                                    value: statusvalue,
                                     lableText: 'Marital Status',
                                     controller: statusController,
                                   ),
@@ -305,6 +311,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                                       'Female',
                                       'Prefer not to say',
                                     ],
+                                    value: Gendervalue,
                                     lableText: 'Gender',
                                     controller: genderController,
                                   ),

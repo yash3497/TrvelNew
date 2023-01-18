@@ -1,5 +1,7 @@
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:travel_app/utils/constant.dart';
@@ -21,14 +23,62 @@ class PublishYourTripScreen extends StatefulWidget {
 }
 
 class _PublishYourTripScreenState extends State<PublishYourTripScreen> {
-  // we have initialized active step to 0 so that
-  // our stepper widget will start from first step
+
+
+  @override
+  void initState() {
+    getDetails();
+    super.initState();
+  }
+  // final List<String> tripLocation = ['Pune', 'Mumbai', 'chennai'];
+  void getDetails() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      var profile = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection('Trip_Plan')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+      SeeTripController.text = profile.data()?['who see trip'];
+      InvitedMemberController.text = profile.data()?['Inveted Member'];
+      MaxMemberController.text = profile.data()?['Max Member'];
+      SpendsController.text = profile.data()?['Spends'];
+      setState(() {});
+    }
+  }
   int _activeCurrentStep = 0;
   bool isChecked = false;
-
   TextEditingController pass = TextEditingController();
   TextEditingController address = TextEditingController();
   TextEditingController pincode = TextEditingController();
+
+
+  final TextEditingController SeeTripController = TextEditingController();
+  final TextEditingController InvitedMemberController = TextEditingController();
+  final TextEditingController MaxMemberController = TextEditingController();
+  final TextEditingController SpendsController = TextEditingController();
+
+  addStep3PublishTripDetails() async {
+    // Call the user's CollectionReference to add a new user
+
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    users
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection("Trip_Plan")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .update({
+      "who see trip": seetripvalue,
+      "Inveted Member": InvitedMembervalue,
+      "Max Member": MaxMembervalue,
+      "Spends": spendvalue,
+    })
+        .then((value) => print("User Added"))
+        .catchError((error) => print("Failed to add user: $error"));
+  }
+  String InvitedMembervalue="All Members";
+  String seetripvalue="Public";
+  String MaxMembervalue="1";
+  String spendvalue="For him/her self";
 
   List<Step> stepList() => [
         Step(
@@ -60,13 +110,17 @@ class _PublishYourTripScreenState extends State<PublishYourTripScreen> {
                     SizedBox(
                       width: width(context) * 0.42,
                       child: CustomDropDownButton(
+                        value: seetripvalue,
                           itemList: ['Public', 'Private'],
+                          controller: SeeTripController,
                           lableText: 'Who can see your trip'),
                     ),
                     SizedBox(
                       width: width(context) * 0.42,
                       child: CustomDropDownButton(
+                        value: InvitedMembervalue,
                           itemList: ['All Members', 'Only Friends'],
+                          controller: InvitedMemberController,
                           lableText: 'Members Type invited'),
                     )
                   ],
@@ -88,12 +142,17 @@ class _PublishYourTripScreenState extends State<PublishYourTripScreen> {
                         '8',
                         '9',
                         '10'
-                      ], lableText: 'Max Members for Trip'),
+                      ],
+                         value: MaxMembervalue,
+                        controller: MaxMemberController,
+                          lableText: 'Max Members for Trip'),
                     ),
                     SizedBox(
                       width: width(context) * 0.44,
                       child: CustomDropDownButton(
                           itemList: ['For him/her self'],
+                         value: spendvalue,
+                        controller: SpendsController,
                           lableText: 'How spends distributed?'),
                     )
                   ],
@@ -217,7 +276,6 @@ class _PublishYourTripScreenState extends State<PublishYourTripScreen> {
                               if (_activeCurrentStep == 0) {
                                 return;
                               }
-
                               setState(() {
                                 _activeCurrentStep -= 1;
                               });
@@ -255,6 +313,16 @@ class _PublishYourTripScreenState extends State<PublishYourTripScreen> {
                         name: 'Save and Proceed',
                         onPressed: () {
                           if (_activeCurrentStep < (stepList().length - 1)) {
+
+                            switch(_activeCurrentStep){
+                              case 0:
+                                  //addPublishTripDetails();
+                                  addStep1PublishTripDetails();
+                              break;
+                              case 1: addStep2PublishTripDetails();
+                              break;
+                              case 2: addStep3PublishTripDetails();
+                            }
                             setState(() {
                               _activeCurrentStep += 1;
                             });

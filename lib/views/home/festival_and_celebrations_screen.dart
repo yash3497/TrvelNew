@@ -142,6 +142,7 @@ class _FestivalsDataListState extends State<FestivalsDataList> {
       cartime = festival.data()?['CarTime'].toInt();
       traintime = festival.data()?['TrainTime'].toInt();
     }
+    setState(() {});
   }
   @override
   Widget build(BuildContext context) {

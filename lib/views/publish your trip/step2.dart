@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -7,8 +9,52 @@ import 'package:travel_app/widget/custom_dropdown_button.dart';
 import '../../model/prima_profile_model.dart';
 import 'add_tourist_spots.dart';
 
-class Step2 extends StatelessWidget {
+addStep2PublishTripDetails() async {
+  // Call the user's CollectionReference to add a new user
+
+  CollectionReference users = FirebaseFirestore.instance.collection('users');
+  users
+      .doc(FirebaseAuth.instance.currentUser!.uid)
+      .collection("Trip_Plan")
+      .doc(FirebaseAuth.instance.currentUser!.uid)
+      .update({
+    "Include in trip": DoInTripController.text,
+
+  })
+      .then((value) => print("User Added"))
+      .catchError((error) => print("Failed to add user: $error"));
+}
+final TextEditingController DoInTripController = TextEditingController();
+
+
+class Step2 extends StatefulWidget {
   const Step2({super.key});
+
+  @override
+  State<Step2> createState() => _Step2State();
+}
+
+class _Step2State extends State<Step2> {
+
+  @override
+  void initState() {
+    getDetails();
+    super.initState();
+  }
+  // final List<String> tripLocation = ['Pune', 'Mumbai', 'chennai'];
+  void getDetails() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      var profile = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection('Trip_Plan')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+      DoInTripController.text = profile.data()?['Include in trip'];
+
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +67,7 @@ class Step2 extends StatelessWidget {
             width: width(context) * 0.94,
             // height: height(context) * 0.08,
             child: TextField(
+              controller: DoInTripController,
                 maxLines: 3,
                 decoration: InputDecoration(
                     border: InputBorder.none,
