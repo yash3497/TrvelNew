@@ -1,10 +1,15 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:travel_app/utils/constant.dart';
 import 'package:travel_app/widget/custom_button.dart';
+
+List planDetails = [];
+int selectedIndex = 0;
+bool loading = false;
 
 class GoPrimaSubscriptionScreen extends StatefulWidget {
   const GoPrimaSubscriptionScreen({super.key});
@@ -229,189 +234,214 @@ class _GoPrimaSubscriptionScreenState extends State<GoPrimaSubscriptionScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
+          child: SingleChildScrollView(
+        child: Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
           child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: const Icon(Icons.arrow_back_ios))
+              Row(
+                children: [
+                  IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(Icons.arrow_back_ios))
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.all(30.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    RichText(
+                        text: TextSpan(children: [
+                      TextSpan(
+                          text: 'Go ', style: bodyText30W600(color: primary)),
+                      TextSpan(
+                          text: 'Explore!\n',
+                          style: bodyText30W600(color: black)),
+                      TextSpan(
+                          text: 'Go ', style: bodyText30W600(color: primary)),
+                      TextSpan(
+                          text: 'Prima.', style: bodyText30W600(color: black)),
+                    ])),
+                    addVerticalSpace(height(context) * 0.05),
+                    CarouselSlider(
+                      carouselController: _carouselController,
+                      options: CarouselOptions(
+                          viewportFraction: 1,
+                          enlargeCenterPage: true,
+                          autoPlay: true,
+                          // enlargeCenterPage: true,
+                          height: MediaQuery.of(context).size.height * 0.18,
+                          onPageChanged: (index, reason) {
+                            setState(() {
+                              _current = index;
+                            });
+                          }),
+                      items: listWidget.map((i) {
+                        return Builder(
+                          builder: (BuildContext context) {
+                            return Column(
+                              children: [
+                                i,
+                              ],
+                            );
+                          },
+                        );
+                      }).toList(),
+                    ),
+                    Center(
+                      child: AnimatedSmoothIndicator(
+                        activeIndex: _current,
+                        count: 5,
+                        effect: ExpandingDotsEffect(
+                            spacing: MediaQuery.of(context).size.width * 0.021,
+                            dotWidth: MediaQuery.of(context).size.width * 0.02,
+                            dotHeight:
+                                MediaQuery.of(context).size.height * 0.01,
+                            dotColor: Colors.grey,
+                            activeDotColor: primary),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Center(
+                child: Text(
+                  'Plan Details',
+                  style: bodyText20w700(color: black),
+                ),
+              ),
+              addVerticalSpace(8),
+              const PlanDetailsWidget(),
+              addVerticalSpace(10),
+              Center(
+                child: SizedBox(
+                    width: width(context) * 0.6,
+                    child: InkWell(
+                      onTap: () {
+                        showAlertDialog(context);
+                      },
+                      child: RichText(
+                          text: TextSpan(children: [
+                        TextSpan(
+                            text: '    Select your plan or try Prima\n',
+                            style: bodyText14normal(color: black)),
+                        TextSpan(
+                            text: 'Free ',
+                            style: TextStyle(
+                                decoration: TextDecoration.underline,
+                                color: primary)),
+                        TextSpan(
+                            text: 'for 7 days (limited ',
+                            style: TextStyle(color: black)),
+                        TextSpan(
+                            text: 'features',
+                            style: TextStyle(
+                                decoration: TextDecoration.underline,
+                                color: primary)),
+                        TextSpan(text: ')', style: TextStyle(color: black)),
+                      ])),
+                    )),
+              ),
+              addVerticalSpace(height(context) * 0.05),
+              Center(
+                child: SizedBox(
+                  width: width(context) * 0.52,
+                  child: const Text(
+                    'Already member know status Have an Issue contact us',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        height: 1.3,
+                        decoration: TextDecoration.underline,
+                        fontSize: 13),
+                  ),
+                ),
+              ),
+              Spacer(),
+              Container(
+                height: height(context) * 0.1,
+                padding: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                width: width(context),
+                decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20)),
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey,
+                        blurRadius: 5,
+                      ),
+                    ]),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      loading
+                          ? const CircularProgressIndicator()
+                          : Padding(
+                              padding: const EdgeInsets.only(top: 12.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    planDetails.isNotEmpty
+                                        ? planDetails[selectedIndex]['price']
+                                        : 'X00',
+                                    style: bodyText16w600(color: black),
+                                  ),
+                                  addVerticalSpace(5),
+                                  Text(
+                                    '${planDetails.isNotEmpty ? planDetails[selectedIndex]['months'] : 0} Months Planned',
+                                    style: bodyText14w600(
+                                        color: black.withOpacity(0.3)),
+                                  )
+                                ],
+                              ),
+                            ),
+                      Column(
+                        children: [
+                          Text(
+                            'Access to all features',
+                            style: bodyText12Small(color: black),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              primaSubscriptionSummary(context);
+                            },
+                            child: Container(
+                              height: 40,
+                              width: width(context) * 0.4,
+                              decoration: myFillBoxDecoration(0, primary, 10),
+                              child: Center(
+                                child: Text(
+                                  'Subscribe',
+                                  style: bodyText16w600(color: white),
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      )
+                    ]),
+              )
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.all(30.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                RichText(
-                    text: TextSpan(children: [
-                  TextSpan(text: 'Go ', style: bodyText30W600(color: primary)),
-                  TextSpan(
-                      text: 'Explore!\n', style: bodyText30W600(color: black)),
-                  TextSpan(text: 'Go ', style: bodyText30W600(color: primary)),
-                  TextSpan(text: 'Prima.', style: bodyText30W600(color: black)),
-                ])),
-                addVerticalSpace(height(context) * 0.05),
-                CarouselSlider(
-                  carouselController: _carouselController,
-                  options: CarouselOptions(
-                      viewportFraction: 1,
-                      enlargeCenterPage: true,
-                      autoPlay: true,
-                      // enlargeCenterPage: true,
-                      height: MediaQuery.of(context).size.height * 0.18,
-                      onPageChanged: (index, reason) {
-                        setState(() {
-                          _current = index;
-                        });
-                      }),
-                  items: listWidget.map((i) {
-                    return Builder(
-                      builder: (BuildContext context) {
-                        return Column(
-                          children: [
-                            i,
-                          ],
-                        );
-                      },
-                    );
-                  }).toList(),
-                ),
-                Center(
-                  child: AnimatedSmoothIndicator(
-                    activeIndex: _current,
-                    count: 5,
-                    effect: ExpandingDotsEffect(
-                        spacing: MediaQuery.of(context).size.width * 0.021,
-                        dotWidth: MediaQuery.of(context).size.width * 0.02,
-                        dotHeight: MediaQuery.of(context).size.height * 0.01,
-                        dotColor: Colors.grey,
-                        activeDotColor: primary),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Center(
-            child: Text(
-              'Plan Details',
-              style: bodyText20w700(color: black),
-            ),
-          ),
-          addVerticalSpace(8),
-          const PlanDetailsWidget(),
-          addVerticalSpace(10),
-          Center(
-            child: SizedBox(
-                width: width(context) * 0.6,
-                child: InkWell(
-                  onTap: () {
-                    showAlertDialog(context);
-                  },
-                  child: RichText(
-                      text: TextSpan(children: [
-                    TextSpan(
-                        text: '    Select your plan or try Prima\n',
-                        style: bodyText14normal(color: black)),
-                    TextSpan(
-                        text: 'Free ',
-                        style: TextStyle(
-                            decoration: TextDecoration.underline,
-                            color: primary)),
-                    TextSpan(
-                        text: 'for 7 days (limited ',
-                        style: TextStyle(color: black)),
-                    TextSpan(
-                        text: 'features',
-                        style: TextStyle(
-                            decoration: TextDecoration.underline,
-                            color: primary)),
-                    TextSpan(text: ')', style: TextStyle(color: black)),
-                  ])),
-                )),
-          ),
-          addVerticalSpace(height(context) * 0.05),
-          Center(
-            child: SizedBox(
-              width: width(context) * 0.52,
-              child: const Text(
-                'Already member know status Have an Issue contact us',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    height: 1.3,
-                    decoration: TextDecoration.underline,
-                    fontSize: 13),
-              ),
-            ),
-          ),
-          Spacer(),
-          Container(
-            height: height(context) * 0.1,
-            padding: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            width: width(context),
-            decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20)),
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey,
-                    blurRadius: 5,
-                  ),
-                ]),
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 12.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '₹XX00',
-                          style: bodyText16w600(color: black),
-                        ),
-                        addVerticalSpace(5),
-                        Text(
-                          '2+1 Months Planned',
-                          style: bodyText14w600(color: black.withOpacity(0.3)),
-                        )
-                      ],
-                    ),
-                  ),
-                  Column(
-                    children: [
-                      Text(
-                        'Access to all features',
-                        style: bodyText12Small(color: black),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          primaSubscriptionSummary(context);
-                        },
-                        child: Container(
-                          height: 40,
-                          width: width(context) * 0.4,
-                          decoration: myFillBoxDecoration(0, primary, 10),
-                          child: Center(
-                            child: Text(
-                              'Subscribe',
-                              style: bodyText16w600(color: white),
-                            ),
-                          ),
-                        ),
-                      )
-                    ],
-                  )
-                ]),
-          )
-        ],
+        ),
       )),
     );
+  }
+
+  getFreeTrail() async {
+    setState(() {
+      loading = true;
+    });
+
+    // var x= FirebaseFirestore.instance.collection(collectionPath)
+
   }
 
   showAlertDialog(BuildContext context) {
@@ -444,7 +474,9 @@ class _GoPrimaSubscriptionScreenState extends State<GoPrimaSubscriptionScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 InkWell(
-                                  onTap: () {},
+                                  onTap: () {
+                                    getFreeTrail();
+                                  },
                                   child: Container(
                                     height: 35,
                                     width: 100,
@@ -594,14 +626,29 @@ class PlanDetailsWidget extends StatefulWidget {
 }
 
 class _PlanDetailsWidgetState extends State<PlanDetailsWidget> {
-  int selectedIndex = 0;
+  getPrimaPlans() async {
+    var x = await FirebaseFirestore.instance
+        .collection('primaPlans')
+        .doc('planDeatils')
+        .get();
+    planDetails.clear();
+    print(x.data());
+    x.data()!.forEach((key, value) {
+      planDetails.add(value);
+    });
+    print(planDetails);
+    setState(() {
+      loading = false;
+    });
+  }
 
-  List planDetails = [
-    {'name': 'Quick', 'centerText': '1+1', 'boldText': 'X00'},
-    {'name': 'Planned', 'centerText': '2+1', 'boldText': 'X00'},
-    {'name': 'Hobby', 'centerText': '5+1', 'boldText': 'XX00'},
-    {'name': 'Active', 'centerText': '10+2', 'boldText': 'XX00'},
-  ];
+  @override
+  void initState() {
+    getPrimaPlans();
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -614,8 +661,13 @@ class _PlanDetailsWidgetState extends State<PlanDetailsWidget> {
               children: [
                 InkWell(
                   onTap: () {
+                    // setState(() {
+                    //   loading = true;
+                    // });
                     selectedIndex = i;
-                    setState(() {});
+                    setState(() {
+                      // loading = false;
+                    });
                   },
                   child: Container(
                     margin: const EdgeInsets.all(7),
@@ -642,7 +694,7 @@ class _PlanDetailsWidgetState extends State<PlanDetailsWidget> {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             Text(
-                              planDetails[i]['name'],
+                              planDetails[i]['planName'],
                               style:
                                   bodytext12Bold(color: black.withOpacity(0.4)),
                             ),
@@ -659,7 +711,7 @@ class _PlanDetailsWidgetState extends State<PlanDetailsWidget> {
                         ),
                         addVerticalSpace(height(context) * 0.03),
                         Text(
-                          planDetails[i]['centerText'],
+                          planDetails[i]['months'],
                           style: bodyText14w600(color: black),
                         ),
                         Text(
@@ -668,7 +720,7 @@ class _PlanDetailsWidgetState extends State<PlanDetailsWidget> {
                         ),
                         addVerticalSpace(height(context) * 0.02),
                         Text(
-                          planDetails[i]['boldText'],
+                          planDetails[i]['price'],
                           style: bodyText20w700(color: primary),
                         )
                       ],
