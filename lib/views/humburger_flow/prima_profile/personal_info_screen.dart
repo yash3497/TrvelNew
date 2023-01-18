@@ -30,6 +30,7 @@ class PersonalInformationScreen extends StatefulWidget {
   State<PersonalInformationScreen> createState() =>
       _PersonalInformationScreenState();
 }
+
 class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
   final TextEditingController dateOfBirth = TextEditingController();
   final TextEditingController anniversaryDate = TextEditingController();

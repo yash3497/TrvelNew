@@ -11,6 +11,7 @@ import 'add_tourist_spots.dart';
 
 addStep2PublishTripDetails() async {
   // Call the user's CollectionReference to add a new user
+
   CollectionReference users = FirebaseFirestore.instance.collection('users');
   users
       .doc(FirebaseAuth.instance.currentUser!.uid)

@@ -13,6 +13,7 @@ import '../../widget/custom_textfield.dart';
 
 addPublishTripDetails() async {
   // Call the user's CollectionReference to add a new user
+
   CollectionReference users = FirebaseFirestore.instance.collection('users');
   users
       .doc(FirebaseAuth.instance.currentUser!.uid)

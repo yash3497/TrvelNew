@@ -73,7 +73,6 @@ class _FestivalAndCelebrationsScreenState
                         fontSize: 14, fontWeight: FontWeight.w400),
                     tabs: const [
                       Tab(
-
                         text: 'August',
                       ),
                       Tab(

@@ -14,7 +14,6 @@ import 'package:travel_app/widget/custom_dropdown_button.dart';
 import 'package:travel_app/widget/custom_textfield.dart';
 
 import '../../model/prima_profile_model.dart';
-
 class PublishYourTripScreen extends StatefulWidget {
   const PublishYourTripScreen({Key? key}) : super(key: key);
 
