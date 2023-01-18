@@ -26,12 +26,10 @@ import 'package:path/path.dart' as j;
 
 class PersonalInformationScreen extends StatefulWidget {
   const PersonalInformationScreen({super.key});
-
   @override
   State<PersonalInformationScreen> createState() =>
       _PersonalInformationScreenState();
 }
-
 class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
   final TextEditingController dateOfBirth = TextEditingController();
   final TextEditingController anniversaryDate = TextEditingController();

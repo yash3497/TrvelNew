@@ -73,6 +73,7 @@ class _FestivalAndCelebrationsScreenState
                         fontSize: 14, fontWeight: FontWeight.w400),
                     tabs: const [
                       Tab(
+
                         text: 'August',
                       ),
                       Tab(
@@ -128,7 +129,6 @@ class _FestivalsDataListState extends State<FestivalsDataList> {
   String _festivalname = "";
   var cartime;
   var traintime;
-
   void getfestivals() async{
     if (FirebaseAuth.instance.currentUser != null) {
       var festival = await FirebaseFirestore.instance

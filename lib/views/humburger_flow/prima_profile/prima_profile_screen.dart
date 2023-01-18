@@ -56,6 +56,8 @@ class _PrimaProfileScreenState extends State<PrimaProfileScreen> {
       setState(() {});
     }
   }
+
+
   String _address = "";
   void getlocationDetails() async {
   if (FirebaseAuth.instance.currentUser != null) {

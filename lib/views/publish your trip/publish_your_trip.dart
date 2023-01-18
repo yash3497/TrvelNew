@@ -22,6 +22,7 @@ class PublishYourTripScreen extends StatefulWidget {
   _PublishYourTripScreenState createState() => _PublishYourTripScreenState();
 }
 
+
 class _PublishYourTripScreenState extends State<PublishYourTripScreen> {
 
 

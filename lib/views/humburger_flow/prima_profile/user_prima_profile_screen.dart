@@ -16,11 +16,9 @@ import '../../../utils/constant.dart';
 
 class UserPrimaProfileScreen extends StatefulWidget {
   const UserPrimaProfileScreen({super.key});
-
   @override
   State<UserPrimaProfileScreen> createState() => _UserPrimaProfileScreenState();
 }
-
 class _UserPrimaProfileScreenState extends State<UserPrimaProfileScreen> {
   @override
   void initState() {
