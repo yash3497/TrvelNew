@@ -1,3 +1,4 @@
+
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -353,7 +354,6 @@ class _PublishYourTripScreenState extends State<PublishYourTripScreen> {
               _activeCurrentStep -= 1;
             });
           },
-
           // onStepTap allows to directly click on the particular step we want
           onStepTapped: (int index) {
             setState(() {

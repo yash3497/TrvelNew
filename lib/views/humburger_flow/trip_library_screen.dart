@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:travel_app/model/save_trip_model.dart';
+import 'package:travel_app/services/db/firebaseDB.dart';
 import 'package:travel_app/views/aspired_trip/travel_agency_details.dart';
 import 'package:travel_app/views/humburger_flow/tourist_spot_screen.dart';
 import 'package:travel_app/views/humburger_flow/trip_map_screen.dart';
@@ -22,6 +25,9 @@ class _TripLibraryScreenState extends State<TripLibraryScreen>
   TabController? _tabController;
   @override
   void initState() {
+    getDummyTrip01();
+    getDummyTrip02();
+    getDummyTrip03();
     _tabController = TabController(length: 3, vsync: this);
     super.initState();
   }
@@ -31,6 +37,57 @@ class _TripLibraryScreenState extends State<TripLibraryScreen>
     _tabController!.dispose();
     super.dispose();
   }
+
+  //---------Get-Trip-Dummy-Data----------//
+  String _title = "";
+  String _subtitle = "";
+  String _image = "";
+  String _location = "";
+
+  void getDummyTrip01() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      var dummy = await FirebaseFirestore.instance
+          .collection('dummyTrips')
+          .doc('2Xhglp1fUkvx3AGV6aQA')
+          .get();
+      _title = dummy.data()?['title'];
+      _subtitle = dummy.data()?['subtitle'];
+      _image = dummy.data()?['image'];
+      _location = dummy.data()?['location'];
+      print(dummy);
+    }
+  }
+
+  void getDummyTrip02() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      var dummy = await FirebaseFirestore.instance
+          .collection('dummyTrips')
+          .doc('trip02')
+          .get();
+      _title = dummy.data()?['title'];
+      _subtitle = dummy.data()?['subtitle'];
+      _image = dummy.data()?['image'];
+      _location = dummy.data()?['location'];
+      print(dummy);
+    }
+  }
+
+  void getDummyTrip03() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      var dummy = await FirebaseFirestore.instance
+          .collection('dummyTrips')
+          .doc('trip03')
+          .get();
+      _title = dummy.data()?['title'];
+      _subtitle = dummy.data()?['subtitle'];
+      _image = dummy.data()?['image'];
+      _location = dummy.data()?['location'];
+      print(dummy);
+    }
+  }
+
+  CollectionReference dummyFuture =
+      FirebaseFirestore.instance.collection('dummyTrips');
 
   @override
   Widget build(BuildContext context) {
@@ -127,88 +184,139 @@ class _TripLibraryScreenState extends State<TripLibraryScreen>
             child: TabBarView(controller: _tabController, children: [
               SizedBox(
                 height: height(context) * 0.87,
-                child: ListView.builder(
-                    itemCount: tripLibraryList.length,
-                    itemBuilder: (ctx, i) {
-                      return CustomTripDataList(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => SaveYourTripsScreen()));
-                        },
-                        img: tripLibraryList[i].img,
-                        location: 'Udupi, Karnataka',
-                        containerYellowBox: SizedBox(),
-                        icon: IconButton(
-                            onPressed: () {},
-                            icon: Icon(
-                              Icons.bookmark_border,
-                              color: white,
-                            )),
-                      );
-                    }),
+                child: FutureBuilder<DocumentSnapshot>(
+                  future: dummyFuture.doc("2Xhglp1fUkvx3AGV6aQA").get(),
+                  builder: ((context, snapshot) {
+                    if (snapshot.hasData) {
+                      Map<String, dynamic> data =
+                          snapshot.data?.data() as Map<String, dynamic>;
+                      return ListView.builder(
+                          itemCount: 1,
+                          itemBuilder: (ctx, i) {
+                            return CustomTripDataList(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            SaveYourTripsScreen()));
+                              },
+                              title: data['title'],
+                              subtitle: data['subtitle'],
+                              img: data['image'] ??
+                                  "https://www.unfe.org/wp-content/uploads/2019/04/SM-placeholder.png",
+                              location: data['location'] ?? 'Udupi, Karnataka',
+                              containerYellowBox: SizedBox(),
+                              icon: IconButton(
+                                  onPressed: () {
+                                    FirebaseDB().addBookmark(
+                                        "2Xhglp1fUkvx3AGV6aQA",
+                                        data['title'],
+                                        data['subtitle'],
+                                        data['image'],
+                                        data['location']);
+                                  },
+                                  icon: Icon(
+                                    Icons.bookmark_border,
+                                    color: white,
+                                  )),
+                            );
+                          });
+                    }
+                    return SizedBox();
+                  }),
+                ),
               ),
               SizedBox(
-                height: height(context) * 0.87,
-                child: ListView.builder(
-                    itemCount: tripLibraryList.length,
-                    itemBuilder: (ctx, i) {
-                      return CustomTripDataList(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      TripLibraryDetailsScreen()));
-                        },
-                        icon: IconButton(
-                            onPressed: () {},
-                            icon: Icon(
-                              Icons.favorite_border_outlined,
-                              color: white,
-                            )),
-                        img: tripLibraryList[i].img,
-                        location: 'Udupi, Karnataka',
-                        containerYellowBox: Container(
-                          height: 20,
-                          width: width(context) * 0.3,
-                          decoration: myFillBoxDecoration(0, primary, 4),
-                          child: Center(
-                            child: Text(
-                              tripLibraryList[i].inviteAndRequest,
-                              style: bodytext12Bold(color: black),
-                            ),
-                          ),
-                        ),
-                      );
-                    }),
-              ),
+                  height: height(context) * 0.87,
+                  child: FutureBuilder<DocumentSnapshot>(
+                    future: dummyFuture.doc('trip02').get(),
+                    builder: (context, snapshot) {
+                      Map<String, dynamic> data =
+                          snapshot.data?.data() as Map<String, dynamic>;
+                      if (snapshot.hasData) {
+                        return ListView.builder(
+                            itemCount: 1,
+                            itemBuilder: (ctx, i) {
+                              return CustomTripDataList(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              SaveYourTripsScreen()));
+                                },
+                                title: data['title'],
+                                subtitle: data['subtitle'],
+                                img: data['image'] ??
+                                    "https://www.unfe.org/wp-content/uploads/2019/04/SM-placeholder.png",
+                                location:
+                                    data['location'] ?? 'Udupi, Karnataka',
+                                containerYellowBox: SizedBox(),
+                                icon: IconButton(
+                                    onPressed: () {
+                                      FirebaseDB().addBookmark(
+                                          "trip02",
+                                          data['title'],
+                                          data['subtitle'],
+                                          data['image'],
+                                          data['location']);
+                                    },
+                                    icon: Icon(
+                                      Icons.bookmark_border,
+                                      color: white,
+                                    )),
+                              );
+                            });
+                      }
+                      return SizedBox();
+                    },
+                  )),
               SizedBox(
-                height: height(context) * 0.87,
-                child: ListView.builder(
-                    itemCount: tripLibraryList.length,
-                    itemBuilder: (ctx, i) {
-                      return CustomTripDataList(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      TripLibraryDetailsScreen()));
-                        },
-                        img: tripLibraryList[i].img,
-                        location: 'Udupi, Karnataka',
-                        containerYellowBox: SizedBox(),
-                        icon: IconButton(
-                            onPressed: () {},
-                            icon: Icon(
-                              Icons.bookmark_border,
-                              color: white,
-                            )),
-                      );
-                    }),
-              )
+                  height: height(context) * 0.87,
+                  child: FutureBuilder<DocumentSnapshot>(
+                    future: dummyFuture.doc('trip03').get(),
+                    builder: (context, snapshot) {
+                      Map<String, dynamic> data =
+                          snapshot.data?.data() as Map<String, dynamic>;
+                      if (snapshot.hasData) {
+                        return ListView.builder(
+                            itemCount: 1,
+                            itemBuilder: (ctx, i) {
+                              return CustomTripDataList(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              SaveYourTripsScreen()));
+                                },
+                                title: data['title'],
+                                subtitle: data['subtitle'],
+                                img: data['image'] ??
+                                    "https://www.unfe.org/wp-content/uploads/2019/04/SM-placeholder.png",
+                                location:
+                                    data['location'] ?? 'Udupi, Karnataka',
+                                containerYellowBox: SizedBox(),
+                                icon: IconButton(
+                                    onPressed: () {
+                                      FirebaseDB().addBookmark(
+                                          'trip03',
+                                          data['title'],
+                                          data['subtitle'],
+                                          data['image'],
+                                          data['location']);
+                                    },
+                                    icon: Icon(
+                                      Icons.bookmark_border,
+                                      color: white,
+                                    )),
+                              );
+                            });
+                      }
+                      return SizedBox();
+                    },
+                  ))
             ]),
           )
         ],
@@ -220,12 +328,16 @@ class _TripLibraryScreenState extends State<TripLibraryScreen>
 class CustomTripDataList extends StatelessWidget {
   const CustomTripDataList({
     Key? key,
+    this.title,
+    this.subtitle,
     required this.location,
     required this.containerYellowBox,
     required this.img,
     this.icon,
     required this.onTap,
   }) : super(key: key);
+  final String? title;
+  final String? subtitle;
   final String location;
   final Widget containerYellowBox;
   final String img;
@@ -251,7 +363,7 @@ class CustomTripDataList extends StatelessWidget {
                         borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(15),
                             topRight: Radius.circular(15)),
-                        child: Image.asset(img)),
+                        child: Image.network(img)),
                     Positioned(
                         top: -5,
                         right: 1,
@@ -304,11 +416,11 @@ class CustomTripDataList extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Tourist Spots list',
+                        title ?? 'Tourist Spots list',
                         style: bodyText22w700(color: black),
                       ),
                       Text(
-                        'Hill Station, Trekking, Waterfalls',
+                        subtitle ?? 'Hill Station, Trekking, Waterfalls',
                         style: bodyText14normal(color: black),
                       ),
                       addVerticalSpace(12),

@@ -1,3 +1,4 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -228,6 +229,7 @@ class _Step1State extends State<Step1> {
               Text('Choose a cover pic'),
             ],
           ),
+
         ),
         addVerticalSpace(20),
         CustomTextFieldWidget(

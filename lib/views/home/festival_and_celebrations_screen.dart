@@ -1,3 +1,4 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -159,6 +160,7 @@ class _FestivalsDataListState extends State<FestivalsDataList> {
                         MaterialPageRoute(
                             builder: (context) => ShowDetailsOfFestivals()));
                   }
+
                   else
                     if (_count == 10) {
                     Navigator.push(
@@ -523,3 +525,4 @@ class ShowDetailsOfFestivals extends StatelessWidget {
     );
   }
 }
+

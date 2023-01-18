@@ -10,6 +10,9 @@ import 'package:geocoding/geocoding.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
+
+import '../widget/my_bottom_navbar.dart';
+
 class LocationProvider with ChangeNotifier {
   String currentAddress = " ";
   var locality;
@@ -29,30 +32,29 @@ class LocationProvider with ChangeNotifier {
       "lng": loclng ?? "",
       "address": locadd ?? "",
       "locality": local ?? "",
-
     });
   }
+
   String loclat = "";
   String loclng = "";
   String locadd = "";
-  String local = "" ;
+  String local = "";
 
-  void getLocation() async{
+  void getLocation() async {
     if (FirebaseAuth.instance.currentUser != null) {
       var location = await FirebaseFirestore.instance
           .collection('users')
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .get();
       locadd = location.data()?['address'];
-      loclat = location.data()?['lat'];
-      loclng = location.data()?['lng'];
+      loclat = location.data()!['lat'] ?? "0.000000";
+      loclng = location.data()!['lng'] ?? "0.000000";
       local = location.data()?['locality'];
-
     }
   }
+
   // fetching current position
   Future fetchCurrentPosition() async {
-
     bool serviceEnabled;
     LocationPermission permission;
 
@@ -77,7 +79,7 @@ class LocationProvider with ChangeNotifier {
     await Geolocator.getCurrentPosition().then((value) async {
       try {
         List<Placemark> placeMarks =
-        await placemarkFromCoordinates(value.latitude, value.longitude);
+            await placemarkFromCoordinates(value.latitude, value.longitude);
         lat = value.latitude;
         long = value.longitude;
 
@@ -85,7 +87,7 @@ class LocationProvider with ChangeNotifier {
 
         currentPosition = value;
         currentAddress =
-        "${place.locality}, ${place.postalCode}, ${place.country}";
+            "${place.locality}, ${place.postalCode}, ${place.country}";
         locality = place.locality!;
         postalCode = place.postalCode!;
         country = place.country!;
@@ -102,7 +104,7 @@ class LocationProvider with ChangeNotifier {
         log(e.toString());
       }
     });
-
+    registerUserSignupPage();
     notifyListeners();
   }
 
@@ -119,7 +121,7 @@ class LocationProvider with ChangeNotifier {
         lat = newLatLongList.first.latitude;
         long = newLatLongList.first.longitude;
         getAddressFromLatLng(
-            newLatLongList.first.latitude, newLatLongList.first.longitude)
+                newLatLongList.first.latitude, newLatLongList.first.longitude)
             .then((value) {
           currentAddress = value!;
         });
@@ -151,6 +153,7 @@ class LocationProvider with ChangeNotifier {
       return null;
     }
   }
+
   // delete user location
   Future<void> deleteLocations(List<dynamic> list) async {
     await FirebaseFirestore.instance
@@ -160,6 +163,7 @@ class LocationProvider with ChangeNotifier {
     notifyListeners();
   }
 }
+
 class festivalLocationProvider with ChangeNotifier {
   String currentAddress = " ";
   var locality;
@@ -181,16 +185,17 @@ class festivalLocationProvider with ChangeNotifier {
       "address": locadd ?? "",
       "locality": local ?? "",
       "CarTime": cartime,
-      "TrainTime" : traintime
+      "TrainTime": traintime
     });
   }
+
   String loclat = "";
   String loclng = "";
   String locadd = "";
-  String local = "" ;
+  String local = "";
   double cartime = 0.0;
   double traintime = 0.0;
-  void getLocation() async{
+  void getLocation() async {
     if (FirebaseAuth.instance.currentUser != null) {
       var location = await FirebaseFirestore.instance
           .collection('festivals')
@@ -202,12 +207,11 @@ class festivalLocationProvider with ChangeNotifier {
       local = location.data()?['locality'];
       cartime = location.data()?['CarTime'];
       traintime = location.data()?['TrainTime'];
-
     }
   }
+
   // fetching current position
   Future fetchCurrentPosition() async {
-
     bool serviceEnabled;
     LocationPermission permission;
 
@@ -232,7 +236,7 @@ class festivalLocationProvider with ChangeNotifier {
     await Geolocator.getCurrentPosition().then((value) async {
       try {
         List<Placemark> placeMarks =
-        await placemarkFromCoordinates(value.latitude, value.longitude);
+            await placemarkFromCoordinates(value.latitude, value.longitude);
         lat = value.latitude;
         long = value.longitude;
 
@@ -240,7 +244,7 @@ class festivalLocationProvider with ChangeNotifier {
 
         currentPosition = value;
         currentAddress =
-        "${place.locality}, ${place.postalCode}, ${place.country}";
+            "${place.locality}, ${place.postalCode}, ${place.country}";
         double distancemeter = 0.0;
         // double storelat = 26.2593607;
         // double storelng = 72.9795197;
@@ -249,10 +253,9 @@ class festivalLocationProvider with ChangeNotifier {
             currentPosition!.latitude,
             currentPosition!.longitude,
             currentPosition!.longitude,
-            currentPosition!.latitude
-        );
+            currentPosition!.latitude);
         distance = distancemeter?.round().toInt();
-        var dis = (distance!/100);
+        var dis = (distance! / 100);
         locality = place.locality!;
         postalCode = place.postalCode!;
         country = place.country!;
@@ -263,8 +266,8 @@ class festivalLocationProvider with ChangeNotifier {
         loclng = value.longitude.toString();
         locadd = currentAddress;
         local = place.locality!;
-        cartime = dis/150;
-        traintime = dis/300;
+        cartime = dis / 150;
+        traintime = dis / 300;
         notifyListeners();
         //return currentAddress ;
       } catch (e) {
@@ -287,7 +290,7 @@ class festivalLocationProvider with ChangeNotifier {
         lat = newLatLongList.first.latitude;
         long = newLatLongList.first.longitude;
         getAddressFromLatLng(
-            newLatLongList.first.latitude, newLatLongList.first.longitude)
+                newLatLongList.first.latitude, newLatLongList.first.longitude)
             .then((value) {
           currentAddress = value!;
         });
@@ -319,6 +322,7 @@ class festivalLocationProvider with ChangeNotifier {
       return null;
     }
   }
+
   // delete user location
   Future<void> deleteLocations(List<dynamic> list) async {
     await FirebaseFirestore.instance

@@ -1,3 +1,4 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -1003,6 +1004,7 @@ class _TripometerCircleWidgetState extends State<TripometerCircleWidget> {
             ),
             Positioned(
                 top: 10,
+
                 right: 10,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

@@ -15,6 +15,23 @@ import '../views/home/home_screen.dart';
 import '../views/prima/go_prima_screen.dart';
 import 'my_drawer.dart';
 
+
+  registerUserSignupPage() async {
+    LocationProvider _locationProvider = LocationProvider();
+    final _fireStore = FirebaseFirestore.instance;
+    if (FirebaseAuth.instance.currentUser != null) {
+      print('=========================================');
+      await _fireStore
+          .collection("users")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .set({
+        'address': _locationProvider.currentAddress,
+        'lat': _locationProvider.loclat.toString(),
+        'lng': _locationProvider.loclng.toString(),
+      }, SetOptions(merge: true));
+    }
+  }
+
 class MyBottomBar extends StatefulWidget {
   const MyBottomBar({Key? key}) : super(key: key);
 
@@ -40,6 +57,7 @@ class _MyBottomBarState extends State<MyBottomBar>
     SharedPreferences counter = await SharedPreferences.getInstance();
     counter.setInt('counT', _counT);
   }
+
   showSnackBar(BuildContext context, String str, [Color clr = Colors.black]) {
     return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(str),
@@ -47,15 +65,6 @@ class _MyBottomBarState extends State<MyBottomBar>
     ));
   }
 
-  registerUser() async {
-    LocationProvider _locationProvider = LocationProvider();
-    final _fireStore = FirebaseFirestore.instance;
-    await _fireStore.collection("users").doc().set({
-      'address': _locationProvider.currentAddress,
-      'lat': _locationProvider.newLatLongList,
-      'lng': _locationProvider.newLatLongList,
-    });
-  }
 
   @override
   void initState() {
@@ -111,16 +120,20 @@ class _MyBottomBarState extends State<MyBottomBar>
                   ),
                 ),
                 InkWell(
-                  onTap: () async { if(_counT==0){
-                    _counT++;
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (ctx) => const GoPrimaSubscriptionScreen()));
-                  } else{                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (ctx) => const PrimaMyBottomBar()));}
+                  onTap: () async {
+                    if (_counT == 0) {
+                      _counT++;
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (ctx) =>
+                                  const GoPrimaSubscriptionScreen()));
+                    } else {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (ctx) => const PrimaMyBottomBar()));
+                    }
                   },
                   child: const Tab(
                     icon: SizedBox(

@@ -1,3 +1,4 @@
+
 import 'dart:developer';
 import 'dart:io';
 
@@ -664,7 +665,6 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
     );
   }
 }
-
 class FireBaseApi {
   static UploadTask? uploadFile(String destination, File file) {
     try {
