@@ -1,3 +1,4 @@
+
 import 'dart:developer';
 import 'dart:io';
 
@@ -26,12 +27,10 @@ import 'package:path/path.dart' as j;
 
 class PersonalInformationScreen extends StatefulWidget {
   const PersonalInformationScreen({super.key});
-
   @override
   State<PersonalInformationScreen> createState() =>
       _PersonalInformationScreenState();
 }
-
 class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
   final TextEditingController dateOfBirth = TextEditingController();
   final TextEditingController anniversaryDate = TextEditingController();
@@ -58,8 +57,8 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
       //'emailId': emailId.text,
       'emergencyNum': emergencyNum.text,
       'mobNum': mobNum.text,
-      'gender':genderController.text,
-      'maritalStatus': statusController.text,
+      'gender':Gendervalue,
+      'maritalStatus': statusvalue,
       'UID': FirebaseAuth.instance.currentUser!.uid,
       "profileImg": img ?? "",
       "document": url ?? "",
@@ -85,6 +84,8 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
       emergencyNum.text = profile.data()?['emergencyNum'];
       lastName.text = profile.data()?['LastName'];
       mobNum.text = profile.data()?['mobNum'];
+      Gendervalue = profile.data()?['gender'];
+      statusvalue = profile.data()?['maritalStatus'];
       setState(() {});
     }
   }
@@ -104,6 +105,9 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
 
   final ImagePicker picker = ImagePicker();
   late ImageSource? imageSource;
+
+  String Gendervalue = "Single";
+  String statusvalue = "male";
 
   bool loading = true;
   late PhotoProvider imageProvider;
@@ -291,6 +295,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                                       'Separated',
                                       'Widowed',
                                     ],
+                                    value: statusvalue,
                                     lableText: 'Marital Status',
                                     controller: statusController,
                                   ),
@@ -305,6 +310,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                                       'Female',
                                       'Prefer not to say',
                                     ],
+                                    value: Gendervalue,
                                     lableText: 'Gender',
                                     controller: genderController,
                                   ),
@@ -346,7 +352,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                               ),
                                 SizedBox(
                                   // height: 37,
-                                  child: Text(FirebaseAuth.instance.currentUser!.email.toString())
+                                    child: Text(FirebaseAuth.instance.currentUser!.email.toString())
                                 ),
                               ],
                             ),
@@ -634,16 +640,16 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
           SizedBox(height: 20,),
           Row(
             children: <Widget>[
-                Icon(Icons.camera),
+              Icon(Icons.camera),
               SizedBox(width: 10,),
               InkWell(
                   onTap: (){
                     cameraPickUploadImage();
                     Navigator.pop(context);
-                    },
+                  },
                   child: Text('Camera',style: TextStyle(fontSize: 20),)),
               SizedBox(width: 100,),
-                Icon(Icons.image),
+              Icon(Icons.image),
 
               SizedBox(width: 10,),
               InkWell(
@@ -659,7 +665,6 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
     );
   }
 }
-
 class FireBaseApi {
   static UploadTask? uploadFile(String destination, File file) {
     try {

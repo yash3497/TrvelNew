@@ -1,3 +1,4 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -62,7 +63,7 @@ class _FestivalAndCelebrationsScreenState
                     onTap: (value) {},
                     isScrollable: true,
                     indicator: BoxDecoration(
-                        // shape: BoxShape.rectangle,
+                      // shape: BoxShape.rectangle,
                         borderRadius: BorderRadius.circular(10),
                         color: primary),
                     indicatorColor: primary,
@@ -73,6 +74,7 @@ class _FestivalAndCelebrationsScreenState
                         fontSize: 14, fontWeight: FontWeight.w400),
                     tabs: const [
                       Tab(
+
                         text: 'August',
                       ),
                       Tab(
@@ -89,7 +91,7 @@ class _FestivalAndCelebrationsScreenState
                 ),
                 Expanded(
                   child:
-                      TabBarView(controller: _tabController, children: const [
+                  TabBarView(controller: _tabController, children: const [
                     FestivalsDataList(),
                     FestivalsDataList(),
                     FestivalsDataList(),
@@ -113,7 +115,7 @@ class FestivalsDataList extends StatefulWidget {
   @override
   State<FestivalsDataList> createState() => _FestivalsDataListState();
 
- }
+}
 
 class _FestivalsDataListState extends State<FestivalsDataList> {
 
@@ -128,7 +130,6 @@ class _FestivalsDataListState extends State<FestivalsDataList> {
   String _festivalname = "";
   var cartime;
   var traintime;
-
   void getfestivals() async{
     if (FirebaseAuth.instance.currentUser != null) {
       var festival = await FirebaseFirestore.instance
@@ -142,6 +143,7 @@ class _FestivalsDataListState extends State<FestivalsDataList> {
       cartime = festival.data()?['CarTime'].toInt();
       traintime = festival.data()?['TrainTime'].toInt();
     }
+    setState(() {});
   }
   @override
   Widget build(BuildContext context) {
@@ -158,8 +160,9 @@ class _FestivalsDataListState extends State<FestivalsDataList> {
                         MaterialPageRoute(
                             builder: (context) => ShowDetailsOfFestivals()));
                   }
+
                   else
-                    if (_count == 10) {
+                  if (_count == 10) {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -183,8 +186,8 @@ class _FestivalsDataListState extends State<FestivalsDataList> {
                     children: [
                       Stack(
                         children: [
-                         Container(
-                             height: 200,
+                          Container(
+                              height: 200,
                               width: 700,
                               child: Image.network(_image)),
                           Positioned(
@@ -353,8 +356,8 @@ class ShowDetailsOfFestivals extends StatelessWidget {
                               //     ),
                               //   );
                               // } else {
-                                //_count++;
-                                Navigator.pop(context);
+                              //_count++;
+                              Navigator.pop(context);
                               //}
                             },
                             icon: Icon(Icons.arrow_back_ios)),
@@ -427,7 +430,7 @@ class ShowDetailsOfFestivals extends StatelessWidget {
                                           radius: 15,
                                           backgroundColor: white,
                                           backgroundImage:
-                                              AssetImage(overlap2[i]),
+                                          AssetImage(overlap2[i]),
                                         ),
                                       ),
                                   ],
@@ -438,7 +441,7 @@ class ShowDetailsOfFestivals extends StatelessWidget {
                                   child: CircleAvatar(
                                     radius: 15,
                                     backgroundColor:
-                                        Colors.blue.withOpacity(0.4),
+                                    Colors.blue.withOpacity(0.4),
                                     child: Text(
                                       '+ 50',
                                       style: bodyText11Small(color: white),
@@ -513,7 +516,7 @@ class ShowDetailsOfFestivals extends StatelessWidget {
                       MaterialPageRoute(
                           builder: (ctx) => SaveTripAndGetQuote(
                               message1:
-                                  'The best mode of travel and travel booking will be suggested by our travel partner for this trip',
+                              'The best mode of travel and travel booking will be suggested by our travel partner for this trip',
                               message2: '')));
                 }),
           )
@@ -522,3 +525,4 @@ class ShowDetailsOfFestivals extends StatelessWidget {
     );
   }
 }
+
