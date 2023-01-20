@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:travel_app/model/save_trip_model.dart';
 import 'package:travel_app/services/db/firebaseDB.dart';
 import 'package:travel_app/views/aspired_trip/travel_agency_details.dart';
@@ -62,7 +63,7 @@ class _TripLibraryScreenState extends State<TripLibraryScreen>
     if (FirebaseAuth.instance.currentUser != null) {
       var dummy = await FirebaseFirestore.instance
           .collection('dummyTrips')
-          .doc('trip02')
+          .doc('AkwzekaiFE2orxmnBfoF')
           .get();
       _title = dummy.data()?['title'];
       _subtitle = dummy.data()?['subtitle'];
@@ -76,7 +77,7 @@ class _TripLibraryScreenState extends State<TripLibraryScreen>
     if (FirebaseAuth.instance.currentUser != null) {
       var dummy = await FirebaseFirestore.instance
           .collection('dummyTrips')
-          .doc('trip03')
+          .doc('fLNR63XQmrUNW9ng5yQ2')
           .get();
       _title = dummy.data()?['title'];
       _subtitle = dummy.data()?['subtitle'];
@@ -88,6 +89,8 @@ class _TripLibraryScreenState extends State<TripLibraryScreen>
 
   CollectionReference dummyFuture =
       FirebaseFirestore.instance.collection('dummyTrips');
+
+  bool isBookmarked = true;
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +119,7 @@ class _TripLibraryScreenState extends State<TripLibraryScreen>
                   // Navigator.push(context,MaterialPageRoute(builder: (ctx)=>));
                 },
                 child: Container(
-                  margin: EdgeInsets.only(right: 10),
+                  margin: const EdgeInsets.only(right: 10),
                   height: 30,
                   width: width(context) * 0.16,
                   decoration:
@@ -146,7 +149,7 @@ class _TripLibraryScreenState extends State<TripLibraryScreen>
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: TabBar(
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               // labelPadding: EdgeInsets.zero,
               // indicatorPadding: EdgeInsets.zero,
               indicatorSize: TabBarIndicatorSize.tab,
@@ -199,31 +202,44 @@ class _TripLibraryScreenState extends State<TripLibraryScreen>
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            SaveYourTripsScreen()));
+                                            const SaveYourTripsScreen()));
                               },
                               title: data['title'],
                               subtitle: data['subtitle'],
                               img: data['image'] ??
                                   "https://www.unfe.org/wp-content/uploads/2019/04/SM-placeholder.png",
                               location: data['location'] ?? 'Udupi, Karnataka',
-                              containerYellowBox: SizedBox(),
+                              containerYellowBox: const SizedBox(),
                               icon: IconButton(
-                                  onPressed: () {
-                                    FirebaseDB().addBookmark(
-                                        "2Xhglp1fUkvx3AGV6aQA",
-                                        data['title'],
-                                        data['subtitle'],
-                                        data['image'],
-                                        data['location']);
+                                  onPressed: () async {
+                                    SharedPreferences _prefs =
+                                        await SharedPreferences.getInstance();
+                                    if (!isBookmarked) {
+                                      await FirebaseDB().addBookmark(
+                                          "2Xhglp1fUkvx3AGV6aQA",
+                                          data['title'],
+                                          data['subtitle'],
+                                          data['image'],
+                                          data['location']);
+                                    } else {
+                                      var docID = _prefs.getString('docID');
+                                      FirebaseDB().removeBookmark(docID);
+                                    }
+
+                                    setState(() {
+                                      isBookmarked = !isBookmarked;
+                                    });
                                   },
-                                  icon: Icon(
-                                    Icons.bookmark_border,
-                                    color: white,
-                                  )),
+                                  icon: !isBookmarked
+                                      ? Icon(
+                                          Icons.bookmark_border,
+                                          color: white,
+                                        )
+                                      : const Icon(Icons.bookmark)),
                             );
                           });
                     }
-                    return SizedBox();
+                    return const SizedBox();
                   }),
                 ),
               ),
@@ -244,7 +260,7 @@ class _TripLibraryScreenState extends State<TripLibraryScreen>
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              SaveYourTripsScreen()));
+                                              const SaveYourTripsScreen()));
                                 },
                                 title: data['title'],
                                 subtitle: data['subtitle'],
@@ -252,11 +268,11 @@ class _TripLibraryScreenState extends State<TripLibraryScreen>
                                     "https://www.unfe.org/wp-content/uploads/2019/04/SM-placeholder.png",
                                 location:
                                     data['location'] ?? 'Udupi, Karnataka',
-                                containerYellowBox: SizedBox(),
+                                containerYellowBox: const SizedBox(),
                                 icon: IconButton(
                                     onPressed: () {
                                       FirebaseDB().addBookmark(
-                                          "trip02",
+                                          "AkwzekaiFE2orxmnBfoF",
                                           data['title'],
                                           data['subtitle'],
                                           data['image'],
@@ -269,7 +285,7 @@ class _TripLibraryScreenState extends State<TripLibraryScreen>
                               );
                             });
                       }
-                      return SizedBox();
+                      return const SizedBox();
                     },
                   )),
               SizedBox(
@@ -289,7 +305,7 @@ class _TripLibraryScreenState extends State<TripLibraryScreen>
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              SaveYourTripsScreen()));
+                                              const SaveYourTripsScreen()));
                                 },
                                 title: data['title'],
                                 subtitle: data['subtitle'],
@@ -297,11 +313,11 @@ class _TripLibraryScreenState extends State<TripLibraryScreen>
                                     "https://www.unfe.org/wp-content/uploads/2019/04/SM-placeholder.png",
                                 location:
                                     data['location'] ?? 'Udupi, Karnataka',
-                                containerYellowBox: SizedBox(),
+                                containerYellowBox: const SizedBox(),
                                 icon: IconButton(
                                     onPressed: () {
                                       FirebaseDB().addBookmark(
-                                          'trip03',
+                                          'fLNR63XQmrUNW9ng5yQ2',
                                           data['title'],
                                           data['subtitle'],
                                           data['image'],
@@ -314,7 +330,7 @@ class _TripLibraryScreenState extends State<TripLibraryScreen>
                               );
                             });
                       }
-                      return SizedBox();
+                      return const SizedBox();
                     },
                   ))
             ]),
@@ -336,6 +352,7 @@ class CustomTripDataList extends StatelessWidget {
     this.icon,
     required this.onTap,
   }) : super(key: key);
+
   final String? title;
   final String? subtitle;
   final String location;
@@ -351,7 +368,7 @@ class CustomTripDataList extends StatelessWidget {
         InkWell(
           onTap: onTap,
           child: Container(
-            margin: EdgeInsets.only(top: 10, bottom: 5),
+            margin: const EdgeInsets.only(top: 10, bottom: 5),
             height: height(context) * 0.37,
             width: width(context) * 0.93,
             decoration: shadowDecoration(15, 2),
@@ -360,7 +377,7 @@ class CustomTripDataList extends StatelessWidget {
                 Stack(
                   children: [
                     ClipRRect(
-                        borderRadius: BorderRadius.only(
+                        borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(15),
                             topRight: Radius.circular(15)),
                         child: Image.network(img)),
@@ -511,7 +528,7 @@ class TripLibraryDetailsScreen extends StatelessWidget {
                           Container(
                             height: height(context) * 0.11,
                             width: width(context) * 1,
-                            padding: EdgeInsets.only(left: 5),
+                            padding: const EdgeInsets.only(left: 5),
                             color: black.withOpacity(0.5),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -557,7 +574,7 @@ class TripLibraryDetailsScreen extends StatelessWidget {
                   SizedBox(
                       height: height(context) * 1.3,
                       child: ListView.builder(
-                          physics: NeverScrollableScrollPhysics(),
+                          physics: const NeverScrollableScrollPhysics(),
                           padding: EdgeInsets.zero,
                           itemCount: dayWiseList.length,
                           itemBuilder: (context, i) {
@@ -581,13 +598,13 @@ class TripLibraryDetailsScreen extends StatelessWidget {
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        TripMapScreen()));
+                                                        const TripMapScreen()));
                                           },
                                           child: Image.asset(
                                               'assets/images/akar-icons_map.png'))
                                     ],
                                   ),
-                                  Text('Monday, Feb 14 2022'),
+                                  const Text('Monday, Feb 14 2022'),
                                   addVerticalSpace(10),
                                   SizedBox(
                                     height: height(context) * 0.32,
@@ -605,7 +622,7 @@ class TripLibraryDetailsScreen extends StatelessWidget {
                                                       context,
                                                       MaterialPageRoute(
                                                           builder: (context) =>
-                                                              TouristSpotsScreen()));
+                                                              const TouristSpotsScreen()));
                                                 },
                                                 child: Row(
                                                   children: [
@@ -619,7 +636,7 @@ class TripLibraryDetailsScreen extends StatelessWidget {
                                                           style: bodyText18w600(
                                                               color: black),
                                                         ),
-                                                        Text(
+                                                        const Text(
                                                           'Religious,Culture',
                                                           style: TextStyle(
                                                               height: 1.4),
@@ -696,7 +713,7 @@ class TripLibraryDetailsScreen extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      TravelAgencyDetailsScreen()));
+                                      const TravelAgencyDetailsScreen()));
                         }))),
           )
         ],

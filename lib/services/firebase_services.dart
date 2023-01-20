@@ -7,7 +7,9 @@ import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:travel_app/utils/constant.dart';
 import 'package:travel_app/views/start/create_new_password.dart';
+import 'package:travel_app/views/start/sign_in_screen.dart';
 
 class FirebaseServices {
   final _auth = FirebaseAuth.instance;
@@ -53,25 +55,54 @@ class FirebaseServices {
 
   //-----Password-Reset-----//
 
-  Future<void> passwordReset(String email) async {
+  Future<void> passwordReset(String email, BuildContext context) async {
     try {
       await _auth.sendPasswordResetEmail(email: email);
-      Fluttertoast.showToast(msg: "Password reset link sent to : " + email);
+      showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text("Reset Password"),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+              actionsAlignment: MainAxisAlignment.center,
+              actionsPadding: const EdgeInsets.all(2),
+              content: const Text(
+                  "Hey! A password reset link has been sent to your email. Please check your inbox and use the link to reset your password. Once you have reset your password, you can log in to your account with your new credentials."),
+              actions: <Widget>[
+                Padding(
+                  padding:
+                      const EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(primary: Colors.amber),
+                    child: Container(
+                      height: 50,
+                      width: width(context),
+                      child: const Center(
+                        child: Text(
+                          "OK",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (_) => SignInScreen()));
+                    },
+                  ),
+                ),
+              ],
+            );
+          });
     } on FirebaseAuthException catch (e) {
       print(e);
       Fluttertoast.showToast(msg: e.message.toString());
-    }
-  }
-
-  Future<void> sendOtp(String email, BuildContext context) async {
-    try {
-      var res = await EmailAuth(sessionName: 'Forget Password')
-          .sendOtp(recipientMail: email);
-      Fluttertoast.showToast(msg: "OTP has sent to : " + email);
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (_) => const CreateNewPassword()));
-    } catch (e) {
-      print(e);
     }
   }
 }
