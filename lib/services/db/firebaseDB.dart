@@ -37,4 +37,27 @@ class FirebaseDB {
       print(e);
     }
   }
+
+  //------Update-Account-Privacy--------//
+
+}
+
+class UpdateAccountVisibility {
+  FirebaseAuth _auth = FirebaseAuth.instance;
+  CollectionReference user = FirebaseFirestore.instance.collection('users');
+  //-----Age---------//
+  Future<void> updatePrivacyVisibility(String value, String privacyList) async {
+    try {
+      var uid = _auth.currentUser!.uid;
+      await user
+          .doc(uid)
+          .collection('accountPrivacy')
+          .doc('Q7golCVjSlWRoZW6DZnG')
+          .update({
+        privacyList: value,
+      });
+    } on FirebaseException catch (e) {
+      print(e.message);
+    }
+  }
 }
