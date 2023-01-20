@@ -1,9 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:travel_app/model/home_model.dart';
 import 'package:travel_app/utils/constant.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../widget/custom_appbar.dart';
 import '../../widget/custom_tab_indicator.dart';
 
@@ -94,10 +95,42 @@ class _QuickEscapeScreenState extends State<QuickEscapeScreen>
   }
 }
 
-class QuickEscapeDataList extends StatelessWidget {
+class QuickEscapeDataList extends StatefulWidget {
   const QuickEscapeDataList({
     Key? key,
   }) : super(key: key);
+
+  @override
+  State<QuickEscapeDataList> createState() => _QuickEscapeDataListState();
+}
+
+class _QuickEscapeDataListState extends State<QuickEscapeDataList> {
+
+
+  @override
+  void initState() {
+    getquickEscape();
+    super.initState();
+  }
+
+  String cityname="";
+  String festvalname = "";
+  var date;
+  var cartime = 1245325.65/150;
+  var traintime = 1245325.65/300;
+  void getquickEscape() async{
+    if (FirebaseAuth.instance.currentUser != null) {
+      var profile = await FirebaseFirestore.instance
+          .collection('Quick_Escape')
+          .doc('citys')
+          .get();
+      cityname = profile['Jaipur'];
+      festvalname = profile['festivalname'];
+      date = profile['Date'].toDate().toString().split(" ").first;
+    }
+    setState(() {
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -152,7 +185,7 @@ class QuickEscapeDataList extends StatelessWidget {
                                     ),
                                     addHorizontalySpace(5),
                                     Text(
-                                      '6th Feb 2022',
+                                      '$date',
                                       style: TextStyle(
                                           fontWeight: FontWeight.w500,
                                           color: white),
@@ -168,7 +201,7 @@ class QuickEscapeDataList extends StatelessWidget {
                                     ),
                                     addHorizontalySpace(5),
                                     Text(
-                                      'Udupi, Karnataka',
+                                      '$cityname',
                                       style: TextStyle(
                                           fontWeight: FontWeight.w500,
                                           color: white),
@@ -178,7 +211,7 @@ class QuickEscapeDataList extends StatelessWidget {
                                       height: 20,
                                       width: width(context) * 0.2,
                                       decoration:
-                                          myFillBoxDecoration(0, primary, 4),
+                                      myFillBoxDecoration(0, primary, 4),
                                       child: Center(
                                         child: Text(
                                           '2 days',
@@ -199,7 +232,7 @@ class QuickEscapeDataList extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Nagaur Cattle Festival',
+                          '$festvalname',
                           style: bodyText22w700(color: black),
                         ),
                         Text(
@@ -217,7 +250,7 @@ class QuickEscapeDataList extends StatelessWidget {
                             SizedBox(
                               width: width(context) * 0.15,
                               child: Text(
-                                '12 Hours drive',
+                                '${cartime.toInt()} hours',
                                 style: bodytext12Bold(color: black),
                               ),
                             ),
@@ -232,7 +265,7 @@ class QuickEscapeDataList extends StatelessWidget {
                             SizedBox(
                               width: width(context) * 0.15,
                               child: Text(
-                                '16 Hours journey',
+                                '${traintime.toInt()} hours',
                                 style: bodytext12Bold(color: black),
                               ),
                             ),

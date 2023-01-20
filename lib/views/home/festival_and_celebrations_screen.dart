@@ -75,16 +75,16 @@ class _FestivalAndCelebrationsScreenState
                     tabs: const [
                       Tab(
 
-                        text: 'August',
+                        text: 'january',
                       ),
                       Tab(
-                        text: 'September',
+                        text: 'february',
                       ),
                       Tab(
-                        text: 'October',
+                        text: 'march',
                       ),
                       Tab(
-                        text: 'November',
+                        text: 'april',
                       ),
                     ],
                   ),
@@ -143,6 +143,7 @@ class _FestivalsDataListState extends State<FestivalsDataList> {
       cartime = festival.data()?['CarTime'].toInt();
       traintime = festival.data()?['TrainTime'].toInt();
     }
+
     setState(() {});
   }
   @override
