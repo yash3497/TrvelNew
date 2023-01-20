@@ -129,7 +129,6 @@ String cityname="";
       date = profile['Date'].toDate().toString().split(" ").first;
     }
     setState(() {
-
     });
   }
 

@@ -87,7 +87,6 @@ class _HomeScreenState extends State<HomeScreen> {
       "imageUrl": _image ?? "",
     });
   }
-
   void getfestivals() async{
     if (FirebaseAuth.instance.currentUser != null) {
       var festival = await FirebaseFirestore.instance
