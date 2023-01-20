@@ -46,6 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
     ));
   }
 
+
   festivalsdetail() async {
     final _fireStore = FirebaseFirestore.instance;
     await _fireStore
@@ -60,6 +61,8 @@ class _HomeScreenState extends State<HomeScreen> {
   DateTime _date = DateTime.now();
   String _image ="";
   String _festivalname ="";
+  var date;
+
 
 
   updatefestivalsdetail() async {
@@ -67,6 +70,17 @@ class _HomeScreenState extends State<HomeScreen> {
     await _fireStore
         .collection("festivals")
         .doc(FirebaseAuth.instance.currentUser!.uid)
+        .update({
+      "Date": _date ?? "",
+      "festivalname": _festivalname ?? "",
+      "imageUrl": _image ?? "",
+    });
+  }
+  updatequickdetail() async {
+    final _fireStore = FirebaseFirestore.instance;
+    await _fireStore
+        .collection("Quick_Escape")
+        .doc('citys')
         .update({
       "Date": _date ?? "",
       "festivalname": _festivalname ?? "",
@@ -82,10 +96,57 @@ class _HomeScreenState extends State<HomeScreen> {
           .get();
       _festivalname = festival.data()?['festivalname'];
       _image = festival.data()?['imageUrl'];
-      _date = festival.data()?['Date'].toDate();
-
+      date = festival.data()?['Date'].toDate().toString().split(" ").first;
     }
+    setState(() {
+
+    });
   }
+List nameList=[];
+  String c1 = "";
+  String c2 = "";
+  String c3 = "";
+  String c4 = "";
+  String c5 = "";
+  String c6 = "";
+  void getquicks() async{
+    if (FirebaseAuth.instance.currentUser != null) {
+      var profile = await FirebaseFirestore.instance
+          .collection('Quick_Escape')
+          .doc('citys')
+          .get();
+      c1 = profile.data()?['Mumbai'];
+      c2 = profile.data()?['Dehli'];
+      c3 = profile.data()?['Kolkata'];
+      c4 = profile.data()?['Lucknow'];
+      c5 = profile.data()?['Mumbai'];
+      c6 = profile.data()?['Dehli'];
+    }
+    setState(() {
+      quickEscapeList = [
+      {'img': 'assets/images/home2.png', 'name': c1},
+      {'img': 'assets/images/home3.png', 'name': c2},
+      {'img': 'assets/images/home4.png', 'name': c3},
+      {'img': 'assets/images/home5.png', 'name': c4},
+      {'img': 'assets/images/home2.png', 'name': c5},
+      {'img': 'assets/images/home3.png', 'name': c6},
+    ];
+    });
+  }
+  String _1name = "";
+  // void getQuickEscape() async{
+  //   if (FirebaseAuth.instance.currentUser != null) {
+  //     var festival = await FirebaseFirestore.instance
+  //         .collection('festivals')
+  //         .doc(FirebaseAuth.instance.currentUser!.uid)
+  //         .get();
+  //
+  //   }
+  //   setState(() {
+  //
+  //   });
+  // }
+
   festivalslocation() async {
 
     festivalLocationProvider _locationProvider = festivalLocationProvider();
@@ -103,6 +164,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     });
   }
+
   registerUser() async {
 
     LocationProvider _locationProvider = LocationProvider();
@@ -118,6 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+
   void screenNavigate(context) {}
 
   final List sliderImg = [
@@ -128,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     getfestivals();
-
+    getquicks();
     LocationProvider _locationProvider = LocationProvider();
     _locationProvider.fetchCurrentPosition();
     _locationProvider.getLocation();
@@ -157,6 +220,7 @@ class _HomeScreenState extends State<HomeScreen> {
   //     finalEmail = obtainEmail;
   //   });
   // }
+
 
   @override
   Widget build(BuildContext context) {
@@ -226,6 +290,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               LocationProvider();
                               await _locationProvider.fetchCurrentPosition();
                               registerUser();
+                              updatequickdetail();
                               await _locationProvider.locationDeatials();
                               Navigator.push(
                                   context,
@@ -321,7 +386,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: SizedBox(
                   height: height(context) * 0.205,
                   child: ListView.builder(
-                      physics: const BouncingScrollPhysics(),
+                      physics: BouncingScrollPhysics(),
                       itemCount: 6,
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (ctx, i) {
@@ -341,8 +406,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     SizedBox(
                                       height: height(context) * 0.13,
                                       width: width(context),
-                                      child: Image.asset(
-                                        'assets/images/festival1.png',
+                                      child: Image.network(
+                                        _image,
                                         fit: BoxFit.fill,
                                       ),
                                     ),
@@ -358,12 +423,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                             CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                'Nagaur Festival',
+                                                '$_festivalname',
                                                 style: bodyText16w600(
                                                     color: black),
                                               ),
                                               Text(
-                                                'February 25, 2022',
+                                                '$date',
                                                 style: bodyText12Small(
                                                     color: black),
                                               )
@@ -414,8 +479,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 SizedBox(
                                   height: height(context) * 0.13,
                                   width: width(context),
-                                  child: Image.asset(
-                                    'assets/images/festival1.png',
+                                  child: Image.network(
+                                    _image,
                                     fit: BoxFit.fill,
                                   ),
                                 ),
@@ -431,12 +496,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                         CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            'Nagaur Festival',
+                                            '$_festivalname',
                                             style:
                                             bodyText16w600(color: black),
                                           ),
                                           Text(
-                                            'February 25, 2022',
+                                            '$date',
                                             style:
                                             bodyText12Small(color: black),
                                           )

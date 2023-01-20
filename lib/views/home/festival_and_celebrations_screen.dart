@@ -75,16 +75,16 @@ class _FestivalAndCelebrationsScreenState
                     tabs: const [
                       Tab(
 
-                        text: 'August',
+                        text: 'january',
                       ),
                       Tab(
-                        text: 'September',
+                        text: 'february',
                       ),
                       Tab(
-                        text: 'October',
+                        text: 'march',
                       ),
                       Tab(
-                        text: 'November',
+                        text: 'april',
                       ),
                     ],
                   ),
