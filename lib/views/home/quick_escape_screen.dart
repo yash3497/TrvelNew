@@ -94,7 +94,6 @@ class _QuickEscapeScreenState extends State<QuickEscapeScreen>
     );
   }
 }
-
 class QuickEscapeDataList extends StatefulWidget {
   const QuickEscapeDataList({
     Key? key,

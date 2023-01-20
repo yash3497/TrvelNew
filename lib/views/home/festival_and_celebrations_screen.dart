@@ -136,6 +136,7 @@ class _FestivalsDataListState extends State<FestivalsDataList> {
           .collection('festivals')
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .get();
+
       _festivalname = festival.data()?['festivalname'];
       _image = festival.data()?['imageUrl'];
       _date = festival.data()?['Date'].toDate().toString().split(" ").first;

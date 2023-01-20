@@ -154,7 +154,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void screenNavigate(context) {}
-
   final List sliderImg = [
     'assets/images/slider1.png',
     'assets/images/slider1.png',
