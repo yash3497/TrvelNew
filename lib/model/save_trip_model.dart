@@ -179,7 +179,7 @@ List<SelectDocument> feedBackCheckboxList = [
   SelectDocument(name: 'Advertidement', isSelected: false),
   SelectDocument(name: 'Refund', isSelected: false),
   SelectDocument(name: 'Co-traveler', isSelected: false),
-  SelectDocument(name: 'Friends in \nVicinity', isSelected: false),
+  SelectDocument(name: 'Friends in nVicinity', isSelected: false),
   SelectDocument(name: 'Save trips', isSelected: false),
   SelectDocument(name: 'Trip Interest', isSelected: false),
   SelectDocument(name: 'Tourist Spots', isSelected: false),

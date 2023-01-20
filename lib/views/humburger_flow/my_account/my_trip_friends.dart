@@ -1,5 +1,8 @@
 import 'dart:developer';
+import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -20,6 +23,55 @@ class MyTripFriendsScreen extends StatefulWidget {
 }
 
 class _MyTripFriendsScreenState extends State<MyTripFriendsScreen> {
+  List<dynamic> friendsInVicinity = [];
+  bool loading = false;
+
+  getFriendInVicinityList() async {
+    setState(() {
+      loading = true;
+    });
+    var x = await FirebaseFirestore.instance.collection('users').get();
+    var y = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get();
+
+    double userLat = double.parse(y.data()!['lat']);
+    double userLng = double.parse(y.data()!['lng']);
+
+    for (var element in x.docs) {
+      // print(element.data());
+      double lat = double.parse(element.data()['lat']);
+      double lng = double.parse(element.data()['lng']);
+
+      double dist = calculateDistance(userLat, userLng, lat, lng);
+
+      print('$lat -- $lng -- $dist');
+      if (dist <= 30 &&element.data()['UID']!=FirebaseAuth.instance.currentUser!.uid ) {
+        friendsInVicinity.add(element.data());
+      }
+    }
+    setState(() {
+      loading = false;
+    });
+  }
+
+  double calculateDistance(lat1, lon1, lat2, lon2) {
+    var p = 0.017453292519943295;
+    var c = cos;
+    var a = 0.5 -
+        c((lat2 - lat1) * p) / 2 +
+        c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
+    return 12742 * asin(sqrt(a));
+  }
+
+  @override
+  void initState() {
+    getFriendInVicinityList();
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,14 +95,17 @@ class _MyTripFriendsScreenState extends State<MyTripFriendsScreen> {
           preferredSize: Size.fromHeight(15),
           child: InkWell(
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>MyfollowingFriendScreen()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => MyfollowingFriendScreen()));
             },
             child: const Text(
               'You have trip friend request',
               style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.normal,
-                  ),
+                fontSize: 20,
+                fontWeight: FontWeight.normal,
+              ),
             ),
           ),
         ),
@@ -81,7 +136,7 @@ class _MyTripFriendsScreenState extends State<MyTripFriendsScreen> {
           height: height(context) * 0.95,
           decoration: shadowDecoration(10, 1),
           child: ListView.builder(
-              itemCount: 16,
+              itemCount: friendsInVicinity.length,
               itemBuilder: (ctx, i) {
                 return Column(
                   children: [

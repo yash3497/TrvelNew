@@ -64,6 +64,29 @@ class _MyBottomBarState extends State<MyBottomBar>
       backgroundColor: clr,
     ));
   }
+    
+  registerUser() async {
+
+    LocationProvider _locationProvider = LocationProvider();
+    final _fireStore = FirebaseFirestore.instance;
+    print('test');
+
+    print(_locationProvider.lat);
+    print(_locationProvider.long);
+    await _fireStore.collection("users").doc(FirebaseAuth.instance.currentUser!.uid).update({
+      'address': _locationProvider.fetchCurrentPosition(),
+      'lat': _locationProvider.lat,
+      'lng': _locationProvider.long,
+    });
+  }
+
+  getLoc()async{
+    LocationProvider _locationProvider =
+                              LocationProvider();
+                              await _locationProvider.fetchCurrentPosition();
+                              registerUser();
+                              await _locationProvider.locationDeatials();
+  }
 
 
   @override

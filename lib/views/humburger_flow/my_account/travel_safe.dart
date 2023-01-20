@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -13,6 +14,13 @@ class TravelSafeScree extends StatefulWidget {
 }
 
 class _TravelSafeScreeState extends State<TravelSafeScree> {
+  @override
+  void initState() {
+    getTravelSafety();
+    // TODO: implement initState
+    super.initState();
+  }
+
   List chipList = [
     'Waterfall',
     'Museum',
@@ -51,6 +59,27 @@ class _TravelSafeScreeState extends State<TravelSafeScree> {
     ' Do not visit at nigh',
   ];
 
+  Map<String, dynamic>? allInstructs = {};
+
+  getTravelSafety() async {
+    var x = await FirebaseFirestore.instance
+        .collection('helpAndSafety')
+        .doc('TravelSafety')
+        .get();
+    allInstructs = x.data();
+    print(allInstructs);
+    getInstructions();
+  }
+
+  getInstructions() async {
+    instruction.clear();
+    List x = allInstructs?[chipList[selectedIndex]]['information'];
+    for (var element in x) {
+      instruction.add(element);
+    }
+    setState(() {});
+  }
+
   int selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
@@ -73,6 +102,7 @@ class _TravelSafeScreeState extends State<TravelSafeScree> {
                       onTap: () {
                         setState(() {
                           selectedIndex = i;
+                          getInstructions();
                         });
                       },
                       child: Container(
