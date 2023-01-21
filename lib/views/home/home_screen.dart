@@ -104,22 +104,22 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  registerUser() async {
-    LocationProvider _locationProvider = LocationProvider();
-    final _fireStore = FirebaseFirestore.instance;
-    print('test');
+  // registerUser() async {
+  //   LocationProvider _locationProvider = LocationProvider();
+  //   final _fireStore = FirebaseFirestore.instance;
+  //   print('test');
 
-    print(_locationProvider.lat);
-    print(_locationProvider.long);
-    await _fireStore
-        .collection("users")
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .update({
-      'address': _locationProvider.fetchCurrentPosition(),
-      'lat': _locationProvider.lat,
-      'lng': _locationProvider.long,
-    });
-  }
+  //   print(_locationProvider.lat);
+  //   print(_locationProvider.long);
+  //   await _fireStore
+  //       .collection("users")
+  //       .doc(FirebaseAuth.instance.currentUser!.uid)
+  //       .update({
+  //     'address': _locationProvider.fetchCurrentPosition(),
+  //     'lat': _locationProvider.lat,
+  //     'lng': _locationProvider.long,
+  //   });
+  // }
 
   void screenNavigate(context) {}
 
@@ -131,9 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
     featuredBannerDetails = x.data();
     print('====================================');
     print(featuredBannerDetails);
-    setState(() {
-      
-    });
+    setState(() {});
   }
 
   final List sliderImg = [
@@ -145,34 +143,10 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     getfestivals();
     getFeaturedBannerDetails();
-    LocationProvider _locationProvider = LocationProvider();
-    _locationProvider.fetchCurrentPosition();
-    _locationProvider.getLocation();
-    // getValidationData().whenComplete(() async {
-    //    final user = FirebaseAuth.instance.currentUser;
-    //    if (user == null) {
-    //      Timer(Duration(seconds: 60), () {
-    //        if (user == null) {
-    //          Navigator.push(
-    //              context,
-    //              MaterialPageRoute(
-    //                  builder: ((context) => SignupWithSocialMediaScreen())));
-    //        }
-    //      });
-    //    }
-    //  });
+    print(FirebaseAuth.instance.currentUser!.uid+'================');
 
     super.initState();
   }
-
-  // Future getValidationData() async {
-  //   final SharedPreferences sharedPreferences =
-  //       await SharedPreferences.getInstance();
-  //   var obtainEmail = sharedPreferences.getString('email');
-  //   setState(() {
-  //     finalEmail = obtainEmail;
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {

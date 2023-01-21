@@ -53,6 +53,8 @@ class LocationProvider with ChangeNotifier {
     }
   }
 
+  
+
   // fetching current position
   Future fetchCurrentPosition() async {
     bool serviceEnabled;
@@ -104,7 +106,7 @@ class LocationProvider with ChangeNotifier {
         log(e.toString());
       }
     });
-    registerUserSignupPage();
+    // registerUserSignupPage();
     notifyListeners();
   }
 

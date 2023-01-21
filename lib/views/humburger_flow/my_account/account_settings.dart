@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:travel_app/utils/constant.dart';
@@ -255,7 +257,39 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
             ));
   }
 
-  Future<dynamic> manageDestinationDialog(BuildContext context) {
+  Future<dynamic> manageDestinationDialog(BuildContext context) async {
+    List homeLoc = [];
+    var x = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get();
+
+    homeLoc = x.data()!['homeLocations'];
+    var homeLocIndex = x.data()!['homeLocationIndex'];
+
+    deleteHomeLoc(int index) async {
+      print(homeLoc[index]);
+      List dy = [];
+      dy.add(homeLoc[index]);
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({"homeLocations": FieldValue.arrayRemove(dy)});
+      homeLoc.remove(homeLoc[index]);
+      setState(() {});
+    }
+
+    updateHomeLoc(String str) async {
+      List abc = [];
+      abc.add(str);
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({"homeLocations": FieldValue.arrayUnion(abc)});
+      homeLoc.remove(str);
+    }
+
+    print(homeLoc);
     return showDialog(
         context: context,
         builder: (_) => AlertDialog(
@@ -289,57 +323,47 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                               ],
                             ),
                             addVerticalSpace(25),
-                            Row(
-                              children: [
-                                SizedBox(
-                                  height: 20,
-                                  width: 30,
-                                  child: Radio(
-                                      activeColor: primary,
-                                      value: selectCity.one,
-                                      groupValue: value,
-                                      onChanged: (val) {
-                                        value = val!;
-                                        setState(() {});
-                                      }),
-                                ),
-                                addHorizontalySpace(10),
-                                Container(
-                                  height: 35,
-                                  width: width * 0.44,
-                                  decoration:
-                                      myOutlineBoxDecoration(2, primary, 7),
-                                  child: const Center(child: Text('Mumbai')),
-                                ),
-                                IconButton(
-                                    onPressed: () {}, icon: Icon(Icons.delete))
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                SizedBox(
-                                  height: 20,
-                                  width: 30,
-                                  child: Radio(
-                                      activeColor: primary,
-                                      value: selectCity.two,
-                                      groupValue: value,
-                                      onChanged: (val) {
-                                        value = val!;
-                                        setState(() {});
-                                      }),
-                                ),
-                                addHorizontalySpace(10),
-                                Container(
-                                  height: 35,
-                                  width: width * 0.44,
-                                  decoration:
-                                      myOutlineBoxDecoration(2, primary, 7),
-                                  child: const Center(child: Text('Pune')),
-                                ),
-                                IconButton(
-                                    onPressed: () {}, icon: Icon(Icons.delete))
-                              ],
+                            ListView.builder(
+                              itemCount: homeLoc.length,
+                              shrinkWrap: true,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Row(
+                                  children: [
+                                    SizedBox(
+                                      height: 20,
+                                      width: 30,
+                                      child: Radio(
+                                          activeColor: primary,
+                                          value: selectCity.one,
+                                          groupValue: value,
+                                          onChanged: (val) {
+                                            value = val!;
+                                            setState(() {});
+                                          }),
+                                    ),
+                                    addHorizontalySpace(10),
+                                    Container(
+                                      height: 35,
+                                      width: width * 0.44,
+                                      decoration:
+                                          myOutlineBoxDecoration(2, primary, 7),
+                                      child: Center(
+                                          child: Text(
+                                              homeLoc[index].split('/')[0])),
+                                    ),
+
+                                    homeLoc.length != 1
+                                        ? IconButton(
+                                            onPressed: () {
+                                              deleteHomeLoc(index);
+                                            },
+                                            icon: Icon(Icons.delete))
+                                        : SizedBox(
+                                            height: 10,
+                                          )
+                                  ],
+                                );
+                              },
                             ),
                             Padding(
                               padding: const EdgeInsets.only(left: 8.0),
@@ -353,7 +377,9 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 InkWell(
-                                  onTap: () {},
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                  },
                                   child: Container(
                                     height: 35,
                                     width: 100,

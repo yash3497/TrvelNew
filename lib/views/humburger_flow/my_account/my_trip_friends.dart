@@ -10,6 +10,10 @@ import 'package:travel_app/views/humburger_flow/my_account/my_following_trip_fri
 import 'package:travel_app/views/humburger_flow/my_account/report_incorrect_user_screen.dart';
 import 'package:travel_app/views/start/sign_in_screen.dart';
 import 'package:travel_app/widget/custom_appbar.dart';
+import 'package:travel_app/widget/custom_textfield.dart';
+
+import 'package:numberpicker/numberpicker.dart';
+import 'package:age_calculator/age_calculator.dart';
 
 import '../../../utils/constant.dart';
 import '../../../widget/custom_button.dart';
@@ -22,11 +26,21 @@ class MyTripFriendsScreen extends StatefulWidget {
   State<MyTripFriendsScreen> createState() => _MyTripFriendsScreenState();
 }
 
+List<dynamic> permanentList = [];
+List<dynamic> listo = [];
+List<dynamic> friendsInVicinity = [];
+List<dynamic> tripFriend = [];
+bool isFIV = false;
+
 class _MyTripFriendsScreenState extends State<MyTripFriendsScreen> {
-  List<dynamic> friendsInVicinity = [];
+  List<dynamic> allMemList = [];
   bool loading = false;
+  late String title;
 
   getFriendInVicinityList() async {
+    friendsInVicinity.clear();
+    allMemList.clear();
+    permanentList.clear();
     setState(() {
       loading = true;
     });
@@ -40,18 +54,40 @@ class _MyTripFriendsScreenState extends State<MyTripFriendsScreen> {
     double userLng = double.parse(y.data()!['lng']);
 
     for (var element in x.docs) {
-      // print(element.data());
-      double lat = double.parse(element.data()['lat']);
-      double lng = double.parse(element.data()['lng']);
+      permanentList.add(element.data());
+      allMemList.add(element.data());
+    }
+    print(allMemList);
 
-      double dist = calculateDistance(userLat, userLng, lat, lng);
-
-      print('$lat -- $lng -- $dist');
-      if (dist <= 30 &&element.data()['UID']!=FirebaseAuth.instance.currentUser!.uid ) {
-        friendsInVicinity.add(element.data());
+    //last 30 days active
+    for (var element in allMemList) {
+      var lastActTime = DateTime.fromMillisecondsSinceEpoch(
+          int.parse(element['lastActive'] ?? 0.0) * 1000);
+      var nowTime = DateTime.now();
+      print('${element['UID']}=====$nowTime ========$lastActTime');
+      var diff =
+          double.parse(nowTime.difference(lastActTime).inDays.toString());
+      if (diff <= 30) {
+        friendsInVicinity.add(element);
       }
     }
+
+    //30km radius
+    for (var element in allMemList) {
+      double lat = double.parse(element['lat'] ?? 0.0);
+      double lng = double.parse(element['lng'] ?? 0.0);
+      double dist = calculateDistance(userLat, userLng, lat, lng);
+      print('$lat -- $lng -- $dist');
+      if (dist <= 30 &&
+          element['UID'] != FirebaseAuth.instance.currentUser!.uid &&
+          !friendsInVicinity.contains(element)) {
+        friendsInVicinity.add(element);
+        allMemList.remove(element);
+      }
+    }
+
     setState(() {
+      listo = friendsInVicinity;
       loading = false;
     });
   }
@@ -67,7 +103,10 @@ class _MyTripFriendsScreenState extends State<MyTripFriendsScreen> {
 
   @override
   void initState() {
-    getFriendInVicinityList();
+    title = widget.title;
+
+    isFIV = title == 'Friends in vicinity' ? true : false;
+    isFIV ? getFriendInVicinityList() : getTripFriend();
     // TODO: implement initState
     super.initState();
   }
@@ -91,24 +130,29 @@ class _MyTripFriendsScreenState extends State<MyTripFriendsScreen> {
           widget.title,
           style: bodyText20w700(color: black),
         ),
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(15),
-          child: InkWell(
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => MyfollowingFriendScreen()));
-            },
-            child: const Text(
-              'You have trip friend request',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.normal,
+        bottom: !isFIV
+            ? PreferredSize(
+                preferredSize: Size.fromHeight(15),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => MyfollowingFriendScreen()));
+                  },
+                  child: const Text(
+                    'You have trip friend request',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                ),
+              )
+            : const PreferredSize(
+                preferredSize: Size.zero,
+                child: SizedBox(),
               ),
-            ),
-          ),
-        ),
         actions: [
           InkWell(
             onTap: () {
@@ -136,24 +180,31 @@ class _MyTripFriendsScreenState extends State<MyTripFriendsScreen> {
           height: height(context) * 0.95,
           decoration: shadowDecoration(10, 1),
           child: ListView.builder(
-              itemCount: friendsInVicinity.length,
+              itemCount: listo.length,
               itemBuilder: (ctx, i) {
+                print(widget.title);
                 return Column(
                   children: [
                     Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const CircleAvatar(
-                            backgroundImage:
-                                AssetImage('assets/images/nearbyfestivals.png'),
-                            radius: 30,
-                          ),
+                          listo[i]['profileImg'] == null
+                              ? const CircleAvatar(
+                                  backgroundImage: AssetImage(
+                                      'assets/images/nearbyfestivals.png'),
+                                  radius: 30,
+                                )
+                              : CircleAvatar(
+                                  backgroundImage:
+                                      NetworkImage(listo[i]['profileImg']),
+                                  radius: 30,
+                                ),
                           addHorizontalySpace(10),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Sumit patil',
+                                listo[i]['fullName'] ?? '',
                                 style: bodyText18w600(color: black),
                               ),
                               addVerticalSpace(3),
@@ -173,33 +224,38 @@ class _MyTripFriendsScreenState extends State<MyTripFriendsScreen> {
                                   ],
                                 ),
                               addVerticalSpace(4),
-                              Row(
-                                children: [
-                                  Image.asset(
-                                    'assets/images/Vector (1).png',
-                                    color: primary,
-                                  ),
-                                  addHorizontalySpace(1),
-                                  Text(
-                                    'Software Developer',
-                                    style: bodyText12Small(color: black),
-                                  )
-                                ],
-                              ),
+                              listo[i]['profession'] != null
+                                  ? Row(
+                                      children: [
+                                        Image.asset(
+                                          'assets/images/Vector (1).png',
+                                          color: primary,
+                                        ),
+                                        addHorizontalySpace(1),
+                                        Text(
+                                          friendsInVicinity[i]['profession'] ??
+                                              '',
+                                          style: bodyText12Small(color: black),
+                                        )
+                                      ],
+                                    )
+                                  : SizedBox(),
                               addVerticalSpace(4),
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.location_on,
-                                    color: primary,
-                                  ),
-                                  addHorizontalySpace(1),
-                                  Text(
-                                    'Pune',
-                                    style: bodyText12Small(color: black),
-                                  )
-                                ],
-                              ),
+                              listo[i]['locality'] != null
+                                  ? Row(
+                                      children: [
+                                        Icon(
+                                          Icons.location_on,
+                                          color: primary,
+                                        ),
+                                        addHorizontalySpace(1),
+                                        Text(
+                                          friendsInVicinity[i]['locality'],
+                                          style: bodyText12Small(color: black),
+                                        )
+                                      ],
+                                    )
+                                  : SizedBox(),
                             ],
                           ),
                           const Spacer(),
@@ -209,9 +265,10 @@ class _MyTripFriendsScreenState extends State<MyTripFriendsScreen> {
                                 value: 1,
                                 child: Text("Send a message"),
                               ),
-                              const PopupMenuItem(
+                              PopupMenuItem(
                                 value: 2,
-                                child: Text("Remove trip friend"),
+                                child: Text(
+                                    "${isFIV ? 'Add' : 'Remove'} trip friend"),
                               ),
                               PopupMenuItem(
                                 // value: 3,
@@ -241,6 +298,73 @@ class _MyTripFriendsScreenState extends State<MyTripFriendsScreen> {
   }
 
   filterDialog(BuildContext context) {
+    TextEditingController locController = TextEditingController();
+    TextEditingController profController = TextEditingController();
+    bool ageFilter = false;
+    final ages = List<String>.generate(
+        100, (int index) => (index + 1).toString(),
+        growable: false);
+    print(ages);
+
+    var currentValue = '';
+
+    void getFilteredFriendInVicinityList() {
+      List allMemberList = permanentList;
+      friendsInVicinity.clear();
+
+      for (var element in allMemberList) {
+        if (locController.text.isNotEmpty) {
+          if ((element['address'] ?? '')
+              .toString()
+              .toLowerCase()
+              .contains(locController.text.toLowerCase())) {
+            friendsInVicinity.add(element);
+            print('loc ele added');
+          }
+        } else if (profController.text.isNotEmpty) {
+          if ((element['profession'] ?? '')
+                  .toString()
+                  .toLowerCase()
+                  .contains(profController.text.toLowerCase()) &&
+              !friendsInVicinity.contains(element)) {
+            friendsInVicinity.add(element);
+            print('pprof ele added');
+          }
+        } else if (ageFilter == true) {
+          if (element['dob'] != null &&
+              element['dob'] != "" &&
+              element['dob'] != ' ') {
+            var d = element['dob'];
+            print(element['UID']);
+            print(d);
+
+            List<String> parts = d.split('-');
+            print(parts);
+
+            DateTime birthday = DateTime(
+                int.parse(parts[0]), int.parse(parts[1]), int.parse(parts[2]));
+
+            DateDuration duration;
+
+            duration = AgeCalculator.age(birthday);
+            // print('Your age is $duration');
+            print(currentValue);
+            if (int.parse(currentValue) == duration.years &&
+                !friendsInVicinity.contains(element)) {
+              friendsInVicinity.add(element);
+              print('age ele added');
+            }
+          } else {
+            continue;
+          }
+        }
+      }
+      setState(() {});
+      print(friendsInVicinity.length);
+
+      Navigator.pop(context);
+    }
+
     showDialog(
         context: context,
         builder: (_) => AlertDialog(
@@ -253,7 +377,7 @@ class _MyTripFriendsScreenState extends State<MyTripFriendsScreen> {
                   var width = MediaQuery.of(context).size.width;
 
                   return Container(
-                      height: height * 0.35,
+                      height: height * 0.6,
                       padding: EdgeInsets.all(10),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -262,14 +386,79 @@ class _MyTripFriendsScreenState extends State<MyTripFriendsScreen> {
                             'Filter Options',
                             style: bodyText30W600(color: black),
                           ),
-                          Text('Client explain it later'),
+                          addVerticalSpace(height * 0.02),
+                          Row(
+                            children: [
+                              Text("by Location : "),
+                              Container(
+                                width: width * 0.35,
+                                child: CustomTextFieldWidget(
+                                  labelText: 'location',
+                                  controller: locController,
+                                ),
+                              )
+                            ],
+                          ),
+                          addVerticalSpace(height * 0.01),
+                          Row(
+                            children: [
+                              Text("by Age : ${ageFilter ? currentValue : ''}"),
+                              Container(
+                                width: width * 0.5,
+                                child: DropdownButton<String>(
+                                  isExpanded: true,
+                                  items: ages.map((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: currentValue,
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
+                                  onChanged: ((String? val) {
+                                    setState(() {
+                                      currentValue = val!;
+                                      ageFilter = true;
+                                      print('$currentValue -- $val');
+                                    });
+                                  }),
+                                ),
+                              )
+                            ],
+                          ),
+                          addVerticalSpace(height * 0.01),
+                          Row(
+                            children: [
+                              Text("by profession : "),
+                              Container(
+                                width: width * 0.35,
+                                child: CustomTextFieldWidget(
+                                  labelText: 'profession',
+                                  controller: profController,
+                                ),
+                              )
+                            ],
+                          ),
                           addVerticalSpace(height * 0.07),
                           SizedBox(
                             width: width * 0.4,
                             child: CustomButton(
-                                name: 'Okay',
+                                name: 'Filter',
                                 onPressed: () {
-                                  Navigator.pop(context);
+                                  getFilteredFriendInVicinityList();
+                                }),
+                          ),
+                          addVerticalSpace(height * 0.01),
+                          SizedBox(
+                            width: width * 0.4,
+                            child: CustomButton(
+                                name: 'Clear Filter',
+                                onPressed: () {
+                                  setState(() {
+                                    locController.clear();
+                                    profController.clear();
+                                    ageFilter = false;
+                                    currentValue = '25';
+                                  });
+                                  getFriendInVicinityList();
                                 }),
                           )
                         ],
@@ -277,5 +466,25 @@ class _MyTripFriendsScreenState extends State<MyTripFriendsScreen> {
                 },
               ),
             ));
+  }
+
+  getTripFriend() async {
+    var x = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get();
+    List tfUIDs = x.data()!['tripFriends'];
+    var y = await FirebaseFirestore.instance.collection('users').get();
+    for (var element in y.docs) {
+      for (var tf in tfUIDs) {
+        if (element.data()['UID'] == tf) {
+          tripFriend.add(element.data());
+        }
+      }
+    }
+    setState(() {
+      listo = tripFriend;
+      print(listo);
+    });
   }
 }
