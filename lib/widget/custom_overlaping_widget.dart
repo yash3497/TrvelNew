@@ -24,7 +24,7 @@ class OverlapingImageCustomWidget extends StatelessWidget {
                   child: CircleAvatar(
                     radius: 15,
                     backgroundColor: white,
-                    backgroundImage: AssetImage(overlap[i]),
+                    backgroundImage: NetworkImage(overlap[i]),
                   ),
                 ),
             ],

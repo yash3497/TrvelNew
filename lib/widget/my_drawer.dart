@@ -40,7 +40,7 @@ class _MyDrawerState extends State<MyDrawer> {
   // // }
 
   String url = "";
-  String userName = "";
+  String? userName = "";
   // new function
   void getDetails() async {
     if (FirebaseAuth.instance.currentUser != null) {
@@ -53,6 +53,7 @@ class _MyDrawerState extends State<MyDrawer> {
       setState(() {});
     }
   }
+
   showSnackBar(BuildContext context, String str, [Color clr = Colors.black]) {
     return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(str),
@@ -72,6 +73,7 @@ class _MyDrawerState extends State<MyDrawer> {
     // _locationProvider.fetchCurrentPosition();
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -162,8 +164,8 @@ class _MyDrawerState extends State<MyDrawer> {
           Theme(
             data: ThemeData(
               colorScheme: Theme.of(context).colorScheme.copyWith(
-                primary: primary,
-              ),
+                    primary: primary,
+                  ),
             ),
             child: ExpansionTile(
               onExpansionChanged: (value) {
@@ -206,7 +208,7 @@ class _MyDrawerState extends State<MyDrawer> {
                     ),
                     Padding(
                       padding:
-                      EdgeInsets.only(left: width(context) * 0.195, top: 8),
+                          EdgeInsets.only(left: width(context) * 0.195, top: 8),
                       child: InkWell(
                         onTap: () {
                           Navigator.push(
@@ -234,8 +236,8 @@ class _MyDrawerState extends State<MyDrawer> {
           Theme(
             data: ThemeData(
               colorScheme: Theme.of(context).colorScheme.copyWith(
-                primary: primary,
-              ),
+                    primary: primary,
+                  ),
             ),
             child: ExpansionTile(
               onExpansionChanged: (value) {
@@ -275,7 +277,7 @@ class _MyDrawerState extends State<MyDrawer> {
                     ),
                     Padding(
                       padding:
-                      EdgeInsets.only(left: width(context) * 0.195, top: 8),
+                          EdgeInsets.only(left: width(context) * 0.195, top: 8),
                       child: InkWell(
                         onTap: () {
                           Navigator.push(
@@ -297,15 +299,15 @@ class _MyDrawerState extends State<MyDrawer> {
                     ),
                     Padding(
                       padding:
-                      EdgeInsets.only(left: width(context) * 0.195, top: 8),
+                          EdgeInsets.only(left: width(context) * 0.195, top: 8),
                       child: InkWell(
                         onTap: () {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => MyTripFriendsScreen(
-                                    title: 'Friends in vicinity',
-                                  )));
+                                        title: 'Friends in vicinity',
+                                      )));
                         },
                         child: Row(
                           children: [
@@ -327,8 +329,8 @@ class _MyDrawerState extends State<MyDrawer> {
           Theme(
             data: ThemeData(
               colorScheme: Theme.of(context).colorScheme.copyWith(
-                primary: primary,
-              ),
+                    primary: primary,
+                  ),
             ),
             child: ExpansionTile(
               onExpansionChanged: ((value) {
@@ -372,7 +374,7 @@ class _MyDrawerState extends State<MyDrawer> {
                     ),
                     Padding(
                       padding:
-                      EdgeInsets.only(left: width(context) * 0.195, top: 8),
+                          EdgeInsets.only(left: width(context) * 0.195, top: 8),
                       child: InkWell(
                           onTap: () {
                             Navigator.push(
@@ -447,8 +449,8 @@ class _MyDrawerState extends State<MyDrawer> {
           Theme(
             data: ThemeData(
               colorScheme: Theme.of(context).colorScheme.copyWith(
-                primary: primary,
-              ),
+                    primary: primary,
+                  ),
             ),
             child: ExpansionTile(
               onExpansionChanged: ((value) {
@@ -507,12 +509,10 @@ class _MyDrawerState extends State<MyDrawer> {
                 const AssetImage(
                   'assets/images/menu7.png',
                 )),
-            title:
-               Text(
-                'Rate us on App Store',
-                style: bodyText14w600(color: black),
-              ),
-
+            title: Text(
+              'Rate us on App Store',
+              style: bodyText14w600(color: black),
+            ),
           ),
           const Divider(
             thickness: 1,

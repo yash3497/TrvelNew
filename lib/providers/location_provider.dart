@@ -38,7 +38,7 @@ class LocationProvider with ChangeNotifier {
   String loclat = "";
   String loclng = "";
   String locadd = "";
-  String local = "";
+  String? local = "";
 
   void getLocation() async {
     if (FirebaseAuth.instance.currentUser != null) {

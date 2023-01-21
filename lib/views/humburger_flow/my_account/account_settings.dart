@@ -2,10 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:travel_app/services/db/firebaseDB.dart';
 import 'package:travel_app/utils/constant.dart';
 import 'package:travel_app/views/humburger_flow/my_account/notification_screen.dart';
 import 'package:travel_app/views/humburger_flow/my_account/privacy_policy_screen.dart';
 import 'package:travel_app/views/humburger_flow/my_account/save_card_screen.dart';
+import 'package:travel_app/widget/account_dropdown.dart';
 import 'package:travel_app/widget/custom_textfield.dart';
 
 import '../../../widget/custom_appbar.dart';
@@ -45,12 +48,34 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   selectCity value = selectCity.two;
 
   bool isSelect = false;
+  //--------GetUID------//
+  String uid = '';
+  Future<void> _getUId() async {
+    FirebaseAuth _auth = FirebaseAuth.instance;
+    setState(() {
+      uid = _auth.currentUser!.uid;
+    });
+    int index = 0;
+    // SharedPreferences _prefs = await SharedPreferences.getInstance();
+    // subTitle = _prefs.getString(privacyList[0])!;
+    // print(subTitle);
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _getUId();
+  }
+  //----------Future------------//
+
+  final _future = FirebaseFirestore.instance.collection('users');
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-          preferredSize: Size.fromHeight(50),
+          preferredSize: const Size.fromHeight(50),
           child: CustomAppBar(title: 'Account Setting')),
       body: SingleChildScrollView(
         child: Padding(
@@ -69,64 +94,36 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               ),
               SizedBox(
                 height: height(context) * 0.55,
-                child: ListView.builder(
-                    padding: EdgeInsets.zero,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: privacyList.length,
-                    itemBuilder: (ctx, i) {
-                      return Column(
-                        children: [
-                          ListTile(
-                            contentPadding: EdgeInsets.zero,
-                            title: Text(
-                              privacyList[i],
-                              style: const TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.w400),
-                            ),
-                            subtitle: SizedBox(
-                              height: 30,
-                              child: DropdownButton<String>(
-                                value: subTitle,
-                                isExpanded: true,
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    subTitle = newValue!;
-                                  });
-                                },
-                                items: settingList
-                                    .map<DropdownMenuItem<String>>(
-                                        (String value) =>
-                                            DropdownMenuItem<String>(
-                                              value: value,
-                                              child: Text(
-                                                value,
-                                                style: bodyText16normal(
-                                                    color:
-                                                        black.withOpacity(0.4)),
-                                              ),
-                                            ))
-                                    .toList(),
-
-                                // add extra sugar..
-                                icon: const Padding(
-                                  padding: EdgeInsets.only(bottom: 8.0),
-                                  child: Icon(
-                                    Icons.arrow_drop_down,
-                                  ),
-                                ),
-                                iconSize: 0,
-                                iconEnabledColor: white,
-                                iconDisabledColor: white,
-                                underline: const SizedBox(),
-                              ),
+                child: FutureBuilder<DocumentSnapshot>(
+                    future: _future
+                        .doc(uid)
+                        .collection('accountPrivacy')
+                        .doc('Q7golCVjSlWRoZW6DZnG')
+                        .get(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return const SizedBox(
+                          height: 60,
+                          width: 60,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.amber,
                             ),
                           ),
-                          const Divider(
-                            height: 0,
-                            thickness: 1,
-                          )
-                        ],
-                      );
+                        );
+                      }
+                      return ListView.builder(
+                          padding: EdgeInsets.zero,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: privacyList.length,
+                          itemBuilder: (ctx, i) {
+                            String value = snapshot.data![privacyList[i]];
+                            return AccountDropdown(
+                              privacyList: privacyList[i],
+                              settingList: settingList,
+                              subTitle: value ?? subTitle,
+                            );
+                          });
                     }),
               ),
               addVerticalSpace(20),
@@ -170,13 +167,15 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (ctx) => SaveCardScreen()));
+                                      builder: (ctx) =>
+                                          const SaveCardScreen()));
                             }
                             if (i == 2) {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (ctx) => NotificationScreen()));
+                                      builder: (ctx) =>
+                                          const NotificationScreen()));
                             }
                           },
                         ),
@@ -193,7 +192,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (ctx) => PrivacyPolicyScreen()));
+                              builder: (ctx) => const PrivacyPolicyScreen()));
                     },
                     child: Text(
                       'Privacy Policy',
@@ -225,7 +224,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
 
                   return Container(
                       height: height * 0.38,
-                      padding: EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(10),
                       child: Column(
                         children: [
                           Text(
@@ -305,7 +304,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                     return Container(
                         height: height * 0.35,
                         width: width * 0.95,
-                        padding: EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(10),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -318,8 +317,8 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                                     style: bodyText16w600(color: black),
                                   ),
                                 ),
-                                Icon(Icons.edit),
-                                Icon(Icons.add),
+                                const Icon(Icons.edit),
+                                const Icon(Icons.add),
                               ],
                             ),
                             addVerticalSpace(25),
