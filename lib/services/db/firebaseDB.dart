@@ -60,4 +60,26 @@ class UpdateAccountVisibility {
       print(e.message);
     }
   }
+
+  //---Save-Pins------//
+  Future<void> savePins(String id, String title, String subtitle, String image,
+      String location) async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    try {
+      var uid = await _auth.currentUser!.uid;
+      var data = user.doc(uid).collection('savedPins').add({
+        "id": id,
+        "title": title,
+        "subtitle": subtitle,
+        "image": image,
+        "location": location
+      }).then((value) {
+        print(value.id);
+        _prefs.setString('docID', value.id);
+      });
+      Fluttertoast.showToast(msg: "Saved");
+    } on FirebaseException catch (e) {
+      print(e);
+    }
+  }
 }

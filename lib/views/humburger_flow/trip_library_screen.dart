@@ -9,6 +9,7 @@ import 'package:travel_app/services/db/firebaseDB.dart';
 import 'package:travel_app/views/aspired_trip/travel_agency_details.dart';
 import 'package:travel_app/views/humburger_flow/tourist_spot_screen.dart';
 import 'package:travel_app/views/humburger_flow/trip_map_screen.dart';
+import 'package:travel_app/views/save_your_trips/bookmarkedTrips.dart';
 import 'package:travel_app/views/save_your_trips/save_your_trips.dart';
 import 'package:travel_app/widget/custom_button.dart';
 
@@ -44,6 +45,7 @@ class _TripLibraryScreenState extends State<TripLibraryScreen>
   String _subtitle = "";
   String _image = "";
   String _location = "";
+  var dockID = '';
 
   void getDummyTrip01() async {
     if (FirebaseAuth.instance.currentUser != null) {
@@ -116,7 +118,13 @@ class _TripLibraryScreenState extends State<TripLibraryScreen>
             children: [
               InkWell(
                 onTap: () {
-                  // Navigator.push(context,MaterialPageRoute(builder: (ctx)=>));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (ctx) => BookmarkedTrips(
+                                docID: dockID,
+                                isBookmarked: isBookmarked,
+                              )));
                 },
                 child: Container(
                   margin: const EdgeInsets.only(right: 10),
@@ -222,8 +230,11 @@ class _TripLibraryScreenState extends State<TripLibraryScreen>
                                           data['image'],
                                           data['location']);
                                     } else {
-                                      var docID = _prefs.getString('docID');
-                                      FirebaseDB().removeBookmark(docID);
+                                      setState(() {
+                                        dockID = _prefs.getString('docID')!;
+                                      });
+
+                                      FirebaseDB().removeBookmark(dockID);
                                     }
 
                                     setState(() {
