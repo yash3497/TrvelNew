@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:travel_app/views/home/festival_and_celebrations_screen.dart';
@@ -7,13 +8,48 @@ import 'package:travel_app/views/start/signup_with_social_media_screen.dart';
 
 import '../../utils/constant.dart';
 
-class UpcomingTripsScreen extends StatelessWidget {
+class UpcomingTripsScreen extends StatefulWidget {
   const UpcomingTripsScreen({super.key});
+
+  @override
+  State<UpcomingTripsScreen> createState() => _UpcomingTripsScreenState();
+}
+
+class _UpcomingTripsScreenState extends State<UpcomingTripsScreen> {
   showSnackBar(BuildContext context, String str, [Color clr = Colors.black]) {
     return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(str),
       backgroundColor: clr,
     ));
+  }
+
+  @override
+  void initState() {
+    getDetails();
+    super.initState();
+  }
+
+  String _festival = "";
+  String _location = "";
+  String _image = "";
+  String _date ="";
+  var lastactive;
+
+  getDetails() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      var profile = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection("upcomingtrip")
+          .doc("VB5hR7xMSptSRiVGJ3YF")
+          .get();
+        _festival = profile.data()?['Festivalname'];
+        _location = profile.data()?['location'];
+        _image = profile.data()?['image'];
+        _date = profile.data()?['date'];
+        lastactive = profile.data()?['lastactive'];
+      setState(() {});
+    }
   }
 
   @override
@@ -86,7 +122,9 @@ class UpcomingTripsScreen extends StatelessWidget {
         children: [
           Expanded(
               // height: height(context) * 0.79,
-              child: ListView.builder(itemBuilder: (ctx, index) {
+              child: ListView.builder(
+                  itemCount: 1,
+                  itemBuilder: (ctx, index) {
             return Column(
               children: [
                 InkWell(
@@ -110,12 +148,14 @@ class UpcomingTripsScreen extends StatelessWidget {
                                 borderRadius: BorderRadius.only(
                                     topLeft: Radius.circular(15),
                                     topRight: Radius.circular(15)),
-                                child: Image.asset('assets/images/beach.png')),
+                                child: Image.network(_image)),
                             Positioned(
                                 top: -5,
                                 right: -5,
                                 child: IconButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+
+                                    },
                                     icon: Icon(
                                       Icons.bookmark_border,
                                       color: white,
@@ -142,7 +182,7 @@ class UpcomingTripsScreen extends StatelessWidget {
                                           ),
                                           addHorizontalySpace(5),
                                           Text(
-                                            '6th Feb 2022',
+                                            '$_date',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.w500,
                                                 color: white),
@@ -158,7 +198,7 @@ class UpcomingTripsScreen extends StatelessWidget {
                                           ),
                                           addHorizontalySpace(5),
                                           Text(
-                                            'Udupi, Karnataka',
+                                            '$_location',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.w500,
                                                 color: white),
@@ -176,7 +216,7 @@ class UpcomingTripsScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Nagaur Cattle Festival',
+                                '$_festival',
                                 style: bodyText22w700(color: black),
                               ),
                               addVerticalSpace(2),
