@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:travel_app/views/aspired_trip/save_trip_and_get_qoute.dart';
+
 import '../../model/home_model.dart';
 import '../../utils/constant.dart';
 import '../../widget/custom_button.dart';

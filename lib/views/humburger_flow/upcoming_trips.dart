@@ -33,7 +33,6 @@ class _UpcomingTripsScreenState extends State<UpcomingTripsScreen> {
   String _location = "";
   String _image = "";
   String _date ="";
-  var lastactive;
 
   getDetails() async {
     if (FirebaseAuth.instance.currentUser != null) {
@@ -47,10 +46,10 @@ class _UpcomingTripsScreenState extends State<UpcomingTripsScreen> {
         _location = profile.data()?['location'];
         _image = profile.data()?['image'];
         _date = profile.data()?['date'];
-        lastactive = profile.data()?['lastactive'];
       setState(() {});
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
