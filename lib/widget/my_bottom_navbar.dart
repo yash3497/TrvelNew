@@ -1,8 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:travel_app/providers/locProvider.dart';
 import 'package:travel_app/providers/location_provider.dart';
+import 'package:location/location.dart' as loco;
 
 import 'package:travel_app/utils/constant.dart';
 import 'package:travel_app/views/home/inbox_screen.dart';
@@ -11,26 +15,34 @@ import 'package:travel_app/views/humburger_flow/upcoming_trips.dart';
 import 'package:travel_app/widget/custom_tab_indicator.dart';
 import 'package:travel_app/widget/prima_bottom_navbar.dart';
 
+import '../dummy.dart';
 import '../views/home/home_screen.dart';
 import '../views/prima/go_prima_screen.dart';
 import 'my_drawer.dart';
 
-
-  registerUserSignupPage() async {
-    LocationProvider _locationProvider = LocationProvider();
-    final _fireStore = FirebaseFirestore.instance;
-    if (FirebaseAuth.instance.currentUser != null) {
-      print('=========================================');
-      await _fireStore
-          .collection("users")
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .set({
-        'address': _locationProvider.currentAddress,
-        'lat': _locationProvider.loclat.toString(),
-        'lng': _locationProvider.loclng.toString(),
-      }, SetOptions(merge: true));
-    }
+registerUserSignupPage(
+    String address, String lati, String lngi, String locality) async {
+  LocationProvider _locationProvider = LocationProvider();
+  List abc = [];
+  abc.add(locality+'/$lati/$lngi');
+  final _fireStore = FirebaseFirestore.instance;
+  if (FirebaseAuth.instance.currentUser != null) {
+    print('=========================================');
+    await _fireStore
+        .collection("users")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .set({
+      'address': address,
+      'lat': lati,
+      'lng': lngi,
+      'locality': locality,
+      'homeLocations':FieldValue.arrayUnion(abc),
+      'homeLocationIndex':0
+    }, SetOptions(merge: true));
   }
+  print('-----lat' + lati);
+  print('-----lat' + lngi);
+}
 
 class MyBottomBar extends StatefulWidget {
   const MyBottomBar({Key? key}) : super(key: key);
@@ -64,35 +76,32 @@ class _MyBottomBarState extends State<MyBottomBar>
       backgroundColor: clr,
     ));
   }
-    
-  registerUser() async {
 
+  // registerUser() async {
+
+  //   LocationProvider _locationProvider = LocationProvider();
+  //   final _fireStore = FirebaseFirestore.instance;
+  //   print('test');
+
+  //   print(_locationProvider.lat);
+  //   print(_locationProvider.long);
+  //   await _fireStore.collection("users").doc(FirebaseAuth.instance.currentUser!.uid).update({
+  //     'address': _locationProvider.fetchCurrentPosition(),
+  //     'lat': _locationProvider.lat,
+  //     'lng': _locationProvider.long,
+  //   });
+  // }
+
+  getLoc() async {
     LocationProvider _locationProvider = LocationProvider();
-    final _fireStore = FirebaseFirestore.instance;
-    print('test');
-
-    print(_locationProvider.lat);
-    print(_locationProvider.long);
-    await _fireStore.collection("users").doc(FirebaseAuth.instance.currentUser!.uid).update({
-      'address': _locationProvider.fetchCurrentPosition(),
-      'lat': _locationProvider.lat,
-      'lng': _locationProvider.long,
-    });
+    await _locationProvider.fetchCurrentPosition();
+    // registerUser();
+    await _locationProvider.locationDeatials();
   }
-
-  getLoc()async{
-    LocationProvider _locationProvider =
-                              LocationProvider();
-                              await _locationProvider.fetchCurrentPosition();
-                              registerUser();
-                              await _locationProvider.locationDeatials();
-  }
-
 
   @override
   void initState() {
-    LocationProvider _locationProvider = LocationProvider();
-    _locationProvider.fetchCurrentPosition();
+    _getCurrentPosition(context);
     super.initState();
     tabController = TabController(initialIndex: 0, length: 5, vsync: this);
   }
@@ -176,7 +185,7 @@ class _MyBottomBarState extends State<MyBottomBar>
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (ctx) => const InboxScreen()));
+                              builder: (ctx) =>  InboxScreen()));
                     } else {
                       showSnackBar(context, "Please Login First!", Colors.red);
                     }
@@ -220,4 +229,69 @@ class _MyBottomBarState extends State<MyBottomBar>
       ),
     );
   }
+}
+
+String _currentAddress = '';
+Position? _currentPosition;
+String lat = '';
+String lng = '';
+
+Future<bool> _handleLocationPermission(BuildContext context) async {
+  // bool serviceEnabled;
+  LocationPermission permission;
+  loco.Location location = loco.Location();
+  bool serviceEnabled;
+
+  serviceEnabled = await location.serviceEnabled();
+  if (!serviceEnabled) {
+    serviceEnabled = await location.requestService();
+    if (!serviceEnabled) {
+      serviceEnabled = await location.requestService();
+    }
+  }
+  permission = await Geolocator.checkPermission();
+  if (permission == LocationPermission.denied) {
+    permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      return false;
+    }
+  }
+  if (permission == LocationPermission.deniedForever) {
+    permission = await Geolocator.requestPermission();
+    return false;
+  }
+  return true;
+}
+
+Future<void> _getCurrentPosition(BuildContext context) async {
+  final hasPermission = await _handleLocationPermission(context);
+
+  if (!hasPermission) return;
+  await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
+      .then((Position position) {
+    _currentPosition = position;
+    _getAddressFromLatLng(_currentPosition!);
+  }).catchError((e) {
+    debugPrint(e);
+  });
+}
+
+Future<void> _getAddressFromLatLng(Position position) async {
+  await placemarkFromCoordinates(
+          _currentPosition!.latitude, _currentPosition!.longitude)
+      .then((List<Placemark> placemarks) {
+    Placemark place = placemarks[0];
+
+    _currentAddress =
+        "${place.locality}, ${place.postalCode}, ${place.country}";
+
+    registerUserSignupPage(
+        _currentAddress,
+        _currentPosition!.latitude.toString(),
+        _currentPosition!.longitude.toString(),
+        place.locality ?? '');
+  }).catchError((e) {
+    debugPrint(e);
+  });
 }

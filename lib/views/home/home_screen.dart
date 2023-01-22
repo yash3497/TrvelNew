@@ -138,6 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     });
   }
+<<<<<<< HEAD
   registerUser() async {
 
     LocationProvider _locationProvider = LocationProvider();
@@ -154,6 +155,39 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void screenNavigate(context) {}
+=======
+
+  // registerUser() async {
+  //   LocationProvider _locationProvider = LocationProvider();
+  //   final _fireStore = FirebaseFirestore.instance;
+  //   print('test');
+
+  //   print(_locationProvider.lat);
+  //   print(_locationProvider.long);
+  //   await _fireStore
+  //       .collection("users")
+  //       .doc(FirebaseAuth.instance.currentUser!.uid)
+  //       .update({
+  //     'address': _locationProvider.fetchCurrentPosition(),
+  //     'lat': _locationProvider.lat,
+  //     'lng': _locationProvider.long,
+  //   });
+  // }
+
+  void screenNavigate(context) {}
+
+  getFeaturedBannerDetails() async {
+    var x = await FirebaseFirestore.instance
+        .collection('Features')
+        .doc('bannerDetails')
+        .get();
+    featuredBannerDetails = x.data();
+    print('====================================');
+    print(featuredBannerDetails);
+    setState(() {});
+  }
+
+>>>>>>> 9041b5a8d47af27d790cff2e5cc4c430e3e680c4
   final List sliderImg = [
     'assets/images/slider1.png',
     'assets/images/slider1.png',
@@ -162,6 +196,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     getfestivals();
+<<<<<<< HEAD
     getquick();
 
     LocationProvider _locationProvider = LocationProvider();
@@ -180,18 +215,13 @@ class _HomeScreenState extends State<HomeScreen> {
     //      });
     //    }
     //  });
+=======
+    getFeaturedBannerDetails();
+    print(FirebaseAuth.instance.currentUser!.uid+'================');
+>>>>>>> 9041b5a8d47af27d790cff2e5cc4c430e3e680c4
 
     super.initState();
   }
-
-  // Future getValidationData() async {
-  //   final SharedPreferences sharedPreferences =
-  //       await SharedPreferences.getInstance();
-  //   var obtainEmail = sharedPreferences.getString('email');
-  //   setState(() {
-  //     finalEmail = obtainEmail;
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
