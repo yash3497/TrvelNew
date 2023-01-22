@@ -51,7 +51,6 @@ class _UpcomingTripsScreenState extends State<UpcomingTripsScreen> {
       setState(() {});
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

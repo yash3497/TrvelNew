@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:travel_app/model/prima_profile_model.dart';
 import 'package:travel_app/views/humburger_flow/prima_profile/about_me_screen.dart';
