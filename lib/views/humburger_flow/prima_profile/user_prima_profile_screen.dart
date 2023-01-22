@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'dart:math';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
@@ -754,6 +755,49 @@ class TripFriendsAndMutualFriendsWidget extends StatefulWidget {
 class _TripFriendsAndMutualFriendsWidgetState
     extends State<TripFriendsAndMutualFriendsWidget>
     with TickerProviderStateMixin {
+  List<dynamic> friendsInVicinity = [];
+  bool loading = false;
+
+  getFriendInVicinityList() async {
+    setState(() {
+      loading = true;
+    });
+    var x = await FirebaseFirestore.instance.collection('users').get();
+    var y = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get();
+
+    double userLat = double.parse(y.data()!['lat']);
+    double userLng = double.parse(y.data()!['lng']);
+
+    for (var element in x.docs) {
+      // print(element.data());
+      double lat = double.parse(element.data()['lat']);
+      double lng = double.parse(element.data()['lng']);
+
+      double dist = calculateDistance(userLat, userLng, lat, lng);
+
+      print('$lat -- $lng -- $dist');
+      if (dist <= 30 &&element.data()['UID']==FirebaseAuth.instance.currentUser!.uid ) {
+        friendsInVicinity.add(element.data());
+      }
+    }
+    setState(() {
+      loading = false;
+    });
+  }
+
+  double calculateDistance(lat1, lon1, lat2, lon2) {
+    var p = 0.017453292519943295;
+    var c = cos;
+    var a = 0.5 -
+        c((lat2 - lat1) * p) / 2 +
+        c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
+    return 12742 * asin(sqrt(a));
+  }
+
+
   TabController? controller;
   @override
   void initState() {
@@ -855,7 +899,7 @@ class _TripFriendsAndMutualFriendsWidgetState
                     height: height(context) * 0.14,
                     child: ListView.builder(
                         scrollDirection: Axis.horizontal,
-                        itemCount: tripAndMutualfrnds.length,
+                        itemCount: friendsInVicinity.length,
                         itemBuilder: (ctx, i) {
                           return Padding(
                             padding: const EdgeInsets.only(right: 8.0),
@@ -866,11 +910,11 @@ class _TripFriendsAndMutualFriendsWidgetState
                                   height: height(context) * 0.11,
                                   width: width(context) * 0.23,
                                   child: Image.asset(
-                                    tripAndMutualfrnds[i]['img'],
+                                    friendsInVicinity[i]['img'],
                                     fit: BoxFit.fill,
                                   ),
                                 ),
-                                Text(tripAndMutualfrnds[i]['name']),
+                                Text(friendsInVicinity[i]['name']),
                               ],
                             ),
                           );
