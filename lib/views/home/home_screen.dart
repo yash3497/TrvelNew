@@ -20,7 +20,6 @@ import 'package:travel_app/views/start/sign_up_screen.dart';
 import 'package:travel_app/widget/my_bottom_navbar.dart';
 //import 'package:provider/provider.dart';
 import 'package:travel_app/widget/my_drawer.dart';
-
 import '../../providers/location_provider.dart';
 import '../../widget/custom_overlaping_widget.dart';
 import '../../widget/slider_widget.dart';
@@ -30,6 +29,8 @@ import '../start/sign_in_screen.dart';
 import '../start/signup_with_social_media_screen.dart';
 
 String? finalEmail;
+Map<String, dynamic>? featuredBannerDetails = {};
+
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({super.key});
@@ -60,6 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
   DateTime _date = DateTime.now();
   String _image ="";
   String _festivalname ="";
+  var date;
 
 
   updatefestivalsdetail() async {
@@ -82,11 +84,11 @@ class _HomeScreenState extends State<HomeScreen> {
           .get();
       _festivalname = festival.data()?['festivalname'];
       _image = festival.data()?['imageUrl'];
-      _date = festival.data()?['Date'].toDate();
+      date = festival.data()?['Date'].toDate().toString().split(" ").first;
 
     }
     setState(() {
-      
+
     });
   }
   String c1 = "";
@@ -120,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ];
     });
   }
-  
+
   festivalslocation() async {
 
     festivalLocationProvider _locationProvider = festivalLocationProvider();
@@ -138,7 +140,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
     });
   }
-<<<<<<< HEAD
   registerUser() async {
 
     LocationProvider _locationProvider = LocationProvider();
@@ -153,10 +154,6 @@ class _HomeScreenState extends State<HomeScreen> {
       'lng': _locationProvider.long,
     });
   }
-
-  void screenNavigate(context) {}
-=======
-
   // registerUser() async {
   //   LocationProvider _locationProvider = LocationProvider();
   //   final _fireStore = FirebaseFirestore.instance;
@@ -186,8 +183,6 @@ class _HomeScreenState extends State<HomeScreen> {
     print(featuredBannerDetails);
     setState(() {});
   }
-
->>>>>>> 9041b5a8d47af27d790cff2e5cc4c430e3e680c4
   final List sliderImg = [
     'assets/images/slider1.png',
     'assets/images/slider1.png',
@@ -196,7 +191,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     getfestivals();
-<<<<<<< HEAD
     getquick();
 
     LocationProvider _locationProvider = LocationProvider();
@@ -215,10 +209,8 @@ class _HomeScreenState extends State<HomeScreen> {
     //      });
     //    }
     //  });
-=======
     getFeaturedBannerDetails();
     print(FirebaseAuth.instance.currentUser!.uid+'================');
->>>>>>> 9041b5a8d47af27d790cff2e5cc4c430e3e680c4
 
     super.initState();
   }
@@ -351,7 +343,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Festivals & Events',
+                      'Events & Festival',
                       style: bodyText20w700(color: black),
                     ),
                     InkWell(
@@ -406,8 +398,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     SizedBox(
                                       height: height(context) * 0.13,
                                       width: width(context),
-                                      child: Image.asset(
-                                        'assets/images/festival1.png',
+                                      child: Image.network(
+                                        _image,
                                         fit: BoxFit.fill,
                                       ),
                                     ),
@@ -423,12 +415,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                             CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                'Nagaur Festival',
+                                                '$_festivalname',
                                                 style: bodyText16w600(
                                                     color: black),
                                               ),
+                                              addVerticalSpace(5),
                                               Text(
-                                                'February 25, 2022',
+                                                '$date',
                                                 style: bodyText12Small(
                                                     color: black),
                                               )
@@ -479,8 +472,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 SizedBox(
                                   height: height(context) * 0.13,
                                   width: width(context),
-                                  child: Image.asset(
-                                    'assets/images/festival1.png',
+                                  child: Image.network(_image
+                                    ,
                                     fit: BoxFit.fill,
                                   ),
                                 ),
@@ -496,12 +489,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                         CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            'Nagaur Festival',
+                                            '$_festivalname',
                                             style:
                                             bodyText16w600(color: black),
                                           ),
+                                          addVerticalSpace(5),
                                           Text(
-                                            'February 25, 2022',
+                                            '$date',
                                             style:
                                             bodyText12Small(color: black),
                                           )

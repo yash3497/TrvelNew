@@ -58,9 +58,10 @@ class _SignInScreenState extends State<SignInScreen> {
                       'Welcome back, Alexandra',
                       style: bodyText22w700(color: black),
                     ),
+                    addVerticalSpace(15),
                     Text(
                       'Sign In',
-                      style: bodyText16normal(color: black),
+                    style: TextStyle(color: Colors.black,fontSize: 16),
                     ),
                     addVerticalSpace(height(context) * 0.08),
                     TextField(
@@ -93,7 +94,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                   builder: ((context) => ForgotPassword())));
                         },
                         child: Text(
-                          'Forgot password?',
+                          'Forgot password ?',
                           style:
                               bodyText14normal(color: black.withOpacity(0.5)),
                         )),
@@ -106,7 +107,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                   builder: ((context) => SignUpScreen())));
                         },
                         child: Text(
-                          'Sign up with new email id?',
+                          'Sign up with new email id ?',
                           style:
                               bodyText14normal(color: black.withOpacity(0.5)),
                         )),
@@ -145,11 +146,11 @@ class _SignInScreenState extends State<SignInScreen> {
                             text: TextSpan(children: [
                           TextSpan(
                               text:
-                                  'By Proceeding further you agree to Travel New’s.\n',
+                                  '     By Proceeding further you agree to Travel New’s.\n',
                               style: bodyText14normal(color: black)),
                           TextSpan(
                               text:
-                                  '          Terms of Services and Privacy Policy',
+                                  '            Terms of Services and Privacy Policy',
                               style:
                                   bodyText14w600(spacing: 1.4, color: black)),
                         ])),

@@ -15,15 +15,28 @@ void getCount(_count) async {
   counter.setInt('count', _count);
 }
 
-class AspiredTrip2Screen extends StatefulWidget {
-  const AspiredTrip2Screen({super.key});
+
+class aspiredScreen extends StatefulWidget {
+  const aspiredScreen({super.key});
 
   @override
-  State<AspiredTrip2Screen> createState() => _AspiredTrip2ScreenState();
+  State<aspiredScreen> createState() =>
+      _aspiredScreen();
 }
 
-class _AspiredTrip2ScreenState extends State<AspiredTrip2Screen> {
+class _aspiredScreen
+    extends State<aspiredScreen> with TickerProviderStateMixin {
+  TabController? _tabController;
   bool isShow = false;
+
+
+  @override
+  void initState() {
+
+    _tabController = TabController(length: 4, vsync: this);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,9 +55,9 @@ class _AspiredTrip2ScreenState extends State<AspiredTrip2Screen> {
         title: isShow
             ? CustomTextFieldWidget(labelText: '  Search  ')
             : Text(
-                'Touch Nature at Hills',
-                style: bodyText20w700(color: black),
-              ),
+          'Touch Nature at Hills',
+          style: bodyText20w700(color: black),
+        ),
         actions: [
           IconButton(
               onPressed: () {
@@ -58,6 +71,74 @@ class _AspiredTrip2ScreenState extends State<AspiredTrip2Screen> {
               ))
         ],
       ),
+      body: Column(
+        children: [
+          SizedBox(
+            height: height(context) * 0.88,
+            child: Column(
+              children: [
+                addVerticalSpace(5),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: TabBar(
+                    padding: EdgeInsets.zero,
+                    // labelPadding: EdgeInsets.zero,
+                    // indicatorPadding: EdgeInsets.zero,
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    unselectedLabelColor: Colors.grey,
+                    controller: _tabController,
+                    onTap: (value) {},
+                    isScrollable: true,
+                    indicator: BoxDecoration(
+                      // shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.circular(10),
+                        color: primary),
+                    indicatorColor: primary,
+                    labelColor: black,
+                    labelStyle: const TextStyle(
+                        fontSize: 14, fontWeight: FontWeight.w600),
+                    unselectedLabelStyle: const TextStyle(
+                        fontSize: 14, fontWeight: FontWeight.w400),
+                    tabs: const [
+                      Tab(
+
+                        text: 'Aspired Trip',
+                      ),
+                      Tab(
+                        text: 'Festival Trip',
+                      ),
+
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child:
+                  TabBarView(controller: _tabController, children: const [
+                    AspiredTrip2Screen(),
+                    AspiredTrip2Screen(),
+                  ]),
+                )
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class AspiredTrip2Screen extends StatefulWidget {
+  const AspiredTrip2Screen({super.key});
+
+  @override
+  State<AspiredTrip2Screen> createState() => _AspiredTrip2ScreenState();
+}
+
+class _AspiredTrip2ScreenState extends State<AspiredTrip2Screen> {
+  bool isShow = false;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
       body: Column(
         children: [
           Expanded(child: ListView.builder(itemBuilder: (ctx, i) {
