@@ -63,7 +63,9 @@ class _MyTripFriendsScreenState extends State<MyTripFriendsScreen> {
     for (var element in allMemList) {
       var lastActTime = DateTime.fromMillisecondsSinceEpoch(
           int.parse(element['lastActive'] ?? 0.0) * 1000);
+      //prima, friend & 
       var nowTime = DateTime.now();
+
       print('${element['UID']}=====$nowTime ========$lastActTime');
       var diff =
           double.parse(nowTime.difference(lastActTime).inDays.toString());
