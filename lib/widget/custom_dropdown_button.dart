@@ -30,12 +30,15 @@ class _CustomDropDownButtonState extends State<CustomDropDownButton> {
             labelStyle: bodyText12Small(color: black),
             label: Row(
               children: [
-                Container(
-                  height: 25,
-                  // width: width(context) * 0.35,
-                  decoration: myFillBoxDecoration(0, white, 20),
-                  child: Center(
-                    child: Text(widget.lableText),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 15),
+                  child: Container(
+                    height: 20,
+                    // width: width(context) * 0.35,
+                    decoration: myFillBoxDecoration(0, white, 20),
+                    child: Center(
+                      child: Text(widget.lableText,style: TextStyle(fontSize: 18),),
+                    ),
                   ),
                 ),
               ],
@@ -46,7 +49,7 @@ class _CustomDropDownButtonState extends State<CustomDropDownButton> {
         hint: Text(
           '--Select--',
           style: TextStyle(
-              fontSize: 13, fontWeight: FontWeight.w600, color: black),
+              fontSize: 15, fontWeight: FontWeight.w600, color: black),
         ),
         items: widget.itemList
             .map<DropdownMenuItem<String>>(
@@ -55,7 +58,6 @@ class _CustomDropDownButtonState extends State<CustomDropDownButton> {
               child: Text(value),
             ))
             .toList(),
-
         value: selectedItem,
         onChanged: (newValue) {
           setState(() {

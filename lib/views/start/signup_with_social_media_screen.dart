@@ -33,7 +33,7 @@ class SignupWithSocialMediaScreen extends StatelessWidget {
                     style: bodyText14normal(color: black),
                   )),
             ),
-            addVerticalSpace(height(context) * 0.06),
+            addVerticalSpace(height(context) * 0.04),
             Padding(
               padding: const EdgeInsets.only(left: 12.0),
               child: Column(

@@ -75,16 +75,16 @@ class _FestivalAndCelebrationsScreenState
                     tabs: const [
                       Tab(
 
-                        text: 'August',
+                        text: 'January',
                       ),
                       Tab(
-                        text: 'September',
+                        text: 'February',
                       ),
                       Tab(
-                        text: 'October',
+                        text: 'March',
                       ),
                       Tab(
-                        text: 'November',
+                        text: 'April',
                       ),
                     ],
                   ),
@@ -136,6 +136,7 @@ class _FestivalsDataListState extends State<FestivalsDataList> {
           .collection('festivals')
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .get();
+
       _festivalname = festival.data()?['festivalname'];
       _image = festival.data()?['imageUrl'];
       _date = festival.data()?['Date'].toDate().toString().split(" ").first;
@@ -143,6 +144,7 @@ class _FestivalsDataListState extends State<FestivalsDataList> {
       cartime = festival.data()?['CarTime'].toInt();
       traintime = festival.data()?['TrainTime'].toInt();
     }
+
     setState(() {});
   }
   @override

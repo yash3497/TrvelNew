@@ -1,14 +1,44 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:travel_app/views/aspired_trip/save_trip_and_get_qoute.dart';
-
 import '../../model/home_model.dart';
 import '../../utils/constant.dart';
 import '../../widget/custom_button.dart';
 
-class AspiredTripDetailsScreen extends StatelessWidget {
+class AspiredTripDetailsScreen extends StatefulWidget {
   const AspiredTripDetailsScreen({super.key});
+
+  @override
+  State<AspiredTripDetailsScreen> createState() => _AspiredTripDetailsScreenState();
+}
+
+class _AspiredTripDetailsScreenState extends State<AspiredTripDetailsScreen> {
+
+
+  String _festival = "Rakhi";
+  String _location = "Jodhpur";
+  String _image = "https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80";
+  String _date = "26 jan 2023";
+  addupcomingDetails() async {
+    // Call the user's CollectionReference to add a new user
+
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    users
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection("upcomingtrip")
+        .doc('VB5hR7xMSptSRiVGJ3YF')
+        .set({
+      'Festivalname': _festival,
+      'location': _location,
+      'image': _image,
+      'date': _date,
+    })
+        .then((value) => print("User Added"))
+        .catchError((error) => print("Failed to add user: $error"));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -193,6 +223,7 @@ class AspiredTripDetailsScreen extends StatelessWidget {
             child: CustomButton(
                 name: 'Save trip and do booking',
                 onPressed: () {
+                  addupcomingDetails();
                   Navigator.push(
                       context,
                       MaterialPageRoute(
