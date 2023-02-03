@@ -772,6 +772,15 @@ class _TripFriendsAndMutualFriendsWidgetState
     super.dispose();
   }
 
+
+  getTripFriends()async{
+
+  }
+
+  getMutualFriends()async{
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(

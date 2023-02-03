@@ -20,6 +20,7 @@ class UserPrimaProfileScreen extends StatefulWidget {
   @override
   State<UserPrimaProfileScreen> createState() => _UserPrimaProfileScreenState();
 }
+
 class _UserPrimaProfileScreenState extends State<UserPrimaProfileScreen> {
   @override
   void initState() {
@@ -27,13 +28,14 @@ class _UserPrimaProfileScreenState extends State<UserPrimaProfileScreen> {
     getlocationDetails();
     super.initState();
   }
+
   List travelPhoto = [
     'assets/images/Rectangle 111.png',
     'assets/  images/Rectangle 111 (1).png',
     'assets/images/Rectangle 111 (2).png',
     'assets/images/Rectangle 111 (3).png',
   ];
-  String Name ="";
+  String Name = "";
   String image = "";
   String _profession = "";
   String _aboutme = "";
@@ -55,6 +57,7 @@ class _UserPrimaProfileScreenState extends State<UserPrimaProfileScreen> {
       setState(() {});
     }
   }
+
   String _address = "";
   void getlocationDetails() async {
     if (FirebaseAuth.instance.currentUser != null) {
@@ -66,17 +69,18 @@ class _UserPrimaProfileScreenState extends State<UserPrimaProfileScreen> {
       setState(() {});
     }
   }
+
   Widget EditAction() {
     return Text.rich(TextSpan(children: [
       WidgetSpan(
           child: Icon(
-            Icons.edit,
-            color: Colors.yellow,
-          )),
+        Icons.edit,
+        color: Colors.yellow,
+      )),
       WidgetSpan(
           child: SizedBox(
-            width: 10,
-          )),
+        width: 10,
+      )),
       TextSpan(text: "Edit Profile")
     ]));
   }
@@ -85,13 +89,13 @@ class _UserPrimaProfileScreenState extends State<UserPrimaProfileScreen> {
     return Text.rich(TextSpan(children: [
       WidgetSpan(
           child: ImageIcon(
-            AssetImage("assets/images/editicon.png"),
-            color: Colors.yellow,
-          )),
+        AssetImage("assets/images/editicon.png"),
+        color: Colors.yellow,
+      )),
       WidgetSpan(
           child: SizedBox(
-            width: 10,
-          )),
+        width: 10,
+      )),
       TextSpan(text: "My Prima Subscriptions")
     ]));
   }
@@ -106,11 +110,12 @@ class _UserPrimaProfileScreenState extends State<UserPrimaProfileScreen> {
       ),
       WidgetSpan(
           child: SizedBox(
-            width: 10,
-          )),
+        width: 10,
+      )),
       TextSpan(text: "Share Profile")
     ]));
   }
+
   Widget ActivityProfileAction() {
     return Text.rich(TextSpan(children: [
       WidgetSpan(
@@ -121,8 +126,8 @@ class _UserPrimaProfileScreenState extends State<UserPrimaProfileScreen> {
       ),
       WidgetSpan(
           child: SizedBox(
-            width: 10,
-          )),
+        width: 10,
+      )),
       TextSpan(text: "My activity feeds")
     ]));
   }
@@ -141,15 +146,14 @@ class _UserPrimaProfileScreenState extends State<UserPrimaProfileScreen> {
                 child: Container(
                   height: height(context) * 0.42,
                   width: width(context) * 1,
-                  decoration:  image== ""
-                      ?
-                  BoxDecoration(
-                      image: DecorationImage(
-                          fit: BoxFit.fill,
-                          image: AssetImage('assets/images/prima3.png')))
+                  decoration: image == ""
+                      ? BoxDecoration(
+                          image: DecorationImage(
+                              fit: BoxFit.fill,
+                              image: AssetImage('assets/images/prima3.png')))
                       : BoxDecoration(
-                      image: DecorationImage(
-                          fit: BoxFit.fill, image: NetworkImage(image))),
+                          image: DecorationImage(
+                              fit: BoxFit.fill, image: NetworkImage(image))),
                   child: SafeArea(
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -171,7 +175,7 @@ class _UserPrimaProfileScreenState extends State<UserPrimaProfileScreen> {
                           ),
                         ),
                         PopupMenuButton(
-                          // add icon, by default "3 dot" icon
+                            // add icon, by default "3 dot" icon
 
                             iconSize: 32,
                             color: Colors.white,
@@ -190,9 +194,7 @@ class _UserPrimaProfileScreenState extends State<UserPrimaProfileScreen> {
                                   child: ShareProfileAction(),
                                 ),
                                 PopupMenuItem<int>(
-                                    value: 3,
-                                    child: ActivityProfileAction()
-                                )
+                                    value: 3, child: ActivityProfileAction())
                               ];
                             },
                             onSelected: (value) {
@@ -239,9 +241,12 @@ class _UserPrimaProfileScreenState extends State<UserPrimaProfileScreen> {
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children:  [
+                        children: [
                           Icon(Icons.location_on_outlined),
-                          Text('$_address',style: TextStyle(fontSize: 20),)
+                          Text(
+                            '$_address',
+                            style: TextStyle(fontSize: 20),
+                          )
                         ],
                       ),
                       addVerticalSpace(15),
@@ -410,7 +415,7 @@ class _UserPrimaProfileScreenState extends State<UserPrimaProfileScreen> {
                         height: height(context) * 0.13,
                         width: width(context) * 0.95,
                         decoration:
-                        myFillBoxDecoration(0, black.withOpacity(0.08), 15),
+                            myFillBoxDecoration(0, black.withOpacity(0.08), 15),
                         child: SizedBox(
                           height: height(context) * 0.13,
                           child: ListView.builder(
@@ -421,7 +426,7 @@ class _UserPrimaProfileScreenState extends State<UserPrimaProfileScreen> {
                                   padding: const EdgeInsets.only(right: 8.0),
                                   child: Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.center,
+                                        CrossAxisAlignment.center,
                                     children: [
                                       SizedBox(
                                         height: height(context) * 0.11,
@@ -442,7 +447,6 @@ class _UserPrimaProfileScreenState extends State<UserPrimaProfileScreen> {
                         'Other Interests',
                         style: bodyText20w700(color: black),
                       ),
-
                       Text(
                         '$_otherintrest',
                         style: bodyText13normal(spacing: 1.4, color: black),
@@ -462,153 +466,156 @@ class _UserPrimaProfileScreenState extends State<UserPrimaProfileScreen> {
     showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          contentPadding: const EdgeInsets.all(6),
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10.0))),
-          content: Builder(
-            builder: (context) {
-              var height = MediaQuery.of(context).size.height;
-              var width = MediaQuery.of(context).size.width;
+              contentPadding: const EdgeInsets.all(6),
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0))),
+              content: Builder(
+                builder: (context) {
+                  var height = MediaQuery.of(context).size.height;
+                  var width = MediaQuery.of(context).size.width;
 
-              return Container(
-                  height: height * 0.22,
-                  padding: EdgeInsets.all(10),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Text(
-                        'Trip Friend',
-                        style: bodyText16w600(color: black),
-                      ),
-                      Text(
-                        'The request has been sent. You will be a trip friend after the request has been accepted. ',
-                        textAlign: TextAlign.center,
-                        style: bodyText13normal(spacing: 1.4, color: black),
-                      ),
-                      // addVerticalSpace(height * 0.07),
-                      SizedBox(
-                        width: width * 0.4,
-                        child: CustomButton(
-                            name: 'Okay',
-                            onPressed: () {
-                              Navigator.pop(context);
-                            }),
-                      )
-                    ],
-                  ));
-            },
-          ),
-        ));
+                  return Container(
+                      height: height * 0.22,
+                      padding: EdgeInsets.all(10),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Text(
+                            'Trip Friend',
+                            style: bodyText16w600(color: black),
+                          ),
+                          Text(
+                            'The request has been sent. You will be a trip friend after the request has been accepted. ',
+                            textAlign: TextAlign.center,
+                            style: bodyText13normal(spacing: 1.4, color: black),
+                          ),
+                          // addVerticalSpace(height * 0.07),
+                          SizedBox(
+                            width: width * 0.4,
+                            child: CustomButton(
+                                name: 'Okay',
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                }),
+                          )
+                        ],
+                      ));
+                },
+              ),
+            ));
   }
 
   inviteToTripDsialog(BuildContext context) {
     showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          contentPadding: const EdgeInsets.all(6),
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10.0))),
-          content: Builder(
-            builder: (context) {
-              var height = MediaQuery.of(context).size.height;
-              var width = MediaQuery.of(context).size.width;
+              contentPadding: const EdgeInsets.all(6),
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0))),
+              content: Builder(
+                builder: (context) {
+                  var height = MediaQuery.of(context).size.height;
+                  var width = MediaQuery.of(context).size.width;
 
-              return Container(
-                  height: height * 0.36,
-                  padding: EdgeInsets.all(10),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Text(
-                        'An invitation will be send to Alexander to join your trip',
-                        textAlign: TextAlign.center,
-                        style: bodyText16w600(color: black),
-                      ),
-                      addVerticalSpace(height * 0.02),
-                      Text(
-                        'Select a trip for Invitation',
-                        style: bodyText14w600(color: black),
-                      ),
-                      CustomDropDownButton(
-                          itemList: locationList,
-                          lableText: '  Trip Invitation  '),
-                      Text(
-                        'Trips requesting for new trip friends are only listed here',
-                        style: bodyText12Small(color: black),
-                        textAlign: TextAlign.center,
-                      ),
-                      addVerticalSpace(10),
-                      SizedBox(
-                        width: width * 0.4,
-                        child: CustomButton(
-                            name: 'Send Invitation',
-                            onPressed: () {
-                              Navigator.pop(context);
-                            }),
-                      )
-                    ],
-                  ));
-            },
-          ),
-        ));
+                  return Container(
+                      height: height * 0.36,
+                      padding: EdgeInsets.all(10),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Text(
+                            'An invitation will be send to Alexander to join your trip',
+                            textAlign: TextAlign.center,
+                            style: bodyText16w600(color: black),
+                          ),
+                          addVerticalSpace(height * 0.02),
+                          Text(
+                            'Select a trip for Invitation',
+                            style: bodyText14w600(color: black),
+                          ),
+                          CustomDropDownButton(
+                              itemList: locationList,
+                              lableText: '  Trip Invitation  '),
+                          Text(
+                            'Trips requesting for new trip friends are only listed here',
+                            style: bodyText12Small(color: black),
+                            textAlign: TextAlign.center,
+                          ),
+                          addVerticalSpace(10),
+                          SizedBox(
+                            width: width * 0.4,
+                            child: CustomButton(
+                                name: 'Send Invitation',
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                }),
+                          )
+                        ],
+                      ));
+                },
+              ),
+            ));
   }
 
   sendMessageDialog(BuildContext context) {
+    TextEditingController _con = new TextEditingController();
     showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          contentPadding: const EdgeInsets.all(6),
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10.0))),
-          content: Builder(
-            builder: (context) {
-              var height = MediaQuery.of(context).size.height;
-              var width = MediaQuery.of(context).size.width;
+              contentPadding: const EdgeInsets.all(6),
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0))),
+              content: Builder(
+                builder: (context) {
+                  var height = MediaQuery.of(context).size.height;
+                  var width = MediaQuery.of(context).size.width;
 
-              return Container(
-                  height: height * 0.32,
-                  padding: EdgeInsets.all(10),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Text(
-                        'Send a quick messages to Alexander',
-                        textAlign: TextAlign.center,
-                        style: bodyText16w600(color: black),
-                      ),
-                      addVerticalSpace(height * 0.01),
-                      Container(
-                          decoration: myFillBoxDecoration(
-                              0, black.withOpacity(0.1), 15),
-                          width: width * 0.94,
-                          // height: height(context) * 0.08,
-                          child: TextField(
-                              maxLines: 3,
-                              decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  contentPadding: EdgeInsets.all(10),
-                                  hintStyle: bodyText13normal(color: black),
-                                  hintText:
-                                  'Write something interesting'))),
-                      Text(
-                        'Please send message only to the person whomm you know well. TravelNew has a zero-tolerance policy for spam',
-                        style: bodyText12Small(spacing: 1.4, color: black),
-                        textAlign: TextAlign.center,
-                      ),
-                      addVerticalSpace(10),
-                      SizedBox(
-                        width: width * 0.4,
-                        child: CustomButton(
-                            name: 'Send Message',
-                            onPressed: () {
-                              Navigator.pop(context);
-                            }),
-                      )
-                    ],
-                  ));
-            },
-          ),
-        ));
+                  return Container(
+                      height: height * 0.32,
+                      padding: EdgeInsets.all(10),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Text(
+                            'Send a quick messages',
+                            textAlign: TextAlign.center,
+                            style: bodyText16w600(color: black),
+                          ),
+                          addVerticalSpace(height * 0.01),
+                          Container(
+                              decoration: myFillBoxDecoration(
+                                  0, black.withOpacity(0.1), 15),
+                              width: width * 0.94,
+                              // height: height(context) * 0.08,
+                              child: TextField(
+                                  maxLines: 3,
+                                  controller: _con,
+                                  decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      contentPadding: EdgeInsets.all(10),
+                                      hintStyle: bodyText13normal(color: black),
+                                      hintText:
+                                          'Write something interesting'))),
+                          Text(
+                            'Please send message only to the person whomm you know well. TravelNew has a zero-tolerance policy for spam',
+                            style: bodyText12Small(spacing: 1.4, color: black),
+                            textAlign: TextAlign.center,
+                          ),
+                          addVerticalSpace(10),
+                          SizedBox(
+                            width: width * 0.4,
+                            child: CustomButton(
+                                name: 'Send Message',
+                                onPressed: () {
+                                  
+                                  Navigator.pop(context);
+                                }),
+                          )
+                        ],
+                      ));
+                },
+              ),
+            ));
   }
 
   Future<void> joinToTripBottomSheet(BuildContext context) {
@@ -624,7 +631,7 @@ class _UserPrimaProfileScreenState extends State<UserPrimaProfileScreen> {
             padding: EdgeInsets.all(10),
             height: height(context) * 0.6,
             child:
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(
                 'You have following request to be your trip friend',
                 textAlign: TextAlign.center,
@@ -639,7 +646,7 @@ class _UserPrimaProfileScreenState extends State<UserPrimaProfileScreen> {
                           children: [
                             Row(
                                 mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   const CircleAvatar(
                                     backgroundImage: AssetImage(
@@ -649,7 +656,7 @@ class _UserPrimaProfileScreenState extends State<UserPrimaProfileScreen> {
                                   addHorizontalySpace(5),
                                   Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'Sumit patil',
@@ -666,7 +673,7 @@ class _UserPrimaProfileScreenState extends State<UserPrimaProfileScreen> {
                                           Text(
                                             'Software Developer',
                                             style:
-                                            bodyText12Small(color: black),
+                                                bodyText12Small(color: black),
                                           )
                                         ],
                                       ),
@@ -680,7 +687,7 @@ class _UserPrimaProfileScreenState extends State<UserPrimaProfileScreen> {
                                           Text(
                                             'Pune',
                                             style:
-                                            bodyText12Small(color: black),
+                                                bodyText12Small(color: black),
                                           )
                                         ],
                                       ),
@@ -689,7 +696,7 @@ class _UserPrimaProfileScreenState extends State<UserPrimaProfileScreen> {
                                   Spacer(),
                                   Column(
                                     mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
+                                        MainAxisAlignment.spaceAround,
                                     children: [
                                       InkWell(
                                         onTap: () {},
@@ -702,7 +709,7 @@ class _UserPrimaProfileScreenState extends State<UserPrimaProfileScreen> {
                                             child: Text(
                                               'Accept',
                                               style:
-                                              bodyText14w600(color: black),
+                                                  bodyText14w600(color: black),
                                             ),
                                           ),
                                         ),
@@ -719,11 +726,10 @@ class _UserPrimaProfileScreenState extends State<UserPrimaProfileScreen> {
                                             child: Text(
                                               'Deny',
                                               style:
-                                              bodyText14w600(color: black),
+                                                  bodyText14w600(color: black),
                                             ),
                                           ),
                                         ),
-
                                       ),
                                     ],
                                   )
@@ -779,7 +785,8 @@ class _TripFriendsAndMutualFriendsWidgetState
       double dist = calculateDistance(userLat, userLng, lat, lng);
 
       print('$lat -- $lng -- $dist');
-      if (dist <= 30 &&element.data()['UID']==FirebaseAuth.instance.currentUser!.uid ) {
+      if (dist <= 30 &&
+          element.data()['UID'] == FirebaseAuth.instance.currentUser!.uid) {
         friendsInVicinity.add(element.data());
       }
     }
@@ -796,7 +803,6 @@ class _TripFriendsAndMutualFriendsWidgetState
         c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
     return 12742 * asin(sqrt(a));
   }
-
 
   TabController? controller;
   @override
@@ -834,9 +840,9 @@ class _TripFriendsAndMutualFriendsWidgetState
             indicatorColor: primary,
             labelColor: black,
             labelStyle:
-            const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
             unselectedLabelStyle:
-            const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+                const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
             tabs: const [
               Tab(
                 text: 'Trip Friends',
@@ -952,12 +958,12 @@ class TripometerCircleWidget extends StatefulWidget {
 
 class _TripometerCircleWidgetState extends State<TripometerCircleWidget> {
   final List tripoMeter = ['Adventure', 'City', 'Nature', 'Religious'];
-  List tripoMeterValue = [12.0,32.1,78.4,90.6];
+  List tripoMeterValue = [12.0, 32.1, 78.4, 90.6];
 
-  double city=0.0;
-  double nature=0.0;
-  double adventure=0.0;
-  double religlous=0.0;
+  double city = 0.0;
+  double nature = 0.0;
+  double adventure = 0.0;
+  double religlous = 0.0;
 
   @override
   void initState() {
@@ -1026,14 +1032,14 @@ class _TripometerCircleWidgetState extends State<TripometerCircleWidget> {
                           annotations: <GaugeAnnotation>[
                             GaugeAnnotation(
                                 widget: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      "${tripoMeterValue[i]}%",
-                                      style: bodytext12Bold(color: Colors.black),
-                                    ),
-                                  ],
-                                ))
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "${tripoMeterValue[i]}%",
+                                  style: bodytext12Bold(color: Colors.black),
+                                ),
+                              ],
+                            ))
                           ],
                         ) // RadialAxis
                       ], // < RadialAxis > [ ]

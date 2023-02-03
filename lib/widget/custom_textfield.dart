@@ -10,6 +10,7 @@ class CustomTextFieldWidget extends StatelessWidget {
   Icon? icon;
   TextEditingController? controller;
   VoidCallback? onClick;
+  // void Function()? onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +26,7 @@ class CustomTextFieldWidget extends StatelessWidget {
         child: TextField(
           onTap: onClick,
           controller: controller,
+          // onChanged:(String){ onChanged},
           keyboardType: TextInputType.text,
           decoration: InputDecoration(
             suffixIcon: icon,

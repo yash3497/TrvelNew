@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ChatModel {
   String sender;
   String senderName;
   String time;
-  List<String> seenBy;
-  List<String> chatGroup;
+  List seenBy;
+  List chatGroup;
+  List peopleInChat;
   String chatId;
   String message;
   String messageId;
@@ -17,6 +19,7 @@ class ChatModel {
       required this.time,
       required this.seenBy,
       required this.chatGroup,
+      required this.peopleInChat,
       required this.isGroup,
       required this.chatId,
       required this.message,
@@ -28,6 +31,7 @@ class ChatModel {
       String time,
       List<String> seenBy,
       List<String> chatGroup,
+      List<String> peopleInChat,
       bool isGroup,
       String chatId,
       String message,
@@ -44,6 +48,7 @@ class ChatModel {
         'time': time,
         'seenBy': seenBy,
         'chatGroup': chatGroup,
+        'peopleInChat': peopleInChat,
         'isGroup': isGroup,
         'chatId': chatId,
         'message': message,
@@ -51,19 +56,18 @@ class ChatModel {
       });
 
       await FirebaseFirestore.instance.collection('chats').doc(chatId).set({
-        'latestMessageTime': time,
-        'senderName': senderName,
         'sender': sender,
+        'senderName': senderName,
+        'time': time,
         'seenBy': seenBy,
         'chatGroup': chatGroup,
-        'chatType': isGroup,
+        'peopleInChat': peopleInChat,
+        'isGroup': isGroup,
         'chatId': chatId,
         'message': message,
         'messageId': messageId,
       }, SetOptions(merge: true));
-    }else{
-
-    }
+    } else {}
   }
 
   deleteMessage(
@@ -72,6 +76,7 @@ class ChatModel {
       String time,
       List<String> seenBy,
       List<String> chatGroup,
+      List<String> peopleInChat,
       bool isGroup,
       String chatId,
       String message,
@@ -84,6 +89,27 @@ class ChatModel {
         .delete();
   }
 
+  clearChats(
+      String sender,
+      String senderName,
+      String time,
+      List<String> seenBy,
+      List<String> chatGroup,
+      List<String> peopleInChat,
+      bool isGroup,
+      String chatId,
+      String message,
+      String messageId) async {
+    var x =
+        await FirebaseFirestore.instance.collection('chats').doc(chatId).get();
+    List abc = x.data()!['chatGroup'];
+    abc.remove(FirebaseAuth.instance.currentUser!.uid);
+    await FirebaseFirestore.instance
+        .collection('chats')
+        .doc(chatId)
+        .set({'chatGroup': abc}, SetOptions(merge: true));
+  }
+
   factory ChatModel.fromDocument(DocumentSnapshot<Map<String, dynamic>> doc) {
     return ChatModel(
       sender: doc.data()!['sender'],
@@ -91,6 +117,7 @@ class ChatModel {
       time: doc.data()!['time'],
       seenBy: doc.data()!['seenBy'],
       chatGroup: doc.data()!['chatGroup'],
+      peopleInChat: doc.data()!['peopleInChat'],
       isGroup: doc.data()!['isGroup'],
       chatId: doc.data()!['chatId'],
       message: doc.data()!['message'],
