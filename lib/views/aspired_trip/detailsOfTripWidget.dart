@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
@@ -5,13 +7,28 @@ import '../../utils/constant.dart';
 import '../../widget/custom_button.dart';
 
 class DetailsOfTripWidget extends StatefulWidget {
-  DetailsOfTripWidget({required this.isShow});
+  DetailsOfTripWidget({required this.isShow, required this.MP});
   bool isShow;
+  final Map<String,dynamic> MP;
   @override
   State<DetailsOfTripWidget> createState() => _DetailsOfTripWidgetState();
 }
 
 class _DetailsOfTripWidgetState extends State<DetailsOfTripWidget> {
+  CollectionReference _collectionRef =
+  FirebaseFirestore.instance.collection('Travalar');
+  Future<void> getData() async {
+    // Get docs from collection reference
+    QuerySnapshot querySnapshot = await _collectionRef.get();
+    // Get data from docs and convert map to List
+    allData = querySnapshot.docs.map((doc) => doc.data()).toList();
+    setState(() {
+    });
+    print(allData);
+  }
+  List allData = [];
+
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -25,16 +42,26 @@ class _DetailsOfTripWidgetState extends State<DetailsOfTripWidget> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(
-                    'Booking id: 540986',
-                    style: bodyText16w600(color: black),
+                  Row(
+                    children: [
+                      Text('Booking ID :  ',style: TextStyle(color: Colors.black),),
+                      Text(
+                        widget.MP['bookingId'],
+                        style: bodyText16w600(color: black),
+                      ),
+                    ],
                   ),
-                  Text(
-                    'Your contact detail',
-                    style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        color: primary,
-                        decoration: TextDecoration.underline),
+                  InkWell(
+                    onTap: (){
+                      contactDialog(context);
+                    },
+                    child: Text(
+                      'Your contact detail',
+                      style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          color: primary,
+                          decoration: TextDecoration.underline),
+                    ),
                   )
                 ],
               )
@@ -45,14 +72,14 @@ class _DetailsOfTripWidgetState extends State<DetailsOfTripWidget> {
             style: bodyText18w600(color: black),
           ),
           addVerticalSpace(20),
-          DetailsOfTripData(),
+          DetailsOfTripData(MP: widget.MP),
           Text(
             'Includes',
             style: bodyText14normal(color: black.withOpacity(0.4)),
           ),
           addVerticalSpace(7),
           Text(
-            'Airport transfer, infant care, cab for Sightseeing',
+            widget.MP['Includes'],
             style: bodyText16w600(color: black),
           ),
           const Divider(
@@ -63,7 +90,7 @@ class _DetailsOfTripWidgetState extends State<DetailsOfTripWidget> {
           SizedBox(
               height: height(context),
               child: ListView.builder(
-                  itemCount: 6,
+                  itemCount: allData.length,
                   itemBuilder: (ctx, i) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,9 +107,17 @@ class _DetailsOfTripWidgetState extends State<DetailsOfTripWidget> {
                                       color: black.withOpacity(0.4)),
                                 ),
                                 addVerticalSpace(5),
-                                Text(
-                                  'Varun Travels',
-                                  style: bodyText18w600(color: black),
+                                Row(
+                                  children: [
+                                    Text(
+                                      allData[i]['name'],
+                                      style: bodyText18w600(color: black),
+                                    ),
+                                    Text(
+                                      ' Travalar',
+                                      style: bodyText18w600(color: black),
+                                    ),
+                                  ],
                                 ),
                                 RatingBar.builder(
                                   initialRating: 4.5,
@@ -110,13 +145,28 @@ class _DetailsOfTripWidgetState extends State<DetailsOfTripWidget> {
                                         style: bodyText14normal(
                                             color: black.withOpacity(0.4)),
                                       ),
-                                      Text(
-                                        '₹ 68,000 (total)',
-                                        style: bodyText14normal(color: black),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            '₹ :',
+                                            style: bodyText14normal(color: black),
+                                          ),Text(
+                                               allData[i]['cost']  ,
+                                            style: bodyText14normal(color: black),
+                                          ),Text(
+                                            ' (total)',
+                                            style: bodyText14normal(color: black),
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        'Booking id: 540986',
-                                        style: bodyText12Small(color: black),
+                                      Row(
+                                        children: [
+                                          Text('Booking ID : ',style: bodyText12Small(color: black)),
+                                          Text(
+                                            widget.MP['bookingId'],
+                                            style: bodyText12Small(color: black),
+                                          ),
+                                        ],
                                       )
                                     ],
                                   )
@@ -126,8 +176,11 @@ class _DetailsOfTripWidgetState extends State<DetailsOfTripWidget> {
                         addVerticalSpace(10),
                         RichText(
                             text: TextSpan(children: [
+                              TextSpan(
+                                  text: 'Est : ',
+                                  style: bodyText13normal(color: black)),
                           TextSpan(
-                              text: 'Est. 2013,',
+                              text: allData[i]['Est'],
                               style: bodyText13normal(color: black)),
                           TextSpan(
                               text: ' Know more',
@@ -138,11 +191,25 @@ class _DetailsOfTripWidgetState extends State<DetailsOfTripWidget> {
                             ? Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    'Package Costs: ₹ 68,000 (total)',
-                                    style: bodyText18w600(color: black),
+                                  Row(
+                                    children: [
+                                      Text('Package Costs : ₹ ', style: bodyText18w600(color: black),),
+                                      Text(
+                                        allData[i]['cost'],
+                                        style: bodyText18w600(color: black),
+                                      ),
+                                      Text(' (total)',style: bodyText18w600(color: black))
+                                    ],
                                   ),
-                                  const Text('Booking id: 540986'),
+                                  Row(
+                                    children: [
+                                      Text('Booking ID : ',style: bodyText12Small(color: black)),
+                                      Text(
+                                        widget.MP['bookingId'],
+                                        style: bodyText12Small(color: black),
+                                      ),
+                                    ],
+                                  ),
                                   addVerticalSpace(15),
                                 ],
                               )
@@ -275,7 +342,9 @@ class _DetailsOfTripWidgetState extends State<DetailsOfTripWidget> {
                                   ),
                                   addHorizontalySpace(20),
                                   InkWell(
-                                    onTap: () {},
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                    },
                                     child: Container(
                                       height: 35,
                                       width: width(context) * 0.3,
@@ -296,7 +365,7 @@ class _DetailsOfTripWidgetState extends State<DetailsOfTripWidget> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Package cost payment due date: 22nd october',
+                                    'Package cost payment due date: ${allData[i]['paymentdueDate']}',
                                     style: bodyText14w600(color: black),
                                   ),
                                   RichText(
@@ -368,6 +437,7 @@ class _DetailsOfTripWidgetState extends State<DetailsOfTripWidget> {
         ],
       ),
     );
+
   }
 
   showAlertDialog(BuildContext context) {
@@ -591,12 +661,74 @@ class _DetailsOfTripWidgetState extends State<DetailsOfTripWidget> {
               ),
             ));
   }
+  @override
+  void initState() {
+    getcontact();
+    getData();
+    super.initState();
+  }
+  String _email = "";
+  String _mobnum = "";
+  void getcontact() async{
+    if (FirebaseAuth.instance.currentUser != null) {
+      var details = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection('primaAccount')
+          .doc('profile')
+          .get();
+      _email = details.data()?['emailId'];
+      _mobnum = details.data()?['mobileNumber'];
+    }
+
+    setState(() {});
+  }
+  contactDialog(BuildContext context) {
+
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          contentPadding: const EdgeInsets.all(6),
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          content: Builder(
+            builder: (context) {
+              var height = MediaQuery.of(context).size.height;
+              var width = MediaQuery.of(context).size.width;
+
+              return Container(
+                height: 200,
+                child: Column(
+                  children: [
+                    addVerticalSpace(30),
+                    Text('Email ID :',style: TextStyle(color: primary),),
+                    addVerticalSpace(10),
+                    Text('$_email'),
+                    addVerticalSpace(10),
+                    Text('Mobile Number :',style: TextStyle(color: primary),),
+                    addVerticalSpace(10),
+                    Text('$_mobnum')
+                  ],
+                ),
+              );
+            },
+          ),
+        ));
+  }
 }
 
-class DetailsOfTripData extends StatelessWidget {
+class DetailsOfTripData extends StatefulWidget {
+  final Map<String,dynamic> MP;
   const DetailsOfTripData({
-    Key? key,
+    Key? key, required this.MP,
   }) : super(key: key);
+
+  @override
+  State<DetailsOfTripData> createState() => _DetailsOfTripDataState();
+}
+
+class _DetailsOfTripDataState extends State<DetailsOfTripData> {
+
 
   @override
   Widget build(BuildContext context) {
@@ -612,7 +744,7 @@ class DetailsOfTripData extends StatelessWidget {
             ),
             addVerticalSpace(5),
             Text(
-              'Family Trip',
+              widget.MP['tripType'],
               style: bodyText16w600(color: black),
             ),
             addVerticalSpace(15),
@@ -622,7 +754,7 @@ class DetailsOfTripData extends StatelessWidget {
             ),
             addVerticalSpace(5),
             Text(
-              'Sept 22, 2022',
+             widget.MP['date'],
               style: bodyText16w600(color: black),
             ),
             addVerticalSpace(15),
@@ -646,9 +778,19 @@ class DetailsOfTripData extends StatelessWidget {
               style: bodyText14normal(color: black.withOpacity(0.4)),
             ),
             addVerticalSpace(5),
-            Text(
-              '6 Adults 2 Childrens ',
-              style: bodyText16w600(color: black),
+            Row(
+              children: [
+                Text(
+                  widget.MP['Adults'],
+                  style: bodyText16w600(color: black),
+                ),
+                Text('  Adults ',style: TextStyle(color: Colors.black),),
+                Text(
+                  widget.MP['childer'],
+                  style: bodyText16w600(color: black),
+                ),
+                Text('  Childerns')
+              ],
             ),
             addVerticalSpace(15),
             Text(
@@ -656,9 +798,14 @@ class DetailsOfTripData extends StatelessWidget {
               style: bodyText14normal(color: black.withOpacity(0.4)),
             ),
             addVerticalSpace(5),
-            Text(
-              '4 Days & 3 Nights',
-              style: bodyText16w600(color: black),
+            Row(
+              children: [
+                Text(
+                  widget.MP['TripDays'],
+                  style: bodyText16w600(color: Colors.black),
+                ),
+                Text('  Days',style: TextStyle(color: Colors.black),)
+              ],
             ),
             addVerticalSpace(15),
             Text(
@@ -667,7 +814,7 @@ class DetailsOfTripData extends StatelessWidget {
             ),
             addVerticalSpace(5),
             Text(
-              '3 Star',
+              widget.MP['Hoteltype'],
               style: bodyText16w600(color: black),
             ),
             addVerticalSpace(15),
@@ -677,3 +824,4 @@ class DetailsOfTripData extends StatelessWidget {
     );
   }
 }
+

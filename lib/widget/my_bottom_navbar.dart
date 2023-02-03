@@ -58,7 +58,7 @@ class _MyBottomBarState extends State<MyBottomBar>
   TabController? tabController;
   final List<Widget> mainScreens = [
     HomeScreen(),
-    const UpcomingTripsScreen(),
+     UpcomingTripsScreen(),
     const Text(''),
     const InboxScreen(),
     const Text(''),

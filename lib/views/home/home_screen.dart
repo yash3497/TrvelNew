@@ -63,19 +63,6 @@ class _HomeScreenState extends State<HomeScreen> {
   String _festivalname ="";
   var date;
 
-
-  updatefestivalsdetail() async {
-    final _fireStore = FirebaseFirestore.instance;
-    await _fireStore
-        .collection("festivals")
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .update({
-      "Date": _date ?? "",
-      "festivalname": _festivalname ?? "",
-      "imageUrl": _image ?? "",
-    });
-  }
-
   void getfestivals() async{
     if (FirebaseAuth.instance.currentUser != null) {
       var festival = await FirebaseFirestore.instance
@@ -183,7 +170,7 @@ class _HomeScreenState extends State<HomeScreen> {
     print(featuredBannerDetails);
     setState(() {});
   }
-  final List sliderImg = [
+   List sliderImg = [
     'assets/images/slider1.png',
     'assets/images/slider1.png',
     'assets/images/slider1.png',
@@ -191,6 +178,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     getfestivals();
+    getData();
     getquick();
 
     LocationProvider _locationProvider = LocationProvider();
@@ -211,10 +199,22 @@ class _HomeScreenState extends State<HomeScreen> {
     //  });
     getFeaturedBannerDetails();
     print(FirebaseAuth.instance.currentUser!.uid+'================');
-
+    getData();
     super.initState();
   }
+  CollectionReference _collectionRef =
+  FirebaseFirestore.instance.collection('festivals');
 
+  Future<void> getData() async {
+    // Get docs from collection reference
+    QuerySnapshot querySnapshot = await _collectionRef.get();
+    // Get data from docs and convert map to List
+    allData = querySnapshot.docs.map((doc) => doc.data()).toList();
+    setState(() {
+    });
+    print(allData);
+  }
+  List allData = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -347,18 +347,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: bodyText20w700(color: black),
                     ),
                     InkWell(
-                      onTap: () async{
-                        if (FirebaseAuth.instance.currentUser != null)
-                        {
-                          festivalLocationProvider _locationProvider =
-                          festivalLocationProvider();
-                          await _locationProvider.fetchCurrentPosition();
-                          await _locationProvider.locationDeatials();
-                          festivalslocation();
-                          updatefestivalsdetail();
-                        }else{
-                          festivalsdetail();
-                        }
+                      onTap: () {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -379,10 +368,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: height(context) * 0.205,
                   child: ListView.builder(
                       physics: const BouncingScrollPhysics(),
-                      itemCount: 6,
+                      itemCount: 2,
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (ctx, i) {
-                        return i == 5
+                        return i == allData.length-1
                             ? Stack(
                           children: [
                             Container(
@@ -472,7 +461,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 SizedBox(
                                   height: height(context) * 0.13,
                                   width: width(context),
-                                  child: Image.network(_image
+                                  child: Image.network(allData[i]['imageUrl']
                                     ,
                                     fit: BoxFit.fill,
                                   ),
@@ -489,13 +478,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                         CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            '$_festivalname',
+                                            allData[i]['festivalname'],
                                             style:
                                             bodyText16w600(color: black),
                                           ),
                                           addVerticalSpace(5),
                                           Text(
-                                            '$date',
+                                            allData[i]['Date'].toDate().toString().split(" ").first,
                                             style:
                                             bodyText12Small(color: black),
                                           )
@@ -552,7 +541,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Padding(
                 padding: const EdgeInsets.only(left: 12.0),
                 child: Text(
-                  'Trips grouped together',
+                  'Experience grouped',
                   style: bodyText12Small(color: black.withOpacity(0.5)),
                 ),
               ),

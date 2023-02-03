@@ -1,6 +1,8 @@
 import 'dart:ui';
 
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:travel_app/utils/constant.dart';
@@ -18,6 +20,29 @@ class _SliderWidgetState extends State<SliderWidget> {
 
   // int inActive = 0;
   int _current = 0;
+  String _picks = "";
+  String _visitSeason = "";
+  String _image = "";
+  void getDetails() async{
+    if (FirebaseAuth.instance.currentUser != null) {
+      var trip = await FirebaseFirestore.instance
+          .collection('Aspired_trips')
+          .doc('Trip1')
+          .get();
+      _picks = trip.data()?['tripnumber'];
+      _visitSeason = trip.data()?['visitcategory'];
+      _image = trip.data()?['imageUrl'];
+    }
+    setState(() {
+
+    });
+  }
+
+  @override
+  void initState() {
+    getDetails();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,11 +108,11 @@ class _SliderWidgetState extends State<SliderWidget> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    'Lorem Ipsum',
+                                    '$_visitSeason',
                                     style: bodyText16normal(color: white),
                                   ),
                                   Text(
-                                    '12 Picks',
+                                    '$_picks Picks',
                                     style: bodyText16normal(color: white),
                                   )
                                 ],

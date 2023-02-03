@@ -5,12 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:intl/intl.dart';
-import 'package:travel_app/views/publish%20your%20trip/add_tourist_spots.dart';
-
-import '../../model/prima_profile_model.dart';
 import '../../utils/constant.dart';
 import '../../widget/custom_dropdown_button.dart';
 import '../../widget/custom_textfield.dart';
+import 'dart:developer';
+import 'package:travel_app/views/humburger_flow/upcoming_trips.dart';
+import 'package:travel_app/widget/custom_appbar.dart';
+import 'package:travel_app/widget/custom_button.dart';
+
+import '../../model/save_trip_model.dart';
 
 addPublishTripDetails() async {
   // Call the user's CollectionReference to add a new user
@@ -241,3 +244,17 @@ class _Step1State extends State<Step1> {
     );
   }
 }
+class Step4 extends StatefulWidget {
+  const Step4({Key? key}) : super(key: key);
+
+  @override
+  State<Step4> createState() => _Step4State();
+}
+
+class _Step4State extends State<Step4> {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
+

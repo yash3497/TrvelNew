@@ -510,223 +510,261 @@ class CustomTripDataList extends StatelessWidget {
   }
 }
 
-class TripLibraryDetailsScreen extends StatelessWidget {
+class TripLibraryDetailsScreen extends StatefulWidget {
   TripLibraryDetailsScreen({super.key});
 
+  @override
+  State<TripLibraryDetailsScreen> createState() => _TripLibraryDetailsScreenState();
+}
+
+class _TripLibraryDetailsScreenState extends State<TripLibraryDetailsScreen> {
   final List dayWiseList = ['Day 1', 'Day 2', 'Day 3'];
+
+  CollectionReference _collectionRef =
+  FirebaseFirestore.instance.collection('users')
+      .doc(FirebaseAuth.instance.currentUser!.uid)
+      .collection("upcomingtrip");
+  Future<void> getData() async {
+    // Get docs from collection reference
+    QuerySnapshot querySnapshot = await _collectionRef.get();
+    // Get data from docs and convert map to List
+    allData = querySnapshot.docs.map((doc) => doc.data()).toList();
+    setState(() {
+    });
+    print(allData);
+  }
+  List allData = [];
+
+  @override
+  void initState() {
+    getData();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-          SizedBox(
-            height: height(context),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    height: height(context) * 0.43,
-                    width: double.infinity,
-                    decoration: const BoxDecoration(
-                        image: DecorationImage(
-                            fit: BoxFit.fill,
-                            image: AssetImage('assets/images/temple.png'))),
-                    child: SafeArea(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Container(
-                            height: height(context) * 0.11,
-                            width: width(context) * 1,
-                            padding: const EdgeInsets.only(left: 5),
-                            color: black.withOpacity(0.5),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.location_on,
-                                      color: primary,
-                                      size: 20,
-                                    ),
-                                    Text(
-                                      'Udupi, Karnataka',
-                                      style: bodyText16normal(color: white),
-                                    ),
-                                  ],
-                                ),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.only(left: 8.0, top: 5),
-                                  child: Text(
-                                    'Family trip ',
-                                    style: bodyText14normal(color: white),
-                                  ),
-                                ),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.only(left: 8.0, top: 5),
-                                  child: Text(
-                                    'Feb 14 - 21, 2022',
-                                    style: bodyText13normal(color: white),
-                                  ),
-                                ),
-                                addVerticalSpace(10)
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                      height: height(context) * 1.3,
-                      child: ListView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          padding: EdgeInsets.zero,
-                          itemCount: dayWiseList.length,
-                          itemBuilder: (context, i) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12.0, vertical: 5),
+          ListView.builder(
+              padding: EdgeInsets.zero,
+              itemCount: dayWiseList.length,
+              itemBuilder: (context, i) {
+            return SizedBox(
+              height: height(context),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: height(context) * 0.43,
+                      width: double.infinity,
+                      decoration: const BoxDecoration(
+                          image: DecorationImage(
+                              fit: BoxFit.fill,
+                              image: AssetImage('assets/images/temple.png'))),
+                      child: SafeArea(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Container(
+                              height: height(context) * 0.11,
+                              width: width(context) * 1,
+                              padding: const EdgeInsets.only(left: 5),
+                              color: black.withOpacity(0.5),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(
-                                        dayWiseList[i],
-                                        style: bodyText20w700(color: black),
+                                      Icon(
+                                        Icons.location_on,
+                                        color: primary,
+                                        size: 20,
                                       ),
-                                      InkWell(
-                                          onTap: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        const TripMapScreen()));
-                                          },
-                                          child: Image.asset(
-                                              'assets/images/akar-icons_map.png'))
+                                      Text(
+                                        allData[i]['address'],
+                                        style: bodyText16normal(color: white),
+                                      ),
                                     ],
                                   ),
-                                  const Text('Monday, Feb 14 2022'),
-                                  addVerticalSpace(10),
-                                  SizedBox(
-                                    height: height(context) * 0.32,
-                                    child: ListView.builder(
-                                        physics:
-                                            const NeverScrollableScrollPhysics(),
-                                        itemCount: 2,
-                                        padding: EdgeInsets.zero,
-                                        itemBuilder: (context, i) {
-                                          return Column(
-                                            children: [
-                                              InkWell(
-                                                onTap: () {
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              const TouristSpotsScreen()));
-                                                },
-                                                child: Row(
-                                                  children: [
-                                                    Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Text(
-                                                          'Sri Krishna Math',
-                                                          style: bodyText18w600(
-                                                              color: black),
-                                                        ),
-                                                        const Text(
-                                                          'Religious,Culture',
-                                                          style: TextStyle(
-                                                              height: 1.4),
-                                                        ),
-                                                        SizedBox(
-                                                          width:
-                                                              width(context) *
-                                                                  0.56,
-                                                          child: Text(
-                                                            'Lorem Ipsum dolor sit amet Lorem Ipsum dolor  Lorem Ipsum dolor sit sit Lorem Ipsum dolor sit..',
-                                                            style:
-                                                                bodyText12Small(
-                                                                    spacing:
-                                                                        1.5,
-                                                                    color:
-                                                                        black),
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.only(left: 8.0, top: 5),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          allData[i]['tripType'],
+                                          style: bodyText14normal(color: white),
+                                        ),
+                                        Text(' Trip',style: bodyText14normal(color: white)),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.only(left: 8.0, top: 5),
+                                    child: Text(
+                                      'Feb 14 - 21, 2022',
+                                      style: bodyText13normal(color: white),
+                                    ),
+                                  ),
+                                  addVerticalSpace(10)
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                        height: height(context) * 1.3,
+                        child: ListView.builder(
+                            physics: const NeverScrollableScrollPhysics(),
+                            padding: EdgeInsets.zero,
+                            itemCount: dayWiseList.length,
+                            itemBuilder: (context, i) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12.0, vertical: 5),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          dayWiseList[i],
+                                          style: bodyText20w700(color: black),
+                                        ),
+                                        InkWell(
+                                            onTap: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          const TripMapScreen()));
+                                            },
+                                            child: Image.asset(
+                                                'assets/images/akar-icons_map.png'))
+                                      ],
+                                    ),
+                                    const Text('Monday, Feb 14 2022'),
+                                    addVerticalSpace(10),
+                                    SizedBox(
+                                      height: height(context) * 0.32,
+                                      child: ListView.builder(
+                                          physics:
+                                              const NeverScrollableScrollPhysics(),
+                                          itemCount: 2,
+                                          padding: EdgeInsets.zero,
+                                          itemBuilder: (context, i) {
+                                            return Column(
+                                              children: [
+                                                InkWell(
+                                                  onTap: () {
+                                                    Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                const TouristSpotsScreen()));
+                                                  },
+                                                  child: Row(
+                                                    children: [
+                                                      Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Text(
+                                                            'Sri Krishna Math',
+                                                            style: bodyText18w600(
+                                                                color: black),
                                                           ),
-                                                        ),
-                                                        addVerticalSpace(5),
-                                                        Row(
-                                                          children: [
-                                                            Text(
-                                                              'Learn more on ',
+                                                          const Text(
+                                                            'Religious,Culture',
+                                                            style: TextStyle(
+                                                                height: 1.4),
+                                                          ),
+                                                          SizedBox(
+                                                            width:
+                                                                width(context) *
+                                                                    0.56,
+                                                            child: Text(
+                                                              'Lorem Ipsum dolor sit amet Lorem Ipsum dolor  Lorem Ipsum dolor sit sit Lorem Ipsum dolor sit..',
                                                               style:
-                                                                  bodytext12Bold(
+                                                                  bodyText12Small(
+                                                                      spacing:
+                                                                          1.5,
                                                                       color:
                                                                           black),
                                                             ),
-                                                            Image.asset(
-                                                                'assets/images/google.png')
-                                                          ],
-                                                        )
-                                                      ],
-                                                    ),
-                                                    addHorizontalySpace(10),
-                                                    SizedBox(
-                                                        height:
-                                                            height(context) *
-                                                                0.12,
-                                                        child: Image.asset(
-                                                          'assets/images/agarbatti.png',
-                                                          fit: BoxFit.fill,
-                                                        ))
-                                                  ],
+                                                          ),
+                                                          addVerticalSpace(5),
+                                                          Row(
+                                                            children: [
+                                                              Text(
+                                                                'Learn more on ',
+                                                                style:
+                                                                    bodytext12Bold(
+                                                                        color:
+                                                                            black),
+                                                              ),
+                                                              Image.asset(
+                                                                  'assets/images/google.png')
+                                                            ],
+                                                          )
+                                                        ],
+                                                      ),
+                                                      addHorizontalySpace(10),
+                                                      SizedBox(
+                                                          height:
+                                                              height(context) *
+                                                                  0.12,
+                                                          child: Image.asset(
+                                                            'assets/images/agarbatti.png',
+                                                            fit: BoxFit.fill,
+                                                          ))
+                                                    ],
+                                                  ),
                                                 ),
-                                              ),
-                                              addVerticalSpace(15)
-                                            ],
-                                          );
-                                        }),
-                                  ),
-                                  // const Divider(
-                                  //   thickness: 1,
-                                  // ),
-                                ],
-                              ),
-                            );
-                          })),
-                  addVerticalSpace(30)
-                ],
+                                                addVerticalSpace(15)
+                                              ],
+                                            );
+                                          }),
+                                    ),
+                                    // const Divider(
+                                    //   thickness: 1,
+                                    // ),
+                                  ],
+                                ),
+                              );
+                            })),
+                    addVerticalSpace(30)
+                  ],
+                ),
               ),
-            ),
+            );
+  }
           ),
-          Positioned(
-            bottom: height(context) * 0.06,
-            left: width(context) * 0.17,
-            child: Center(
-                child: SizedBox(
-                    width: width(context) * 0.65,
-                    child: CustomButton(
-                        name: 'See your travel Utility',
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const TravelAgencyDetailsScreen()));
-                        }))),
-          )
+          // Positioned(
+          //   bottom: height(context) * 0.06,
+          //   left: width(context) * 0.17,
+          //   child: Center(
+          //       child: SizedBox(
+          //           width: width(context) * 0.65,
+          //           child: CustomButton(
+          //               name: 'See your travel Utility',
+          //               onPressed: () {
+          //                 Navigator.push(
+          //                     context,
+          //                     MaterialPageRoute(
+          //                         builder: (context) =>
+          //                            const TravelAgencyDetailsScreen(MP: widget,)));
+          //               }))),
+          // )
         ],
       ),
     );

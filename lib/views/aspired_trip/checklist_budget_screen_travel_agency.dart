@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -5,10 +7,39 @@ import 'package:travel_app/model/save_trip_model.dart';
 import 'package:travel_app/utils/constant.dart';
 import 'package:travel_app/widget/custom_button.dart';
 
-class CheckListAndBudgetScreen extends StatelessWidget {
-  CheckListAndBudgetScreen({super.key});
-  final items = ['1', '2', '3', '4', '6', '7', '8', '9', '10'];
+import '../../widget/custom_textfield.dart';
+
+class CheckListAndBudgetScreen extends StatefulWidget {
+  CheckListAndBudgetScreen({super.key, required this.MP});
+  final Map<String,dynamic> MP;
+  @override
+  State<CheckListAndBudgetScreen> createState() => _CheckListAndBudgetScreenState();
+}
+
+class _CheckListAndBudgetScreenState extends State<CheckListAndBudgetScreen> {
+  final items = [];
+  String _string = 'Take on rent';
   String? selectedValue = '1';
+
+  final TextEditingController iteamcontroller = TextEditingController();
+  final TextEditingController amountcontroller = TextEditingController();
+
+  updateitemacarry() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      var profile = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection("upcomingtrip")
+          .doc(widget.MP['postId'])
+          .update({
+        "iteamName": FieldValue.arrayUnion([iteamcontroller.text]),
+        "ItemType": FieldValue.arrayUnion([_string]),
+        "ruppes": FieldValue.arrayUnion([amountcontroller.text])
+
+      });
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,11 +54,7 @@ class CheckListAndBudgetScreen extends StatelessWidget {
                 style: bodyText18w600(color: black),
               ),
               Spacer(),
-              InkWell(
-                  onTap: () {
-                    saveItemforTravel(context);
-                  },
-                  child: Icon(Icons.edit)),
+
               addHorizontalySpace(6),
               InkWell(
                   onTap: () {
@@ -54,7 +81,7 @@ class CheckListAndBudgetScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         SizedBox(
-                          height: height(context) * 0.2,
+                          height: height(context) * 0.19,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,69 +90,30 @@ class CheckListAndBudgetScreen extends StatelessWidget {
                                 'Camera',
                                 style: bodyText14w600(color: black),
                               ),
-                              Text(
-                                'Medicine',
-                                style: bodyText14w600(color: black),
-                              ),
-                              Text(
-                                'Shopping',
-                                style: bodyText14w600(color: black),
-                              ),
-                              Text(
-                                'Drinks',
-                                style: bodyText14w600(color: black),
-                              ),
-                              Text(
-                                '',
-                                style: bodyText14w600(color: black),
-                              ),
                             ],
                           ),
                         ),
                         SizedBox(
                           height: height(context) * 0.19,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Row(children: [
-                                Text('Take on rent'),
-                                Icon(
-                                  Icons.arrow_drop_down_outlined,
-                                  color: primary,
+                          child:  Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment
+                                      .spaceEvenly,
+                                  children: [
+                                    Row(children: [
+                                      Text('Take on rent'),
+                                      Icon(
+                                        Icons.arrow_drop_down_outlined,
+                                        color: primary,
+                                      ),
+                                    ]),
+
+                                    Text(
+                                      'Total',
+                                      style: bodyText14w600(color: black),
+                                    )
+                                  ],
                                 ),
-                              ]),
-                              Row(children: [
-                                Text('Carry while travel'),
-                                Icon(
-                                  Icons.arrow_drop_down_outlined,
-                                  color: primary,
-                                ),
-                              ]),
-                              Row(
-                                children: [
-                                  Text('Buy while travel '),
-                                  Icon(
-                                    Icons.arrow_drop_down_outlined,
-                                    color: primary,
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Text('Buy while travel '),
-                                  Icon(
-                                    Icons.arrow_drop_down_outlined,
-                                    color: primary,
-                                  ),
-                                ],
-                              ),
-                              Text(
-                                'Total',
-                                style: bodyText14w600(color: black),
-                              )
-                            ],
-                          ),
                         ),
                         SizedBox(
                           height: height(context) * 0.2,
@@ -137,20 +125,9 @@ class CheckListAndBudgetScreen extends StatelessWidget {
                                 '1,000',
                                 style: bodyText14w600(color: black),
                               ),
+
                               Text(
-                                '0',
-                                style: bodyText14w600(color: black),
-                              ),
-                              Text(
-                                '5,000',
-                                style: bodyText14w600(color: black),
-                              ),
-                              Text(
-                                '3,300',
-                                style: bodyText14w600(color: black),
-                              ),
-                              Text(
-                                '9,300',
+                                '1,000',
                                 style: bodyText14w600(color: black),
                               ),
                             ],
@@ -202,174 +179,81 @@ class CheckListAndBudgetScreen extends StatelessWidget {
                           ))
                     ],
                   ),
-                  Text(
-                    'What to bring for the trip',
-                    style: bodyText16w600(color: black),
+                  CustomTextFieldWidget(
+                    //itemList: tripLocation,
+                      controller: iteamcontroller,
+                    labelText: 'Enter your item',
                   ),
-                  addVerticalSpace(height(context) * 0.02),
+                  addVerticalSpace(20),
                   Container(
-                      decoration:
-                          myFillBoxDecoration(0, black.withOpacity(0.1), 15),
-                      width: width(context) * 0.9,
-                      height: height(context) * 0.15,
-                      child: TextField(
-                        maxLines: 4,
-                        decoration: InputDecoration(
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.all(10),
-                            hintStyle: bodyText13normal(color: black),
-                            hintText:
-                                'Mention what’s incorrect with any reference if any For suggestion on multiple sections, please enter after each suggestion '),
-                      )),
-                  addVerticalSpace(height(context) * 0.02),
-                  Text(
-                    'Save items that you wish to have for trip',
-                    style: bodyText16w600(color: black),
-                  ),
-                  addVerticalSpace(15),
-                  SizedBox(
-                    height: height(context) * 0.3,
-                    child: ListView.builder(
-                        itemCount: saveWishList.length,
-                        itemBuilder: (ctx, i) {
-                          return Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        saveWishList[i].userName,
-                                        style: bodyText13normal(
-                                            color: black.withOpacity(0.4)),
-                                      ),
-                                      Text(
-                                        saveWishList[i].item,
-                                        style: bodyText14w600(color: black),
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        decoration: myOutlineBoxDecoration(
-                                            1, primary, 10),
-                                        height: height(context) * 0.04,
-                                        width: width(context) * 0.4,
-                                        // color: const Color(0xffF0F0F0),
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 8.0, top: 2, right: 8),
-                                          child: Center(
-                                            child: DropdownButton<String>(
-                                              value: saveWishList[i]
-                                                  .selectedValaue,
-                                              isExpanded: true,
-                                              onChanged: (newValue) {
-                                                setState(() {
-                                                  saveWishList[i]
-                                                          .selectedValaue =
-                                                      newValue!;
-                                                });
-                                              },
-                                              items: saveWishList[i]
-                                                  .dropDown
-                                                  .map<
-                                                          DropdownMenuItem<
-                                                              String>>(
-                                                      (String value) =>
-                                                          DropdownMenuItem<
-                                                              String>(
-                                                            value: value,
-                                                            child: Text(
-                                                              value,
-                                                              style:
-                                                                  bodytext12Bold(
-                                                                      color:
-                                                                          black),
-                                                            ),
-                                                          ))
-                                                  .toList(),
-
-                                              // add extra sugar..
-                                              icon: const Padding(
-                                                padding: EdgeInsets.only(
-                                                    bottom: 8.0),
-                                                child: Icon(
-                                                  Icons.arrow_drop_down,
-                                                ),
-                                              ),
-                                              iconSize: 25,
-                                              iconEnabledColor: primary,
-                                              iconDisabledColor:
-                                                  black.withOpacity(0.7),
-                                              underline: const SizedBox(),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  addHorizontalySpace(20),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        '1,000',
-                                        style: bodyText14w600(color: black),
-                                      ),
-                                      Icon(Icons.delete)
-                                    ],
-                                  )
-                                ],
-                              ),
-                              addVerticalSpace(10),
-                            ],
-                          );
-                        }),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      InkWell(
-                        onTap: () {},
-                        child: Container(
-                          height: height(context) * 0.04,
-                          width: width(context) * 0.4,
-                          decoration: myFillBoxDecoration(0, primary, 10),
-                          child: Center(
-                            child: Text(
-                              'Save',
-                              style: bodyText14w600(color: black),
-                            ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border(
+                        top: BorderSide(
+                          color: Colors.black
+,                        ),
+                          bottom: BorderSide(
+                              color: Colors.black
                           ),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {},
-                        child: Container(
-                          height: height(context) * 0.04,
-                          width: width(context) * 0.4,
-                          decoration: myOutlineBoxDecoration(1, primary, 10),
-                          child: Center(
-                            child: Text(
-                              'Add items',
-                              style: bodyText14w600(color: black),
-                            ),
+                          right: BorderSide(
+                              color: Colors.black
                           ),
-                        ),
+                          left: BorderSide(
+                              color: Colors.black
+                          )
                       )
-                    ],
-                  )
+                    ),
+                    child: Padding(
+                      padding:  EdgeInsets.only(left: 20),
+                      child: DropdownButton<String>(
+                        borderRadius: BorderRadius.circular(10),
+                        value: _string,
+                        isExpanded: true,
+                        onChanged: (newValue) {
+                          setState(() {
+                            _string = newValue!;
+                          });
+                        },
+                        items: ['Take on rent','Carry while travel','Buy while travel']
+                            .map<DropdownMenuItem<String>>(
+                                (String value) => DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(
+                                value,
+                                style: bodytext12Bold(color: black),
+                              ),
+                            ))
+                            .toList(),
+
+                        // add extra sugar..
+                        icon: const Padding(
+                          padding: EdgeInsets.only(bottom: 8.0),
+                          child: Icon(
+                            Icons.arrow_drop_down,
+                          ),
+                        ),
+                        iconSize: 25,
+                        iconEnabledColor: primary,
+                        iconDisabledColor: black.withOpacity(0.7),
+                        underline: const SizedBox(),
+                      ),
+                    ),
+                  ),
+                  addVerticalSpace(20),
+                  CustomTextFieldWidget(
+                    //itemList: tripLocation,
+                     controller: amountcontroller,
+                    labelText: 'Enter your amount',
+                  ),
+                  addVerticalSpace(30),
+                  CustomButton(name: 'Save', onPressed: (){
+                    Navigator.pop(context);
+                    updateitemacarry();
+                  })
                 ],
               ));
         });
       },
     );
-  }
+    }
 }

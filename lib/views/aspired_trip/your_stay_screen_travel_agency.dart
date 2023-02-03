@@ -1,16 +1,24 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../utils/constant.dart';
 import '../../widget/custom_button.dart';
 
 class YourStayScreen extends StatefulWidget {
-  const YourStayScreen({super.key});
-
+  const YourStayScreen({super.key, required this.MP});
+  final Map<String,dynamic> MP;
   @override
   State<YourStayScreen> createState() => _YourStayScreenState();
 }
 
 class _YourStayScreenState extends State<YourStayScreen> {
+
+@override
+  void initState() {
+    super.initState();
+  }
+
   bool isOpen = false;
   @override
   Widget build(BuildContext context) {
@@ -22,16 +30,24 @@ class _YourStayScreenState extends State<YourStayScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
-                  'Booking id: 540986',
-                  style: bodyText16w600(color: black),
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 140),
+                      child: Text('Booking ID : ',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w800),),
+                    ),
+                    Text(
+                      widget.MP['bookingId'],
+                      style: bodyText16w600(color: black),
+                    ),
+                  ],
                 ),
                 addVerticalSpace(15),
                 Container(
                   margin: EdgeInsets.all(10),
                   width: width(context) * 0.93,
                   child: Text(
-                    'Your travel advisors will send a response after the hotel booking process from them is completed Details of your stay at the hotel will be appearing here just before your trip starts.',
+                        widget.MP['bookingeresponse'],
                     textAlign: TextAlign.center,
                     style: bodyText14normal(
                         spacing: 1.4, color: black.withOpacity(0.5)),
@@ -64,9 +80,16 @@ class _YourStayScreenState extends State<YourStayScreen> {
                   Row(
                     children: [
                       Spacer(),
-                      Text(
-                        'Booking id: 540986',
-                        style: bodyText14w600(color: primary),
+                      Row(
+                        children: [
+                          Text(
+                            'Booking id: ',
+                            style: bodyText14w600(color: primary),
+                          ),
+                          Text(
+                            widget.MP['bookingId']
+                          )
+                        ],
                       )
                     ],
                   ),
@@ -97,7 +120,7 @@ class _YourStayScreenState extends State<YourStayScreen> {
                           ),
                           addVerticalSpace(5),
                           Text(
-                            '3 Star',
+                          widget.MP['Hoteltype'],
                             style: bodyText16w600(color: black),
                           ),
                           addVerticalSpace(15),
@@ -108,7 +131,7 @@ class _YourStayScreenState extends State<YourStayScreen> {
                           ),
                           addVerticalSpace(5),
                           Text(
-                            'Sept 22, 2022',
+                            widget.MP['date'],
                             style: bodyText16w600(color: black),
                           ),
                           addVerticalSpace(15),
@@ -123,9 +146,25 @@ class _YourStayScreenState extends State<YourStayScreen> {
                                 bodyText14normal(color: black.withOpacity(0.4)),
                           ),
                           addVerticalSpace(5),
-                          Text(
-                            '6 Adults 2 Childrens ',
-                            style: bodyText16w600(color: black),
+                          Row(
+                            children: [
+                              Text(
+                                widget.MP['Adults'],
+                                style: bodyText16w600(color: black),
+                              ),
+                              Text(
+                                ' Adults  ',
+                                style: bodyText16w600(color: black),
+                              ),
+                              Text(
+                                widget.MP['childer'],
+                                style: bodyText16w600(color: black),
+                              ),
+                              Text(
+                                ' Childerens',
+                                style: bodyText16w600(color: black),
+                              ),
+                            ],
                           ),
                           addVerticalSpace(15),
                           Text(
@@ -134,9 +173,17 @@ class _YourStayScreenState extends State<YourStayScreen> {
                                 bodyText14normal(color: black.withOpacity(0.4)),
                           ),
                           addVerticalSpace(5),
-                          Text(
-                            '4 Days & 3 Nights',
-                            style: bodyText16w600(color: black),
+                          Row(
+                            children: [
+                              Text(
+                              widget.MP['TripDays'],
+                                style: bodyText16w600(color: black),
+                              ),
+                              Text(
+                                ' Days',
+                                style: bodyText16w600(color: black),
+                              ),
+                            ],
                           ),
                           addVerticalSpace(15),
                         ],
