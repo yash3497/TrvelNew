@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -16,6 +18,46 @@ class ExploreTripSuggestionScreen extends StatefulWidget {
 class _ExploreTripSuggestionScreenState
     extends State<ExploreTripSuggestionScreen> {
   String _string = 'Shopping';
+  final TextEditingController suggestion1 = TextEditingController();
+  final TextEditingController suggestion2 = TextEditingController();
+  updateads() async {
+    final _fireStore = FirebaseFirestore.instance;
+    await _fireStore
+        .collection('Travalar')
+        .doc('Mahaveer_travalar')
+        .collection('Explore_ads')
+        .doc('Fatured')
+        .update({
+      "suggestion1" : suggestion1.text,
+      "suggestion2" : suggestion2.text
+
+    });
+  }
+  String _name ="";
+  String _address ="";
+  String _date ="";
+  void getDetails() async{
+    if (FirebaseAuth.instance.currentUser != null) {
+      var ads = await FirebaseFirestore.instance
+          .collection('Travalar')
+          .doc('Mahaveer_travalar')
+          .collection('Explore_ads')
+          .doc('Fatured')
+          .get();
+      _name = ads.data()?['name'];
+      _address = ads.data()?['address'];
+      _date = ads.data()?['date'];
+
+    }
+    setState(() {
+
+    });
+  }
+  @override
+  void initState() {
+    getDetails();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,11 +76,11 @@ class _ExploreTripSuggestionScreenState
         title: Column(
           children: [
             Text(
-              'Bhadrachalam, Telangana',
+              '$_name $_address',
               style: bodyText20w700(color: black),
             ),
             Text(
-              'Feb 16 - 17',
+              '$_date',
               style: bodyText14normal(color: black),
             )
           ],
@@ -56,7 +98,7 @@ class _ExploreTripSuggestionScreenState
             ),
             addVerticalSpace(20),
             Text(
-              'Bhadrachalam',
+              '$_name',
               style: bodyText18w600(color: black),
             ),
             addVerticalSpace(15),
@@ -109,6 +151,7 @@ class _ExploreTripSuggestionScreenState
                 decoration: myFillBoxDecoration(0, black.withOpacity(0.1), 15),
                 width: width(context) * 0.95,
                 child: TextField(
+                  controller: suggestion1,
                     maxLines: 4,
                     decoration: InputDecoration(
                       border: InputBorder.none,
@@ -122,6 +165,7 @@ class _ExploreTripSuggestionScreenState
                 decoration: myFillBoxDecoration(0, black.withOpacity(0.1), 15),
                 width: width(context) * 0.95,
                 child: TextField(
+                  controller: suggestion2,
                     maxLines: 2,
                     decoration: InputDecoration(
                       border: InputBorder.none,
@@ -142,6 +186,7 @@ class _ExploreTripSuggestionScreenState
                 child: CustomButton(
                     name: 'Send Suggestion',
                     onPressed: () {
+                      updateads();
                       suggestionOverlay(context);
                     }),
               ),

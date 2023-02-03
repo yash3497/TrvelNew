@@ -6,9 +6,16 @@ import 'package:travel_app/views/aspired_trip/save_trip_and_get_qoute.dart';
 import 'package:travel_app/widget/custom_button.dart';
 import 'package:travel_app/views/start/signup_with_social_media_screen.dart';
 import '../../model/home_model.dart';
+import '../../services/db/firebaseDB.dart';
 import '../../utils/constant.dart';
 import '../../widget/custom_appbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:travel_app/utils/constant.dart';
+import '../../../utils/constant.dart';
+import '../../widget/custom_overlaping_widget.dart';
+import '../../widget/custom_textfield.dart';
+import '../humburger_flow/my_account/trip_intrest_screen.dart';
+import '../humburger_flow/trip_library_screen.dart';
 
 var _count = 0;
 void getCount(_count) async {
@@ -39,11 +46,44 @@ class _FestivalAndCelebrationsScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-          preferredSize: Size.fromHeight(50),
-          child: CustomAppBar(
-            title: 'Festivals and Celebrations',
-          )),
+      appBar: AppBar(
+        elevation: 0,
+        centerTitle: true,
+        backgroundColor: white,
+        leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(
+              Icons.arrow_back_ios,
+              color: black,
+            )),
+        title: Text(
+          'Festivals and Celebrations',
+          style: bodyText20w700(color: black),
+
+        ),
+        actions: [
+          InkWell(
+            onTap: () {
+              filterDialog(context);
+            },
+            child: Row(
+              children: [
+                Text(
+                  'Filter',
+                  style: bodyText14w600(color: black),
+                ),
+                Icon(
+                  Icons.filter_alt_outlined,
+                  color: black,
+                ),
+                addHorizontalySpace(10)
+              ],
+            ),
+          ),
+        ],
+      ),
       body: Column(
         children: [
           SizedBox(
@@ -121,37 +161,77 @@ class _FestivalsDataListState extends State<FestivalsDataList> {
 
   @override
   void initState() {
-    getfestivals();
+    getData();
     super.initState();
+
   }
-  String _address = "";
-  var _date;
-  String _image ="";
-  String _festivalname = "";
-  var cartime;
-  var traintime;
-  void getfestivals() async{
-    if (FirebaseAuth.instance.currentUser != null) {
-      var festival = await FirebaseFirestore.instance
-          .collection('festivals')
+  CollectionReference _collectionRef =
+  FirebaseFirestore.instance.collection('festivals');
+
+  Future<void> getData() async {
+    // Get docs from collection reference
+    QuerySnapshot querySnapshot = await _collectionRef.get();
+    // Get data from docs and convert map to List
+    allData = querySnapshot.docs.map((doc) => doc.data()).toList();
+    setState(() {
+    });
+    print(allData);
+  }
+  List allData = [];
+
+  String _id = "";
+  String _location = "";
+  String _subtitle = "";
+  String _title = "";
+  String _imagee = "";
+  bool isBookmarked = false;
+  List Bookmarklist =[];
+  void bookmark() {
+    if (isBookmarked = false) {
+      Bookmarklist
+          .removeAt(Bookmarklist.indexOf(['name']));
+      CollectionReference users = FirebaseFirestore.instance
+          .collection('users');
+      users
           .doc(FirebaseAuth.instance.currentUser!.uid)
-          .get();
-
-      _festivalname = festival.data()?['festivalname'];
-      _image = festival.data()?['imageUrl'];
-      _date = festival.data()?['Date'].toDate().toString().split(" ").first;
-      _address = festival.data()?['locality'];
-      cartime = festival.data()?['CarTime'].toInt();
-      traintime = festival.data()?['TrainTime'].toInt();
+          .collection("bookmarks")
+          .add({
+        'id': _id,
+        'image': _imagee,
+        'location':_location,
+        'subtitle':_subtitle,
+        'title':_title,
+      });
+      setState(() {
+        isBookmarked = !isBookmarked;
+      });
+    } else
+   {
+      Bookmarklist.add(context);
+      CollectionReference users = FirebaseFirestore.instance
+          .collection('users');
+      users
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection("bookmarks")
+          .add({
+        'id': _id,
+        'image': _imagee,
+        'location':_location,
+        'subtitle':_subtitle,
+        'title':_title,
+      });
+      setState(() {
+      });
     }
-
-    setState(() {});
   }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
         height: height(context) * 0.87,
-        child: ListView.builder(itemBuilder: (ctx, index) {
+        child: ListView.builder(
+            itemCount: allData.length,
+            itemBuilder: (ctx, index) {
           return Column(
             children: [
               InkWell(
@@ -181,7 +261,7 @@ class _FestivalsDataListState extends State<FestivalsDataList> {
                 },
                 child: Container(
                   margin: EdgeInsets.only(top: 10, bottom: 5),
-                  height: height(context) * 0.36,
+                  height: height(context) * 0.370,
                   width: width(context) * 0.93,
                   decoration: shadowDecoration(15, 2),
                   child: Column(
@@ -191,16 +271,56 @@ class _FestivalsDataListState extends State<FestivalsDataList> {
                           Container(
                               height: 200,
                               width: 700,
-                              child: Image.network(_image)),
+                              child: Image.network(allData[index]['imageUrl'])),
                           Positioned(
                               top: -5,
                               right: -5,
                               child: IconButton(
-                                  onPressed: () {},
-                                  icon: Icon(
+                                  onPressed: () async {
+                                    // Navigator.push(context, MaterialPageRoute(builder: (context)=>TripLibraryScreen()));
+                                    //  bookmark();
+                                    if (!isBookmarked)  {
+
+                                             Bookmarklist.add(context);
+                                             DocumentReference users = FirebaseFirestore.instance
+                                                 .collection('users')
+                                                 .doc(FirebaseAuth.instance.currentUser!.uid)
+                                                 .collection("bookmarks")
+                                                 .doc();
+                                             users.set({
+                                             'id': _id,
+                                             "postID": users.id,
+                                             'image': _imagee,
+                                             'location':_location,
+                                             'subtitle':_subtitle,
+                                             'title':_title,
+                                             });
+                                             }
+                                             else {
+                                             var trip = await FirebaseFirestore.instance
+                                                 .collection('users')
+                                                 .doc(FirebaseAuth.instance.currentUser!.uid)
+                                                 .collection('bookmarks')
+                                                 .doc()
+                                                 .get();
+                                             var docID = trip.data()?['docID'];
+                                             FirebaseDB().removeBookmark(docID);
+                                             }
+                                             setState(() {
+                                             isBookmarked = !isBookmarked;
+                                             });
+
+                                    setState(() {
+                                      isBookmarked = !isBookmarked;
+                                    });
+                                  },
+                                  icon: !isBookmarked
+                                      ? Icon(
                                     Icons.bookmark_border,
-                                    color: white,
-                                  ))),
+                                    color: Colors.black,
+                                  )
+                                      : const Icon(Icons.bookmark)),
+                              ),
                           Positioned(
                               bottom: 0,
                               left: 0,
@@ -222,7 +342,7 @@ class _FestivalsDataListState extends State<FestivalsDataList> {
                                         ),
                                         addHorizontalySpace(5),
                                         Text(
-                                          '$_date',
+                                          allData[index]['Date'].toDate().toString().split(" ").first,
                                           style: TextStyle(
                                               fontWeight: FontWeight.w500,
                                               color: white),
@@ -238,7 +358,7 @@ class _FestivalsDataListState extends State<FestivalsDataList> {
                                         ),
                                         addHorizontalySpace(5),
                                         Text(
-                                          '$_address',
+                                          allData[index]['locality'],
                                           style: TextStyle(
                                               fontWeight: FontWeight.w500,
                                               color: white),
@@ -256,14 +376,17 @@ class _FestivalsDataListState extends State<FestivalsDataList> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '$_festivalname',
+                              allData[index]['festivalname'],
                               style: bodyText22w700(color: black),
                             ),
                             Text(
                               'Animal Husbandry dept & Stare Tourism dept',
                               style: bodyText14normal(color: black),
                             ),
-                            addVerticalSpace(10),
+                            addVerticalSpace(5),
+                            OverlapingImageCustomWidget(
+                                overlap: overlap),
+                            addVerticalSpace(5),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
@@ -274,7 +397,7 @@ class _FestivalsDataListState extends State<FestivalsDataList> {
                                 SizedBox(
                                   width: width(context) * 0.15,
                                   child: Text(
-                                    '$cartime hours',
+                                    allData[index]['CarTime'].toString(),
                                     style: bodytext12Bold(color: black),
                                   ),
                                 ),
@@ -289,7 +412,7 @@ class _FestivalsDataListState extends State<FestivalsDataList> {
                                 SizedBox(
                                   width: width(context) * 0.15,
                                   child: Text(
-                                    '$traintime hours',
+                                    allData[index]['TrainTime'].toString(),
                                     style: bodytext12Bold(color: black),
                                   ),
                                 ),
@@ -323,9 +446,139 @@ class _FestivalsDataListState extends State<FestivalsDataList> {
   }
 }
 
-class ShowDetailsOfFestivals extends StatelessWidget {
+class ShowDetailsOfFestivals extends StatefulWidget {
   ShowDetailsOfFestivals({super.key});
 
+  @override
+  State<ShowDetailsOfFestivals> createState() => _ShowDetailsOfFestivalsState();
+}
+
+class _ShowDetailsOfFestivalsState extends State<ShowDetailsOfFestivals> {
+
+  @override
+  void initState() {
+    getfestivals();
+    getpermission();
+    super.initState();
+  }
+  String _address = "";
+  var _date;
+  String _image ="";
+  String _festivalname = "";
+  String _about = "";
+  var cartime;
+  var traintime;
+  List _nearbytouristname = [];
+  List _nearbyturistimage = [];
+  String _includes="";
+  void getfestivals() async{
+    if (FirebaseAuth.instance.currentUser != null) {
+      var festival = await FirebaseFirestore.instance
+          .collection('festivals')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+
+      _festivalname = festival.data()?['festivalname'];
+      _image = festival.data()?['imageUrl'];
+      _date = festival.data()?['Date'].toDate().toString().split(" ").first;
+      _address = festival.data()?['locality'];
+      _about = festival.data()?['about'];
+      _nearbytouristname = festival.data()?['nearbytouristname'];
+      _nearbyturistimage = festival.data()?['nearbyturistimage'];
+      _includes = festival.data()?['includes'];
+    }
+
+    setState(() {});
+  }
+  String _mobileNum = "";
+  String _email = "";
+  void getpermission() async{
+    if (FirebaseAuth.instance.currentUser != null) {
+      var per = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+      .collection('primaAccount')
+      .doc('profile')
+          .get();
+          _mobileNum = per.data()?['mobileNumber'];
+          _email = per.data()?['emailId'];
+    }
+
+    setState(() {});
+
+    print('$_mobileNum');
+    print('$_email');
+  }
+
+  String _id = "";
+  String _location = "";
+  String _subtitle = "";
+  String _title = "";
+  String _imagee = "";
+  bool isBookmarked = false;
+  List Bookmarklist =[];
+  void bookmark() {
+    if (isBookmarked = false) {
+      Bookmarklist
+          .removeAt(Bookmarklist.indexOf(['name']));
+      CollectionReference users = FirebaseFirestore.instance
+          .collection('users');
+      users
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection("bookmarks")
+          .add({
+        'id': _id,
+        'image': _imagee,
+        'location':_location,
+        'subtitle':_subtitle,
+        'title':_title,
+      });
+      setState(() {
+        isBookmarked = !isBookmarked;
+      });
+    } else
+    {
+      Bookmarklist.add(context);
+      CollectionReference users = FirebaseFirestore.instance
+          .collection('users');
+      users
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection("bookmarks")
+          .add({
+        'id': _id,
+        'image': _imagee,
+        'location':_location,
+        'subtitle':_subtitle,
+        'title':_title,
+      });
+      setState(() {
+      });
+    }
+  }
+  addsavetrip() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      var profile = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection("upcomingtrip")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .set({
+      });
+      setState(() {});
+    }
+  }
+  updatesavetrip() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      var profile = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection("upcomingtrip")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({
+      });
+      setState(() {});
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -339,10 +592,10 @@ class ShowDetailsOfFestivals extends StatelessWidget {
                 Container(
                   height: height(context) * 0.42,
                   width: double.infinity,
-                  decoration: const BoxDecoration(
+                  decoration:  BoxDecoration(
                       image: DecorationImage(
                           fit: BoxFit.fill,
-                          image: AssetImage('assets/images/festivalmain.png'))),
+                          image: NetworkImage(_image))),
                   child: SafeArea(
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -365,7 +618,9 @@ class ShowDetailsOfFestivals extends StatelessWidget {
                             icon: Icon(Icons.arrow_back_ios)),
                         Spacer(),
                         IconButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              bookmark();
+                            },
                             icon: Icon(Icons.bookmark_border_rounded)),
                         const Padding(
                           padding: EdgeInsets.only(right: 12.0, top: 10),
@@ -382,12 +637,12 @@ class ShowDetailsOfFestivals extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Nagaur Cattle Festival',
+                        '$_festivalname',
                         style: bodyText30W600(color: black),
                       ),
-                      Text(
-                        'Religious, Culture.',
-                      ),
+                      // Text(
+                      //   'Religious, Culture.',
+                      // ),
                       addVerticalSpace(8),
                       Row(
                         children: [
@@ -396,7 +651,7 @@ class ShowDetailsOfFestivals extends StatelessWidget {
                             color: primary,
                           ),
                           Text(
-                            'Nagaur, Rajasthan',
+                            '$_address',
                             style: bodyText16normal(color: black),
                           )
                         ],
@@ -408,7 +663,7 @@ class ShowDetailsOfFestivals extends StatelessWidget {
                       ),
                       addVerticalSpace(5),
                       Text(
-                        'The Krishna Matha was founded by the Vaishnavite saint Jagadguru Shri Madhvacharya in the 13th century. He was the founder of the Dwaita school of Vedanta.It is believed that Madhwacharya found the vigraha of Shri Krishna in a large ball of gopichandana.',
+                        '$_about',
                         style: TextStyle(
                             height: 1.3,
                             fontSize: 18,
@@ -474,14 +729,14 @@ class ShowDetailsOfFestivals extends StatelessWidget {
                                     height: height(context) * 0.12,
                                     width: width(context) * 0.37,
                                     child: Image.asset(
-                                      nearbySpots[i]['img'],
+                                      _nearbyturistimage[i],
                                       fit: BoxFit.fill,
                                     ),
                                   ),
                                 ),
                                 addVerticalSpace(5),
                                 Text(
-                                  nearbySpots[i]['name'],
+                                  _nearbytouristname[i],
                                 )
                               ]);
                             }),
@@ -493,7 +748,7 @@ class ShowDetailsOfFestivals extends StatelessWidget {
                       ),
                       addVerticalSpace(5),
                       Text(
-                        'The Krishna Matha was founded by the Vaishnavite saint Jagadguru Shri Madhvacharya in the 13th century. He was the founder of the Dwaita school of Vedanta.It is believed that Madhwacharya found the vigraha of Shri Krishna in a large ball of gopichandana.',
+                        '$_includes',
                         style: TextStyle(
                             height: 1.3,
                             fontSize: 18,
@@ -511,19 +766,287 @@ class ShowDetailsOfFestivals extends StatelessWidget {
             bottom: height(context) * 0.05,
             left: 9,
             child: CustomButton(
+
                 name: 'Interested! Save Trip and Get Quote',
                 onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (ctx) => SaveTripAndGetQuote(
-                              message1:
-                              'The best mode of travel and travel booking will be suggested by our travel partner for this trip',
-                              message2: '')));
+                  if(_email == "" || _mobileNum == ""){
+                    NumberpoppubDialog(context);
+                    }
+                  else {
+                    if(FirebaseAuth.instance.currentUser!.uid !=
+                        null){
+                      updatesavetrip();
+                      // addsavetrip();
+                    }else{
+                      updatesavetrip();
+                    }
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (ctx) =>
+                                SaveTripAndGetQuote(
+                                    message1:
+                                    'The best mode of travel and travel booking will be suggested by our travel partner for this trip',
+                                    message2: '')));
+                  }
                 }),
           )
         ],
       ),
+    );
+  }
+}
+filterDialog(BuildContext context) {
+
+  showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        contentPadding: const EdgeInsets.all(6),
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10.0))),
+        content: Builder(
+          builder: (context) {
+            var height = MediaQuery.of(context).size.height;
+            var width = MediaQuery.of(context).size.width;
+
+            return Container(
+                height: 500,
+                child: YourFilter());
+                      },
+        ),
+      ));
+}
+NumberpoppubDialog(BuildContext context) {
+
+  final TextEditingController mobileNumber = TextEditingController();
+  final TextEditingController emailcontroller = TextEditingController();
+
+  updatePrimaAccountDetails() async {
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    users
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection("primaAccount")
+        .doc("profile")
+        .update({
+      "mobileNumber": mobileNumber.text,
+      "emailId": emailcontroller.text,
+    })
+        .then((value) => print("Details Updated"))
+        .catchError((error) => print("Failed to Update users Details: $error"));
+  }
+
+  showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        contentPadding: const EdgeInsets.all(6),
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10.0))),
+        content: Builder(
+          builder: (context) {
+            var height = MediaQuery.of(context).size.height;
+            var width = MediaQuery.of(context).size.width;
+
+            return Container(
+                height: 500,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Text('Your contact details are required for Travel operators to contact and send the booking details',style: TextStyle(fontSize: 20),),
+                    ),
+                    addVerticalSpace(15),
+                        SizedBox(
+                            height: 37,
+                            width: width * 0.65,
+                            child: CustomTextFieldWidget(
+                              labelText: 'Mobile number',
+                              controller: mobileNumber,
+                            )),
+                        addVerticalSpace(10),
+                        SizedBox(
+                            height: 37,
+                            width: width * 0.65,
+                            child: CustomTextFieldWidget(
+                              labelText: 'Email',
+                              controller: emailcontroller,
+                            )),
+                    addVerticalSpace(10),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 15),
+                      child: chekbox(),
+                    ),
+                    addVerticalSpace(30),
+                    Container(
+                        width: 255,
+                        child: CustomButton(name: 'Submit',
+                            onPressed: (){
+                          updatePrimaAccountDetails();
+                          Navigator.pop(context);
+                        }))
+
+                  ],
+                )
+
+            );
+          },
+        ),
+      ));
+}
+
+class YourFilter extends StatefulWidget {
+  @override
+  _YourFilterState createState() => _YourFilterState();
+}
+
+class _YourFilterState extends State<YourFilter> {
+  List chipList = [
+    {'name': "Temple festivals", 'isSelect': false},
+    {'name': "Local festivals", 'isSelect': false},
+    {'name': "Local melas", 'isSelect': false},
+    {'name': "Big festivals", 'isSelect': false},
+    {'name': "Cattle festivals", 'isSelect': false},
+
+  ];
+
+  void getFilteredfestival() async{
+    for (var element in chipList) {
+      if (chipList.isEmpty) {
+        if ((element['festivalname'] ?? '')
+            .toString()
+            .toLowerCase()
+            .contains(chipList.toString().toLowerCase())) {
+          FirebaseFirestore.instance
+              .collection('festivals')
+              .doc(FirebaseAuth.instance.currentUser!.uid)
+              .get();
+          print('festival filtered');
+        }
+      }
+    }
+    Navigator.pop(context);
+setState(() {
+
+});
+  }
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Scaffold(
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Your Filter',
+                        style: bodyText18w600(color: black),
+                      ),
+                    ],
+                  ),
+                ),
+                FilterWidget(chipName: chipList),
+                addVerticalSpace(15),
+                Positioned(
+                  bottom: 30,
+                  left: width(context) * 0.25,
+                  child: SizedBox(
+                    width: width(context) * 0.5,
+                    child: CustomButton(name: 'use',
+                        onPressed: () {
+                         getFilteredfestival();
+                        //  Navigator.pop(context);
+                        }),
+                  ),
+                )
+              ],
+            ),
+          ),
+
+        ],
+      ),
+    );
+  }
+}
+class FilterWidget extends StatefulWidget {
+  final List chipName;
+
+  FilterWidget({required this.chipName});
+
+  @override
+  _FilterWidgetState createState() => _FilterWidgetState();
+}
+
+class _FilterWidgetState extends State<FilterWidget> {
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: height(context) * 0.30,
+      child: GridView.builder(
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: widget.chipName.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2, childAspectRatio: 2.8),
+          itemBuilder: (ctx, i) {
+            return InkWell(
+              onTap: () {
+                setState(() {
+                  widget.chipName[i]['isSelect'] =
+                  !widget.chipName[i]['isSelect'];
+                });
+              },
+              child:
+              Container(
+                margin: EdgeInsets.all(5),
+                height: height(context) * 0.045,
+                width: width(context) * 0.3,
+                decoration: widget.chipName[i]['isSelect']
+                    ? myFillBoxDecoration(0, primary, 50)
+                    : myOutlineBoxDecoration(2, primary, 50),
+                child: Center(
+                  child: Text(widget.chipName[i]['name']),
+                ),
+              ),
+            );
+          }),
+    );
+  }
+}
+class chekbox extends StatefulWidget {
+  const chekbox({Key? key}) : super(key: key);
+
+  @override
+  State<chekbox> createState() => _chekboxState();
+}
+
+class _chekboxState extends State<chekbox> {
+  bool value = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child:
+        Row(
+          children: [
+            Checkbox(
+              value: this.value,
+             activeColor: primary,
+              checkColor: Colors.black,
+              onChanged: (bool? value) {
+                setState(() {
+                  this.value = value!;
+                });
+              },
+            ),
+           Text('Save to my profile',style: TextStyle(fontSize: 18),),
+          ],
+        ),
+
     );
   }
 }

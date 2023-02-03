@@ -88,7 +88,7 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
         "Annivarsary": annivarsaryDate.text,
         'profession': professionController.text,
         // "maritalStatus": statusController,
-      "gender": FieldValue.arrayRemove([genderController]),
+     // "gender": FieldValue.arrayRemove([genderController]),
        // John Doe
       //"governmentId": IdUrl, // 42
       "aboutme":   aboutMeController.text,
@@ -785,7 +785,6 @@ class _TripometerWidgetState extends State<TripometerWidget> {
                             child: Slider(
                               value: tripoMeterList[i]['value'],
                               onChanged: (value) {
-                               //tripoMeterList1[i]['value'] = value;
                                 tripoMeterList[i]['value'] = value;
                                 print(tripoMeterList[i]['value']);
                                 setState(() {

@@ -1,13 +1,17 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:travel_app/views/aspired_trip/aspired_trip_details_screen.dart';
 import 'package:travel_app/widget/custom_appbar.dart';
+import 'package:travel_app/widget/custom_button.dart';
 import 'package:travel_app/widget/custom_textfield.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../services/db/firebaseDB.dart';
 import '../../utils/constant.dart';
 import 'package:travel_app/views/start/signup_with_social_media_screen.dart';
+import 'package:travel_app/views/humburger_flow/trip_library_screen.dart';
 
 var _count = 0;
 void getCount(_count) async {
@@ -136,12 +140,89 @@ class AspiredTrip2Screen extends StatefulWidget {
 
 class _AspiredTrip2ScreenState extends State<AspiredTrip2Screen> {
   bool isShow = false;
+
+  String _destination = "";
+  String _state ="";
+  String _tripdays ="";
+  String _excerpttrip ="";
+  String _budget ="";
+  String _image ="";
+  String _tripname ="";
+
+  void getDetails() async{
+    if (FirebaseAuth.instance.currentUser != null) {
+      var trip = await FirebaseFirestore.instance
+          .collection('Aspired_trips')
+          .doc('Trip1')
+          .get();
+      _destination = trip.data()?['destinationname'];
+       _state = trip.data()?['statename'];
+       _tripdays = trip.data()?['tripdays'];
+       _excerpttrip = trip.data()?['Excerpt_of_trip'];
+       _budget = trip.data()?['Budget'];
+       _image = trip.data()?['imageUrl'];
+       _tripname = trip.data()?['tripname'];
+    }
+    setState(() {});
+  }
+
+  String _id = "";
+  String _location = "";
+  String _subtitle = "";
+  String _title = "";
+  String _imagee = "";
+  bool isBookmarked = false;
+  List Bookmarklist =[];
+  void bookmark() {
+    if (isBookmarked) {
+      Bookmarklist
+          .removeAt(Bookmarklist.indexOf(['postID']));
+      // CollectionReference users = FirebaseFirestore.instance
+      //     .collection('users');
+      // users
+      //     .doc(FirebaseAuth.instance.currentUser!.uid)
+      //     .collection("bookmarks")
+      //     .add({
+      //   'id': _id,
+      //   'image': _imagee,
+      //   'location':_location,
+      //   'subtitle':_subtitle,
+      //   'title':_title,
+      // });
+      // setState(() {
+      //   isBookmarked = !isBookmarked;
+      // });
+    } else
+    {
+      Bookmarklist.add(context);
+      CollectionReference users = FirebaseFirestore.instance
+          .collection('users');
+      users
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection("bookmarks")
+          .add({
+        'id': _id,
+        'image': _imagee,
+        'location':_location,
+        'subtitle':_subtitle,
+        'title':_title,
+      });
+      // setState(() {
+      // });
+    }
+  }
+
+  @override
+  void initState() {
+    getDetails();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
-          Expanded(child: ListView.builder(itemBuilder: (ctx, i) {
+          Expanded(child: ListView.builder(itemCount:1,itemBuilder: (ctx, i) {
             return InkWell(
               onTap: () {
                 if (FirebaseAuth.instance.currentUser != null) {
@@ -166,7 +247,7 @@ class _AspiredTrip2ScreenState extends State<AspiredTrip2Screen> {
               },
               child: Container(
                 margin: EdgeInsets.all(10),
-                height: height(context) * 0.35,
+                height: height(context) * 0.36,
                 width: width(context) * 0.95,
                 decoration: shadowDecoration(15, 0.2),
                 child: Column(
@@ -177,16 +258,52 @@ class _AspiredTrip2ScreenState extends State<AspiredTrip2Screen> {
                             borderRadius: const BorderRadius.only(
                                 topLeft: Radius.circular(15),
                                 topRight: Radius.circular(15)),
-                            child: Image.asset('assets/images/beach.png')),
+                            child: Image.network(_image)),
                         Positioned(
-                            top: -5,
-                            right: -5,
-                            child: IconButton(
-                                onPressed: () {},
-                                icon: Icon(
-                                  Icons.bookmark_border,
-                                  color: white,
-                                ))),
+                          top: -5,
+                          right: -5,
+                          child: IconButton(
+                              onPressed: ()  async{
+                              //  Navigator.push(context, MaterialPageRoute(builder: (context)=>TripLibraryScreen()));
+                               // bookmark();
+                                if (!isBookmarked) {
+
+                                  Bookmarklist.add(context);
+                                  DocumentReference users = FirebaseFirestore.instance
+                                      .collection('users')
+                                      .doc(FirebaseAuth.instance.currentUser!.uid)
+                                      .collection("bookmarks")
+                                      .doc();
+                                  users.set({
+                                    'id': _id,
+                                    "postID": users.id,
+                                    'image': _imagee,
+                                    'location':_location,
+                                    'subtitle':_subtitle,
+                                    'title':_title,
+                                  });
+                                }
+                                else {
+                                  var trip = await FirebaseFirestore.instance
+                                      .collection('users')
+                                      .doc(FirebaseAuth.instance.currentUser!.uid)
+                                      .collection('bookmarks')
+                                      .doc()
+                                      .get();
+                                  var docID = trip.data()?['docID'];
+                                  FirebaseDB().removeBookmark(docID);
+                                }
+                                setState(() {
+                                  isBookmarked = !isBookmarked;
+                                });
+                              },
+                              icon: !isBookmarked
+                                  ? Icon(
+                                Icons.bookmark_border,
+                                color: white,
+                              )
+                                  : const Icon(Icons.bookmark)),
+                        ),
                         Positioned(
                             bottom: 0,
                             left: 0,
@@ -210,15 +327,15 @@ class _AspiredTrip2ScreenState extends State<AspiredTrip2Screen> {
                                         ),
                                         addHorizontalySpace(5),
                                         Text(
-                                          'Panvel, Maharashtra',
+                                          '$_destination, $_state',
                                           style: TextStyle(
                                               fontWeight: FontWeight.w500,
                                               color: white),
                                         ),
                                         Spacer(),
                                         Text(
-                                          '1-2 Days',
-                                          style: bodyText14w600(color: white),
+                                          '$_tripdays Days',
+                                          style: bodyText14w600(color: Colors.yellow),
                                         )
                                       ],
                                     ),
@@ -230,26 +347,39 @@ class _AspiredTrip2ScreenState extends State<AspiredTrip2Screen> {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(10.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Row(
                         children: [
-                          Text(
-                            'Trek to Karnala fort',
-                            style: bodyText22w700(color: black),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '$_tripname',
+                                style: bodyText22w700(color: black),
+                              ),
+                              addVerticalSpace(7),
+                              Text(
+                                '$_excerpttrip',
+                                style: bodyText14normal(color: black),
+                              ),
+                           //   addVerticalSpace(4),
+                              Row(
+                                children: [
+                                  Text(
+                                    'Expected ₹: $_budget /per person',
+                                    style: bodyText14w600(color: black),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 140),
+                                    child: TextButton(child: Text('get quotes'), onPressed: (){}),
+                                  )
+                                ],
+                              )
+                            ],
                           ),
-                          addVerticalSpace(7),
-                          Text(
-                            'Experience pleasant and cool environment with sce',
-                            style: bodyText14normal(color: black),
-                          ),
-                          addVerticalSpace(4),
-                          Text(
-                            'Expected ₹: 2,000/per person',
-                            style: bodyText14w600(color: black),
-                          )
                         ],
                       ),
-                    )
+                    ),
+
                   ],
                 ),
               ),
