@@ -26,6 +26,7 @@ class _PrimaProfileScreenState extends State<PrimaProfileScreen> {
   @override
   void initState() {
     getDetails();
+    getphotoData();
     getlocationDetails();
     super.initState();
   }
@@ -49,14 +50,16 @@ class _PrimaProfileScreenState extends State<PrimaProfileScreen> {
           .collection('primaAccount')
           .doc('profile')
           .get();
-      image = profile.data()?['profileImg'];
-      Name = profile.data()?['fullName'];
+      image = profile.data()?['imageUrl'];
       Name = profile.data()?['fullName'];
       _profession = profile.data()?['profession'];
       _aboutme = profile.data()?['aboutme'];
       _otherintrest = profile.data()?['userInterest'];
-      setState(() {});
+
     }
+    setState(() {
+
+    });
   }
 
   String _address = "";
@@ -132,6 +135,23 @@ class _PrimaProfileScreenState extends State<PrimaProfileScreen> {
       TextSpan(text: "My activity feeds")
     ]));
   }
+  CollectionReference _collectionRef =
+  FirebaseFirestore.instance
+      .collection('users')
+      .doc(FirebaseAuth.instance.currentUser!.uid)
+      .collection("primaAccount")
+      .doc('profile')
+      .collection('travel_photo');
+  Future<void> getphotoData() async {
+    // Get docs from collection reference
+    QuerySnapshot querySnapshot = await _collectionRef.get();
+    // Get data from docs and convert map to List
+    allphotoData = querySnapshot.docs.map((doc) => doc.data()).toList();
+    setState(() {
+    });
+    print(allphotoData);
+  }
+  List allphotoData = [];
 
   @override
   Widget build(BuildContext context) {
@@ -421,7 +441,7 @@ class _PrimaProfileScreenState extends State<PrimaProfileScreen> {
                           height: height(context) * 0.13,
                           child: ListView.builder(
                               scrollDirection: Axis.horizontal,
-                              itemCount: travelPhoto.length,
+                              itemCount: allphotoData.length,
                               itemBuilder: (ctx, i) {
                                 return Padding(
                                   padding: const EdgeInsets.only(right: 8.0),
@@ -432,8 +452,8 @@ class _PrimaProfileScreenState extends State<PrimaProfileScreen> {
                                       SizedBox(
                                         height: height(context) * 0.11,
                                         width: width(context) * 0.23,
-                                        child: Image.asset(
-                                          travelPhoto[i],
+                                        child: Image.network(
+                                          allphotoData[i]['travelphotoUrl'],
                                           fit: BoxFit.fill,
                                         ),
                                       ),
@@ -792,7 +812,7 @@ class _TripFriendsAndMutualFriendsWidgetState
     }
     print(tripAndMutualfrnds);
     print('|||||||||||||||||||||||||||||||');setState(() {
-      
+
     });
   }
 
@@ -838,6 +858,7 @@ class _TripFriendsAndMutualFriendsWidgetState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   addVerticalSpace(10),
+                  if(tripAndMutualfrnds.length!=null )
                   SizedBox(
                     height: height(context) * 0.14,
                     child: ListView.builder(
@@ -846,20 +867,22 @@ class _TripFriendsAndMutualFriendsWidgetState
                         itemBuilder: (ctx, i) {
                           return InkWell(
                             onTap: (() {
-                              
-                              Navigator.push(context, MaterialPageRoute(builder: (_)=>UserPrimaProfileScreen(userDetails: tripAndMutualfrnds[i])));
+
+                             // Navigator.push(context, MaterialPageRoute(builder: (_)=>UserPrimaProfileScreen(userDetails: tripAndMutualfrnds[i])));
                             }),
                             child: Padding(
                               padding: const EdgeInsets.only(right: 8.0),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  SizedBox(
-                                    height: height(context) * 0.11,
-                                    width: width(context) * 0.23,
-                                    child: Image.asset(
-                                      tripAndMutualfrnds[i]['profileImg'],
-                                      fit: BoxFit.fill,
+                                  Container(
+                                    child: SizedBox(
+                                      height: height(context) * 0.11,
+                                      width: width(context) * 0.23,
+                                      child: Image.asset(
+                                        tripAndMutualfrnds[i]['profileImg'],
+                                        fit: BoxFit.fill,
+                                      ),
                                     ),
                                   ),
                                   addVerticalSpace(5),
@@ -883,48 +906,48 @@ class _TripFriendsAndMutualFriendsWidgetState
                   )
                 ],
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  addVerticalSpace(10),
-                  SizedBox(
-                    height: height(context) * 0.14,
-                    child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: tripAndMutualfrnds.length,
-                        itemBuilder: (ctx, i) {
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  height: height(context) * 0.11,
-                                  width: width(context) * 0.23,
-                                  child: Image.asset(
-                                    tripAndMutualfrnds[i]['img'],
-                                    fit: BoxFit.fill,
-                                  ),
-                                ),
-                                Text(tripAndMutualfrnds[i]['name']),
-                              ],
-                            ),
-                          );
-                        }),
-                  ),
-                  addVerticalSpace(8),
-                  InkWell(
-                    onTap: () {},
-                    child: const Text(
-                      'You have trip friend request >',
-                      style: TextStyle(
-                          decoration: TextDecoration.underline,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600),
-                    ),
-                  )
-                ],
-              ),
+              // Column(
+              //   crossAxisAlignment: CrossAxisAlignment.start,
+              //   children: [
+              //     addVerticalSpace(10),
+              //     SizedBox(
+              //       height: height(context) * 0.14,
+              //       child: ListView.builder(
+              //           scrollDirection: Axis.horizontal,
+              //           itemCount: tripAndMutualfrnds.length,
+              //           itemBuilder: (ctx, i) {
+              //             return Padding(
+              //               padding: const EdgeInsets.only(right: 8.0),
+              //               child: Column(
+              //                 crossAxisAlignment: CrossAxisAlignment.center,
+              //                 children: [
+              //                   SizedBox(
+              //                     height: height(context) * 0.11,
+              //                     width: width(context) * 0.23,
+              //                     child: Image.asset(
+              //                       tripAndMutualfrnds[i]['img'],
+              //                       fit: BoxFit.fill,
+              //                     ),
+              //                   ),
+              //                   Text(tripAndMutualfrnds[i]['name']),
+              //                 ],
+              //               ),
+              //             );
+              //           }),
+              //     ),
+              //     addVerticalSpace(8),
+              //     InkWell(
+              //       onTap: () {},
+              //       child: const Text(
+              //         'You have trip friend request >',
+              //         style: TextStyle(
+              //             decoration: TextDecoration.underline,
+              //             fontSize: 12,
+              //             fontWeight: FontWeight.w600),
+              //       ),
+              //     )
+              //   ],
+              // ),
             ]),
           )
         ],

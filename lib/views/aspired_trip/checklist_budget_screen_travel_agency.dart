@@ -40,115 +40,178 @@ class _CheckListAndBudgetScreenState extends State<CheckListAndBudgetScreen> {
       setState(() {});
     }
   }
+  deletiteam() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      var profile = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection("upcomingtrip")
+          .doc(widget.MP['postId'])
+          .update({
+        "iteamName": FieldValue.arrayRemove([iteamcontroller.text]),
+        "ItemType": FieldValue.arrayRemove([_string]),
+        "ruppes": FieldValue.arrayRemove([amountcontroller.text])
+
+      });
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Row(
-            children: [
-              Text(
-                'Checklist/Budget',
-                style: bodyText18w600(color: black),
-              ),
-              Spacer(),
+    if(widget.MP['ItemType']==null){
+      return Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(
+              children: [
+                Text(
+                  'Checklist/Budget',
+                  style: bodyText18w600(color: black),
+                ),
+                Spacer(),
 
-              addHorizontalySpace(6),
-              InkWell(
-                  onTap: () {
-                    saveItemforTravel(context);
-                  },
-                  child: const Icon(
-                    Icons.add,
-                    size: 30,
-                  )),
-            ],
-          ),
-          addVerticalSpace(20),
-          Text('Save items that you wish to have for the trip'),
-          addVerticalSpace(15),
-          SizedBox(
-            height: height(context) * 0.23,
-            width: width(context) * 0.95,
-            child: Card(
-              elevation: 5,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(children: [
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SizedBox(
-                          height: height(context) * 0.19,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Camera',
-                                style: bodyText14w600(color: black),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          height: height(context) * 0.19,
-                          child:  Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment
-                                      .spaceEvenly,
-                                  children: [
-                                    Row(children: [
-                                      Text('Take on rent'),
-                                      Icon(
-                                        Icons.arrow_drop_down_outlined,
-                                        color: primary,
+                addHorizontalySpace(6),
+                InkWell(
+                    onTap: () {
+                      saveItemforTravel(context);
+                    },
+                    child: const Icon(
+                      Icons.add,
+                      size: 30,
+                    )),
+              ],
+            ),
+            addVerticalSpace(20),
+            Text('Save items that you wish to have for the trip'),
+            addVerticalSpace(15),
+            SizedBox(
+              child: Center(child: Text('You Not have any Iteam',style: TextStyle(fontWeight: FontWeight.w400,fontSize: 30),)),
+            ),
+            addVerticalSpace(height(context) * 0.06),
+          ]),
+        ),
+      );
+    }else {
+      return Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(
+              children: [
+                Text(
+                  'Checklist/Budget',
+                  style: bodyText18w600(color: black),
+                ),
+                Spacer(),
+
+                addHorizontalySpace(6),
+                InkWell(
+                    onTap: () {
+                      saveItemforTravel(context);
+                    },
+                    child: const Icon(
+                      Icons.add,
+                      size: 30,
+                    )),
+              ],
+            ),
+            addVerticalSpace(20),
+            Text('Save items that you wish to have for the trip'),
+            addVerticalSpace(15),
+            SizedBox(
+              height: height(context) * 0.23,
+              width: width(context) * 0.95,
+              child: Card(
+                elevation: 5,
+                child: ListView.builder(
+                    itemCount: widget.MP['ItemType'].length,
+                    itemBuilder: (ctx, i) {
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8, left: 8),
+                        child: Column(children: [
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                SizedBox(
+                                  height: 40,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment
+                                        .spaceEvenly,
+                                    crossAxisAlignment: CrossAxisAlignment
+                                        .start,
+                                    children: [
+                                      Text(
+                                        widget.MP['iteamName'][i],
+                                        style: bodyText14w600(color: black),
                                       ),
-                                    ]),
-
-                                    Text(
-                                      'Total',
-                                      style: bodyText14w600(color: black),
-                                    )
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                        ),
-                        SizedBox(
-                          height: height(context) * 0.2,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '1,000',
-                                style: bodyText14w600(color: black),
-                              ),
+                                SizedBox(
+                                  height: 40,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment
+                                        .start,
+                                    mainAxisAlignment: MainAxisAlignment
+                                        .spaceEvenly,
+                                    children: [
+                                      Row(children: [
+                                        Text(widget.MP['ItemType'][i]),
+                                        Icon(
+                                          Icons.arrow_drop_down_outlined,
+                                          color: primary,
+                                        ),
+                                      ]
+                                      ),
 
-                              Text(
-                                '1,000',
-                                style: bodyText14w600(color: black),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ])
-                ]),
+                                      // Text(
+                                      //   'Total',
+                                      //   style: bodyText14w600(color: black),
+                                      // )
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 40,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment
+                                        .spaceEvenly,
+                                    crossAxisAlignment: CrossAxisAlignment
+                                        .start,
+                                    children: [
+                                      Text(
+                                        widget.MP['ruppes'][i],
+                                        style: bodyText14w600(color: black),
+                                      ),
+
+                                      // Text(
+                                      //   '1,000',
+                                      //   style: bodyText14w600(color: black),
+                                      // ),
+                                    ],
+                                  ),
+                                ),
+                                IconButton(onPressed: () {
+                                  setState(() {});
+                                  deletiteam();
+                                }, icon: Icon(Icons.delete))
+
+                              ]),
+
+                        ]),
+                      );
+                    }
+                ),
               ),
             ),
-          ),
-          addVerticalSpace(height(context) * 0.06),
-          Center(
-            child: SizedBox(
-              height: 40,
-              width: width(context) * 0.4,
-              child: CustomButton(name: 'Save', onPressed: () {}),
-            ),
-          )
-        ]),
-      ),
-    );
+            addVerticalSpace(height(context) * 0.06),
+          ]),
+        ),
+      );
+    }
   }
 
   Future<void> saveItemforTravel(BuildContext context) {
@@ -247,6 +310,7 @@ class _CheckListAndBudgetScreenState extends State<CheckListAndBudgetScreen> {
                   ),
                   addVerticalSpace(30),
                   CustomButton(name: 'Save', onPressed: (){
+                    setState(() {});
                     Navigator.pop(context);
                     updateitemacarry();
                   })

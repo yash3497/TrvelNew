@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
+import 'package:travel_app/chatUtils/IndividualChatScreen.dart';
 import 'package:travel_app/model/prima_profile_model.dart';
 import 'package:travel_app/views/humburger_flow/prima_profile/about_me_screen.dart';
 import 'package:travel_app/views/humburger_flow/prima_profile/create_prima_profile.dart';
@@ -13,16 +14,30 @@ import 'package:travel_app/views/humburger_flow/prima_profile/travel_photos_scre
 import 'package:travel_app/widget/custom_button.dart';
 import 'package:travel_app/widget/custom_dropdown_button.dart';
 
+import '../../../chatUtils/chatModel.dart';
 import '../../../utils/constant.dart';
 
 class UserPrimaProfileScreen extends StatefulWidget {
-  const UserPrimaProfileScreen({super.key, required this.userDetails});
+  const UserPrimaProfileScreen({super.key, required this.userDetails, required this.chat});
   final Map<String, dynamic> userDetails;
+  final ChatModel chat;
   @override
   State<UserPrimaProfileScreen> createState() => _UserPrimaProfileScreenState();
 }
 
 class _UserPrimaProfileScreenState extends State<UserPrimaProfileScreen> {
+  String imgURL = '';
+  getData() async {
+    var x = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.chat.sender)
+        .get();
+    imgURL = x.data()!['profileImg'] ??
+        'https://firebasestorage.googleapis.com/v0/b/travelnew-79e2e.appspot.com/o/profileImg?alt=media&token=39dc5e0e-8a3d-41cf-94c0-8ca03147aa7a';
+    setState(() {});
+
+  }
+
   @override
   void initState() {
     print(widget.userDetails);
@@ -302,7 +317,7 @@ class _UserPrimaProfileScreenState extends State<UserPrimaProfileScreen> {
                           ),
                           InkWell(
                             onTap: () {
-                              sendMessageDialog(context);
+                              Navigator.push(context, MaterialPageRoute(builder: (context)=>IndividualPage(chatModel: widget.chat, img: imgURL)));
                             },
                             child: Column(
                               children: [
