@@ -16,7 +16,8 @@ import 'package:travel_app/widget/custom_dropdown_button.dart';
 import '../../../utils/constant.dart';
 
 class UserPrimaProfileScreen extends StatefulWidget {
-  const UserPrimaProfileScreen({super.key});
+  const UserPrimaProfileScreen({super.key, required this.userDetails});
+  final Map<String, dynamic> userDetails;
   @override
   State<UserPrimaProfileScreen> createState() => _UserPrimaProfileScreenState();
 }
@@ -24,6 +25,7 @@ class UserPrimaProfileScreen extends StatefulWidget {
 class _UserPrimaProfileScreenState extends State<UserPrimaProfileScreen> {
   @override
   void initState() {
+    print(widget.userDetails);
     getDetails();
     getlocationDetails();
     super.initState();
@@ -49,9 +51,9 @@ class _UserPrimaProfileScreenState extends State<UserPrimaProfileScreen> {
           .doc('profile')
           .get();
       image = profile.data()?['imageUrl'];
+      // Name = profile.data()?['fullName'];
       Name = profile.data()?['fullName'];
-      Name = profile.data()?['fullName'];
-      _profession = profile.data()?['profession'];
+      _profession = profile.data()!['profession'];
       _aboutme = profile.data()?['aboutme'];
       _otherintrest = profile.data()?['userInterest'];
       setState(() {});
@@ -146,14 +148,14 @@ class _UserPrimaProfileScreenState extends State<UserPrimaProfileScreen> {
                 child: Container(
                   height: height(context) * 0.42,
                   width: width(context) * 1,
-                  decoration: image == ""
+                  decoration: widget.userDetails['profileImg'] == ""
                       ? BoxDecoration(
                           image: DecorationImage(
                               fit: BoxFit.fill,
                               image: AssetImage('assets/images/prima3.png')))
                       : BoxDecoration(
                           image: DecorationImage(
-                              fit: BoxFit.fill, image: NetworkImage(image))),
+                              fit: BoxFit.fill, image: NetworkImage(widget.userDetails['profileImg'] ))),
                   child: SafeArea(
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -235,7 +237,7 @@ class _UserPrimaProfileScreenState extends State<UserPrimaProfileScreen> {
                       addVerticalSpace(10),
                       Center(
                         child: Text(
-                          '$Name',
+                          widget.userDetails['fullName'],
                           style: bodyText30W600(color: black),
                         ),
                       ),
@@ -244,7 +246,7 @@ class _UserPrimaProfileScreenState extends State<UserPrimaProfileScreen> {
                         children: [
                           Icon(Icons.location_on_outlined),
                           Text(
-                            '$_address',
+                            widget.userDetails['locality'],
                             style: TextStyle(fontSize: 20),
                           )
                         ],
@@ -320,7 +322,7 @@ class _UserPrimaProfileScreenState extends State<UserPrimaProfileScreen> {
                       ),
                       addVerticalSpace(15),
                       Text(
-                        'About  $Name',
+                        'About  ${widget.userDetails['fullName']}',
                         style: bodyText22w700(color: black),
                       ),
                       addVerticalSpace(10),
@@ -343,7 +345,7 @@ class _UserPrimaProfileScreenState extends State<UserPrimaProfileScreen> {
                           ),
                           addHorizontalySpace(8),
                           Text(
-                            'Female, 25',
+                            ', 25',
                             style: TextStyle(fontSize: 18, color: black),
                           ),
                           addHorizontalySpace(width(context) * 0.1),
@@ -365,7 +367,7 @@ class _UserPrimaProfileScreenState extends State<UserPrimaProfileScreen> {
                       ),
                       addVerticalSpace(15),
                       Text(
-                        'Tripometer of  $Name',
+                        'Tripometer of  ${widget.userDetails['fullName']}',
                         style: bodyText20w700(color: black),
                       ),
                       addVerticalSpace(15),
@@ -607,7 +609,6 @@ class _UserPrimaProfileScreenState extends State<UserPrimaProfileScreen> {
                             child: CustomButton(
                                 name: 'Send Message',
                                 onPressed: () {
-                                  
                                   Navigator.pop(context);
                                 }),
                           )
@@ -817,6 +818,29 @@ class _TripFriendsAndMutualFriendsWidgetState
     controller!.dispose();
     super.dispose();
   }
+
+
+  getTripFriends() async {
+    tripAndMutualfrnds.clear();
+    var x = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get();
+    List abc = x.data()!['tripFriends'];
+    print(abc);
+    for (var element in abc) {
+      var y = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(element)
+          .get();
+      tripAndMutualfrnds.add(y.data());
+    }
+    print(tripAndMutualfrnds);
+    print('|||||||||||||||||||||||||||||||');setState(() {
+      
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {

@@ -216,7 +216,7 @@ class _MyBottomBarState extends State<MyBottomBar>
                 )
               ],
               labelPadding: const EdgeInsets.all(8),
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.symmetric(horizontal: 8),
               labelColor: primary,
               unselectedLabelColor: Colors.grey.shade400,
               isScrollable: false,
