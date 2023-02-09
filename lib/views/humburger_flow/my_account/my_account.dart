@@ -5,11 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
-<<<<<<< HEAD
 import 'package:google_fonts/google_fonts.dart';
-=======
 import 'package:google_sign_in/google_sign_in.dart';
->>>>>>> 1c4207a2fecdeccee7ddcd55e4682449a0720deb
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:travel_app/utils/constant.dart';
 import 'package:travel_app/views/humburger_flow/my_account/B2B_registration.dart';
@@ -70,6 +67,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
     getprimDetails();
     super.initState();
   }
+
   String Name = "";
   void getprimDetails() async {
     if (FirebaseAuth.instance.currentUser != null) {
@@ -80,12 +78,8 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
           .doc('profile')
           .get();
       Name = profile.data()?['firstName'];
-
-
     }
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   @override
@@ -108,34 +102,33 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
           ),
           actions: [
             InkWell(
-<<<<<<< HEAD
               onTap: () async {
-                 if(FirebaseAuth.instance.currentUser != null){
-                  if(Name==""){
+                if (FirebaseAuth.instance.currentUser != null) {
+                  if (Name == "") {
                     empatyprimaccout(context);
-                  }else{
+                  } else {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (ctx) => const PrimaProfileScreen()));
                   }
-
-                } else{
-                   Navigator.push(context, MaterialPageRoute(builder: (context)=>SignupWithSocialMediaScreen()));
+                } else {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => SignupWithSocialMediaScreen()));
                 }
-=======
-              onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (ctx) => PrimaProfileScreen()));
->>>>>>> 1c4207a2fecdeccee7ddcd55e4682449a0720deb
               },
               child: SizedBox(
                   width: width(context) * 0.1,
                   child: Image.asset('assets/images/kingicon.png')),
             ),
             InkWell(
-              onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>PersonalInformationScreen()));
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PersonalInformationScreen()));
               },
               child: SizedBox(
                   width: width(context) * 0.14,
@@ -331,13 +324,13 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                   sharedPreferences.remove('email');
                   await FirebaseAuth.instance.signOut();
                   print('l1');
-  final _googleSignIn = GoogleSignIn();
+                  final _googleSignIn = GoogleSignIn();
 
                   final GoogleSignInAccount? googleSignInAccount =
-          await _googleSignIn.signIn();
+                      await _googleSignIn.signIn();
 
                   print('l2');
-await googleSignInAccount!.clearAuthCache();
+                  await googleSignInAccount!.clearAuthCache();
                   print('l3');
 
                   Navigator.push(
@@ -393,28 +386,33 @@ await googleSignInAccount!.clearAuthCache();
           ]),
         ));
   }
-  empatyprimaccout(BuildContext context) {
 
+  empatyprimaccout(BuildContext context) {
     showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          contentPadding: const EdgeInsets.all(6),
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10.0))),
-          content: Builder(
-            builder: (context) {
-              var height = MediaQuery.of(context).size.height;
-              var width = MediaQuery.of(context).size.width;
+              contentPadding: const EdgeInsets.all(6),
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0))),
+              content: Builder(
+                builder: (context) {
+                  var height = MediaQuery.of(context).size.height;
+                  var width = MediaQuery.of(context).size.width;
 
-              return Container(
-                height: 200,
-                child: Center(child: Text('You not have Prima Account.',style: TextStyle(fontFamily: GoogleFonts.roboto().fontFamily),)),
-
-              );
-            },
-          ),
-        ));
+                  return Container(
+                    height: 200,
+                    child: Center(
+                        child: Text(
+                      'You not have Prima Account.',
+                      style: TextStyle(
+                          fontFamily: GoogleFonts.roboto().fontFamily),
+                    )),
+                  );
+                },
+              ),
+            ));
   }
+
   showBusinessSignup(BuildContext context) {
     showDialog(
         context: context,

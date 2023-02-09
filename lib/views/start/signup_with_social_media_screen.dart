@@ -12,10 +12,12 @@ class SignupWithSocialMediaScreen extends StatefulWidget {
   const SignupWithSocialMediaScreen({super.key});
 
   @override
-  State<SignupWithSocialMediaScreen> createState() => _SignupWithSocialMediaScreenState();
+  State<SignupWithSocialMediaScreen> createState() =>
+      _SignupWithSocialMediaScreenState();
 }
 
-class _SignupWithSocialMediaScreenState extends State<SignupWithSocialMediaScreen> {
+class _SignupWithSocialMediaScreenState
+    extends State<SignupWithSocialMediaScreen> {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   @override
@@ -73,14 +75,8 @@ class _SignupWithSocialMediaScreenState extends State<SignupWithSocialMediaScree
             addVerticalSpace(height(context) * 0.06),
             InkWell(
               onTap: () async {
-<<<<<<< HEAD
-                _googleSignIn.signIn().then((value) => MyBottomBar());
-                // Navigator.push(context,
-                //     MaterialPageRoute(builder: ((context) => MyBottomBar())));
-=======
                 FirebaseAuthen _auth = new FirebaseAuthen();
                 await _auth.signInWithGoogle(context);
->>>>>>> 1c4207a2fecdeccee7ddcd55e4682449a0720deb
               },
               child: Container(
                 height: 50,

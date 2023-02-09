@@ -99,14 +99,9 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
         .then((value) => print("Details Updated"))
         .catchError((error) => print("Failed to Update users Details: $error"));
   }
-<<<<<<< HEAD
-  String _image ="";
-String firstname = "";
-=======
 
   String _image = "";
-
->>>>>>> 1c4207a2fecdeccee7ddcd55e4682449a0720deb
+  String firstname = "";
   void getDetails() async {
     if (FirebaseAuth.instance.currentUser != null) {
       var profile = await FirebaseFirestore.instance
@@ -738,15 +733,9 @@ class _TripometerWidgetState extends State<TripometerWidget> {
         .collection("tripoMeter")
         .doc("profile")
         .update({
-<<<<<<< HEAD
-      "Adventure" : adventure,
-      "City" : city,
-      "Nature" : nature,
-=======
       "Adventure": adventure,
       "City": city,
       "Nature": nature,
->>>>>>> 1c4207a2fecdeccee7ddcd55e4682449a0720deb
       "Religlous": religlous
     });
   }
@@ -812,17 +801,12 @@ class _TripometerWidgetState extends State<TripometerWidget> {
                                   nature = tripoMeterList[2]['value'];
                                   religlous = tripoMeterList[3]['value'];
                                 });
-<<<<<<< HEAD
-                                if(city != 0.0 ){
+                                if (city != 0.0) {
                                   addTripometerDetails();
-                                }else{
+                                } else {
                                   updateTripometerDetails();
                                 }
 
-=======
-                                //  addTripometerDetails();
-                                updateTripometerDetails();
->>>>>>> 1c4207a2fecdeccee7ddcd55e4682449a0720deb
                                 getTripometerDetails();
                               },
                               max: 100,
@@ -848,6 +832,7 @@ class _TripometerWidgetState extends State<TripometerWidget> {
     );
   }
 }
+
 String _image1 = "";
 String _image2 = "";
 String _image3 = "";
@@ -859,14 +844,15 @@ updatetravelphoto() async {
       .collection("primaAccount")
       .doc("profile")
       .update({
-    "TravelPhoto1": _image1,
-    "TravelPhoto2": _image2,
-    "TravelPhoto3": _image3,
-    "TravelPhoto4": _image4,
-  })
+        "TravelPhoto1": _image1,
+        "TravelPhoto2": _image2,
+        "TravelPhoto3": _image3,
+        "TravelPhoto4": _image4,
+      })
       .then((value) => print("Details Updated"))
       .catchError((error) => print("Failed to Update users Details: $error"));
 }
+
 class UploadTravelsPhotos extends StatefulWidget {
   const UploadTravelsPhotos({super.key});
 
@@ -875,7 +861,6 @@ class UploadTravelsPhotos extends StatefulWidget {
 }
 
 class _UploadTravelsPhotosState extends State<UploadTravelsPhotos> {
-<<<<<<< HEAD
   // File? _image1;
   // File? _image2;
   // File? _image3;
@@ -898,105 +883,71 @@ class _UploadTravelsPhotosState extends State<UploadTravelsPhotos> {
   // String _image2 = "";
   // String _image3 = "";
   // String _image4 = "";
-  void pickUploadImage1() async{
-    final image = await ImagePicker().pickImage(source: ImageSource.gallery,
+  void pickUploadImage1() async {
+    final image = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
         maxWidth: MediaQuery.of(context).size.width,
         maxHeight: MediaQuery.of(context).size.height,
         imageQuality: 75);
     Reference ref = FirebaseStorage.instance.ref().child('profileImg');
 
     await ref.putFile(File(image!.path));
-    ref.getDownloadURL().then((value){
+    ref.getDownloadURL().then((value) {
       print(value);
       setState(() {
         _image1 = value;
       });
     });
   }
-  void pickUploadImage2() async{
-    final image = await ImagePicker().pickImage(source: ImageSource.gallery,
+
+  void pickUploadImage2() async {
+    final image = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
         maxWidth: MediaQuery.of(context).size.width,
         maxHeight: MediaQuery.of(context).size.height,
         imageQuality: 75);
     Reference ref = FirebaseStorage.instance.ref().child('profileImg');
 
     await ref.putFile(File(image!.path));
-    ref.getDownloadURL().then((value){
+    ref.getDownloadURL().then((value) {
       print(value);
       setState(() {
         _image2 = value;
       });
     });
   }
-  void pickUploadImage3() async{
-    final image = await ImagePicker().pickImage(source: ImageSource.gallery,
+
+  void pickUploadImage3() async {
+    final image = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
         maxWidth: MediaQuery.of(context).size.width,
         maxHeight: MediaQuery.of(context).size.height,
         imageQuality: 75);
     Reference ref = FirebaseStorage.instance.ref().child('profileImg');
 
     await ref.putFile(File(image!.path));
-    ref.getDownloadURL().then((value){
+    ref.getDownloadURL().then((value) {
       print(value);
       setState(() {
-        _image3= value;
+        _image3 = value;
       });
     });
   }
-  void pickUploadImage4() async{
-    final image = await ImagePicker().pickImage(source: ImageSource.gallery,
+
+  void pickUploadImage4() async {
+    final image = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
         maxWidth: MediaQuery.of(context).size.width,
         maxHeight: MediaQuery.of(context).size.height,
         imageQuality: 75);
     Reference ref = FirebaseStorage.instance.ref().child('profileImg');
 
     await ref.putFile(File(image!.path));
-    ref.getDownloadURL().then((value){
+    ref.getDownloadURL().then((value) {
       print(value);
       setState(() {
         _image4 = value;
       });
-=======
-  File? _image1;
-  File? _image2;
-  File? _image3;
-  File? _image4;
- bool _images1 =false;
- bool _images3=false;
- bool _images2 =false;
- bool _images4 =false;
-  
-
-  Future pickImage(int i) async {
-    final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (image == null) {
-      return;
-    }
-    final imagepath = File(image.path);
-    print(i);
-    setState(() {
-      switch (i) {
-        case 0:
-          _image1 = imagepath;
-          setState(() {
-            print(i);
-          });
-          break;
-        case 1:
-          _image2 = imagepath;
-          setState(() {});print(i);
-          break;
-        case 2:
-          _image3 = imagepath;
-          setState(() {});print(i);
-          break;
-        case 3:
-          _image4 = imagepath;
-          setState(() {});print(i);
-          break;
-        default:
-      }
->>>>>>> 1c4207a2fecdeccee7ddcd55e4682449a0720deb
     });
   }
 
@@ -1016,11 +967,13 @@ class _UploadTravelsPhotosState extends State<UploadTravelsPhotos> {
       setState(() {});
     }
   }
-@override
+
+  @override
   void initState() {
     getDetails();
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -1036,7 +989,6 @@ class _UploadTravelsPhotosState extends State<UploadTravelsPhotos> {
           style: bodyText12Small(color: black),
         ),
         addVerticalSpace(15),
-<<<<<<< HEAD
         Padding(
           padding: const EdgeInsets.only(left: 50),
           child: Column(
@@ -1045,43 +997,45 @@ class _UploadTravelsPhotosState extends State<UploadTravelsPhotos> {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child:
-                    InkWell(
-                      onTap: (){
+                    child: InkWell(
+                      onTap: () {
                         pickUploadImage1();
                       },
                       child: Container(
                         height: height(context) * 0.15,
                         width: width(context) * 0.3,
-                        decoration: _image1== ""
+                        decoration: _image1 == ""
                             ? BoxDecoration(
-                            image: DecorationImage(
-                                fit: BoxFit.fill,
-                                image: NetworkImage('https://creazilla-store.fra1.digitaloceanspaces.com/icons/3175753/ic-fluent-add-square-24-regular-icon-sm.png')))
+                                image: DecorationImage(
+                                    fit: BoxFit.fill,
+                                    image: NetworkImage(
+                                        'https://creazilla-store.fra1.digitaloceanspaces.com/icons/3175753/ic-fluent-add-square-24-regular-icon-sm.png')))
                             : BoxDecoration(
-                            image: DecorationImage(
-                                fit: BoxFit.fill, image: NetworkImage(_image1))),
+                                image: DecorationImage(
+                                    fit: BoxFit.fill,
+                                    image: NetworkImage(_image1))),
                       ),
                     ),
                   ),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child:
-                    InkWell(
-                      onTap: (){
+                    child: InkWell(
+                      onTap: () {
                         pickUploadImage2();
                       },
                       child: Container(
                         height: height(context) * 0.15,
                         width: width(context) * 0.3,
-                        decoration: _image2== ""
+                        decoration: _image2 == ""
                             ? BoxDecoration(
-                            image: DecorationImage(
-                                fit: BoxFit.fill,
-                                image: NetworkImage('https://creazilla-store.fra1.digitaloceanspaces.com/icons/3175753/ic-fluent-add-square-24-regular-icon-sm.png')))
+                                image: DecorationImage(
+                                    fit: BoxFit.fill,
+                                    image: NetworkImage(
+                                        'https://creazilla-store.fra1.digitaloceanspaces.com/icons/3175753/ic-fluent-add-square-24-regular-icon-sm.png')))
                             : BoxDecoration(
-                            image: DecorationImage(
-                                fit: BoxFit.fill, image: NetworkImage(_image2))),
+                                image: DecorationImage(
+                                    fit: BoxFit.fill,
+                                    image: NetworkImage(_image2))),
                       ),
                     ),
                   ),
@@ -1091,102 +1045,51 @@ class _UploadTravelsPhotosState extends State<UploadTravelsPhotos> {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child:
-                    InkWell(
-                      onTap: (){
+                    child: InkWell(
+                      onTap: () {
                         pickUploadImage3();
                       },
                       child: Container(
                         height: height(context) * 0.15,
                         width: width(context) * 0.3,
-                        decoration: _image3== ""
+                        decoration: _image3 == ""
                             ? BoxDecoration(
-                            image: DecorationImage(
-                                fit: BoxFit.fill,
-                                image: NetworkImage('https://creazilla-store.fra1.digitaloceanspaces.com/icons/3175753/ic-fluent-add-square-24-regular-icon-sm.png')))
+                                image: DecorationImage(
+                                    fit: BoxFit.fill,
+                                    image: NetworkImage(
+                                        'https://creazilla-store.fra1.digitaloceanspaces.com/icons/3175753/ic-fluent-add-square-24-regular-icon-sm.png')))
                             : BoxDecoration(
-                            image: DecorationImage(
-                                fit: BoxFit.fill, image: NetworkImage(_image3))),
+                                image: DecorationImage(
+                                    fit: BoxFit.fill,
+                                    image: NetworkImage(_image3))),
                       ),
                     ),
                   ),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child:
-                    InkWell(
-                      onTap: (){
+                    child: InkWell(
+                      onTap: () {
                         pickUploadImage4();
                       },
                       child: Container(
                         height: height(context) * 0.15,
                         width: width(context) * 0.3,
-                        decoration: _image4== ""
+                        decoration: _image4 == ""
                             ? BoxDecoration(
-                            image: DecorationImage(
-                                fit: BoxFit.fill,
-                                image: NetworkImage('https://creazilla-store.fra1.digitaloceanspaces.com/icons/3175753/ic-fluent-add-square-24-regular-icon-sm.png')))
+                                image: DecorationImage(
+                                    fit: BoxFit.fill,
+                                    image: NetworkImage(
+                                        'https://creazilla-store.fra1.digitaloceanspaces.com/icons/3175753/ic-fluent-add-square-24-regular-icon-sm.png')))
                             : BoxDecoration(
-                            image: DecorationImage(
-                                fit: BoxFit.fill, image: NetworkImage(_image4))),
+                                image: DecorationImage(
+                                    fit: BoxFit.fill,
+                                    image: NetworkImage(_image4))),
                       ),
                     ),
                   ),
                 ],
               ),
             ],
-=======
-        Center(
-          child: Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            children: List.generate(4, (i) {
-              return InkWell(
-                onTap: () {
-                  pickImage(i);
-                },
-                child: 
-                _images1 != false
-                    ? Image.file(
-                        _image1!,
-                        height: height(context) * 0.15,
-                        width: width(context) * 0.35,
-                        fit: BoxFit.cover,
-                      )
-                    : _images2 != false
-                        ? Image.file(
-                            _image2!,
-                            height: height(context) * 0.15,
-                            width: width(context) * 0.35,
-                            fit: BoxFit.cover,
-                          )
-                        : _images3 != false
-                            ? Image.file(
-                                _image3!,
-                                height: height(context) * 0.15,
-                                width: width(context) * 0.35,
-                                fit: BoxFit.cover,
-                              )
-                            : _images4 != false
-                                ? Image.file(
-                                    _image4!,
-                                    height: height(context) * 0.15,
-                                    width: width(context) * 0.35,
-                                    fit: BoxFit.cover,
-                                  )
-                                : Container(
-                                    height: height(context) * 0.15,
-                                    width: width(context) * 0.35,
-                                    decoration: myOutlineBoxDecoration(
-                                        1, black.withOpacity(0.3), 10),
-                                    child: Center(
-                                        child: Icon(
-                                      Icons.add,
-                                      color: black.withOpacity(0.3),
-                                    )),
-                                  ),
-              );
-            }),
->>>>>>> 1c4207a2fecdeccee7ddcd55e4682449a0720deb
           ),
         ),
         // Center(

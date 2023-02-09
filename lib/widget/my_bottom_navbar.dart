@@ -121,13 +121,9 @@ class _MyBottomBarState extends State<MyBottomBar>
   @override
   void initState() {
     _getCurrentPosition(context);
-<<<<<<< HEAD
-   // getData();
+    // getData();
     checkupcoming();
     getprimDetails();
-=======
-    // addPr();
->>>>>>> 1c4207a2fecdeccee7ddcd55e4682449a0720deb
     super.initState();
 
     tabController = TabController(initialIndex: 0, length: 5, vsync: this);
@@ -143,12 +139,10 @@ class _MyBottomBarState extends State<MyBottomBar>
           .doc('check')
           .get();
       check = profile.data()?['upcoming'];
-
     }
-    setState(() {
-
-    });
+    setState(() {});
   }
+
   String Name = "";
   void getprimDetails() async {
     if (FirebaseAuth.instance.currentUser != null) {
@@ -159,11 +153,8 @@ class _MyBottomBarState extends State<MyBottomBar>
           .doc('profile')
           .get();
       Name = profile.data()?['firstName'];
-
     }
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   @override
@@ -193,67 +184,32 @@ class _MyBottomBarState extends State<MyBottomBar>
                       ),
                     ),
                   ),
-<<<<<<< HEAD
                   InkWell(
                     onTap: () {
                       if (check == "") {
-                        if(FirebaseAuth.instance.currentUser != null){
+                        if (FirebaseAuth.instance.currentUser != null) {
                           empatycomingtrip(context);
-                        }else{
+                        } else {
                           empatycomingtrip(context);
                           Navigator.pop(context);
-                          showSnackBar(context, "Please Login First!", Colors.red);
-
+                          showSnackBar(
+                              context, "Please Login First!", Colors.red);
                         }
-=======
-                ),
-                InkWell(
-                  onTap: () async {
-                    if (FirebaseAuth.instance.currentUser != null) {
-                      var x = await FirebaseFirestore.instance
-                          .collection('users')
-                          .doc(FirebaseAuth.instance.currentUser!.uid)
-                          .get();
-                      bool y = x.data()!['isPrima'];
-                      print(y);
-                      print(FirebaseAuth.instance.currentUser!.uid);
-                      if (!y) {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (ctx) =>
-                                    const GoPrimaSubscriptionScreen()));
->>>>>>> 1c4207a2fecdeccee7ddcd55e4682449a0720deb
                       } else {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-<<<<<<< HEAD
-                                builder: (ctx) =>  UpcomingTripsScreen()));
+                                builder: (ctx) => UpcomingTripsScreen()));
                       }
                     },
                     child: const Tab(
                       icon: ImageIcon(
-=======
-                                builder: (ctx) => const PrimaMyBottomBar()));
-                      }
-                    } else {
-                      showSnackBar(context, "Please Login First!", Colors.red);
-                    }
-                  },
-                  child: const Tab(
-                    icon: SizedBox(
-                      height: 50,
-                      width: 50,
-                      child: ImageIcon(
->>>>>>> 1c4207a2fecdeccee7ddcd55e4682449a0720deb
                         AssetImage(
                           'assets/images/navbar2.png',
                         ),
                       ),
                     ),
                   ),
-<<<<<<< HEAD
                   InkWell(
                     onTap: () async {
                       if (_counT == 0) {
@@ -263,18 +219,18 @@ class _MyBottomBarState extends State<MyBottomBar>
                             MaterialPageRoute(
                                 builder: (ctx) =>
                                     const GoPrimaSubscriptionScreen()));
-                      } else if(FirebaseAuth.instance.currentUser != null){
-                        if(Name==""){
+                      } else if (FirebaseAuth.instance.currentUser != null) {
+                        if (Name == "") {
                           empatyprimaccout(context);
-                        }else{
+                        } else {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (ctx) => const PrimaMyBottomBar()));
                         }
-
-                      } else{
-                        showSnackBar(context, "Please Login First!", Colors.red);
+                      } else {
+                        showSnackBar(
+                            context, "Please Login First!", Colors.red);
                       }
                     },
                     child: const Tab(
@@ -285,37 +241,6 @@ class _MyBottomBarState extends State<MyBottomBar>
                           AssetImage(
                             'assets/images/navbar3.png',
                           ),
-=======
-                ),
-                InkWell(
-                  onTap: () {
-                    if (FirebaseAuth.instance.currentUser != null) {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (ctx) => InboxScreen()));
-                    } else {
-                      showSnackBar(context, "Please Login First!", Colors.red);
-                    }
-                  },
-                  child: const Tab(
-                    icon: ImageIcon(
-                      AssetImage(
-                        'assets/images/navbar4.png',
-                      ),
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    _globalKey.currentState!.openDrawer();
-                  },
-                  child: const Tab(
-                    icon: SizedBox(
-                      height: 50,
-                      width: 50,
-                      child: ImageIcon(
-                        AssetImage(
-                          'assets/images/navbar5.png',
->>>>>>> 1c4207a2fecdeccee7ddcd55e4682449a0720deb
                         ),
                       ),
                     ),
@@ -323,12 +248,11 @@ class _MyBottomBarState extends State<MyBottomBar>
                   InkWell(
                     onTap: () {
                       if (FirebaseAuth.instance.currentUser != null) {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (ctx) =>  InboxScreen()));
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (ctx) => InboxScreen()));
                       } else {
-                        showSnackBar(context, "Please Login First!", Colors.red);
+                        showSnackBar(
+                            context, "Please Login First!", Colors.red);
                       }
                     },
                     child: const Tab(
@@ -371,49 +295,57 @@ class _MyBottomBarState extends State<MyBottomBar>
       ),
     );
   }
+
   empatycomingtrip(BuildContext context) {
-
     showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          contentPadding: const EdgeInsets.all(6),
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10.0))),
-          content: Builder(
-            builder: (context) {
-              var height = MediaQuery.of(context).size.height;
-              var width = MediaQuery.of(context).size.width;
+              contentPadding: const EdgeInsets.all(6),
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0))),
+              content: Builder(
+                builder: (context) {
+                  var height = MediaQuery.of(context).size.height;
+                  var width = MediaQuery.of(context).size.width;
 
-              return Container(
-                height: 200,
-                child: Center(child: Text('You not have any upcoming tirp.',style: TextStyle(fontFamily: GoogleFonts.roboto().fontFamily),)),
-
-              );
-            },
-          ),
-        ));
+                  return Container(
+                    height: 200,
+                    child: Center(
+                        child: Text(
+                      'You not have any upcoming tirp.',
+                      style: TextStyle(
+                          fontFamily: GoogleFonts.roboto().fontFamily),
+                    )),
+                  );
+                },
+              ),
+            ));
   }
-  empatyprimaccout(BuildContext context) {
 
+  empatyprimaccout(BuildContext context) {
     showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          contentPadding: const EdgeInsets.all(6),
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10.0))),
-          content: Builder(
-            builder: (context) {
-              var height = MediaQuery.of(context).size.height;
-              var width = MediaQuery.of(context).size.width;
+              contentPadding: const EdgeInsets.all(6),
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0))),
+              content: Builder(
+                builder: (context) {
+                  var height = MediaQuery.of(context).size.height;
+                  var width = MediaQuery.of(context).size.width;
 
-              return Container(
-                height: 200,
-                child: Center(child: Text('You not have Prima Account.',style: TextStyle(fontFamily: GoogleFonts.roboto().fontFamily),)),
-
-              );
-            },
-          ),
-        ));
+                  return Container(
+                    height: 200,
+                    child: Center(
+                        child: Text(
+                      'You not have Prima Account.',
+                      style: TextStyle(
+                          fontFamily: GoogleFonts.roboto().fontFamily),
+                    )),
+                  );
+                },
+              ),
+            ));
   }
 }
 
@@ -481,5 +413,3 @@ Future<void> _getAddressFromLatLng(Position position) async {
     debugPrint(e);
   });
 }
-
-
