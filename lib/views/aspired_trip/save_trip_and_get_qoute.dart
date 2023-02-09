@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import 'package:travel_app/utils/constant.dart';
@@ -85,6 +86,21 @@ class _SaveTripAndGetQuoteState extends State<SaveTripAndGetQuote> {
       setState(() {});
     }
   }
+  checkupcomingtip() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      DocumentReference profile =  FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection("upcomingtrip")
+          .doc('check');
+      profile.set({
+        "upcoming": check
+      });
+      setState(() {});
+    }
+  }
+  String check = "yes";
+
   addupcomingtrip() async {
     if (FirebaseAuth.instance.currentUser != null) {
       DocumentReference profile =  FirebaseFirestore.instance
@@ -439,8 +455,7 @@ class _SaveTripAndGetQuoteState extends State<SaveTripAndGetQuote> {
                 ),
            // addVerticalSpace(5),
                 Text('All travelers are requested to adhere health protocols as prescribed by the state and various authorities'),
-         addVerticalSpace(10),
-            Text('Thank You, we’ll notify here with best quotes for your trip'),
+
                 Text(
               widget.message2,
               style: bodyText12Small(spacing: 1.3, color: black),
@@ -453,6 +468,7 @@ class _SaveTripAndGetQuoteState extends State<SaveTripAndGetQuote> {
                       name: 'Get Quotes',
                       onPressed: () {
                         addupcomingtrip();
+                        checkupcomingtip();
                       //  updatesavetrip();
                         Navigator.push(
                             context,
@@ -483,6 +499,11 @@ class _SaveTripAndGetQuoteState extends State<SaveTripAndGetQuote> {
                   height: 200,
               child: Column(
                 children: [
+
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text('       Your contact details are required for Travel operators to contact and send the booking details.',style: TextStyle(fontFamily: GoogleFonts.roboto().fontFamily),),
+                  ),
                   addVerticalSpace(30),
                   Text('Email ID :',style: TextStyle(color: primary),),
                   addVerticalSpace(10),
@@ -776,7 +797,7 @@ LearnmoreDialog(BuildContext context) {
             return Container(
               height: 300,
               child: Center(child: Text('Once you save this trip, TravelNew will provide your trip details to our network of certified travel operators and they shall provide you with their best quotation. Our travel operator may suggest you change in travel due to seat availability and Itinerary as per travel convenience',
-              style: TextStyle(fontSize: 25),
+              style: TextStyle(fontFamily: GoogleFonts.roboto().fontFamily),
               )),
             );
           },

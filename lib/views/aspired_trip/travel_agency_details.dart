@@ -76,9 +76,11 @@ class _TravelAgencyDetailsScreenState extends State<TravelAgencyDetailsScreen> {
             children: [
               Row(
                 children: [
-                  Text(
-                    widget.MP['tirpname'],
-                    style: bodyText20w700(color: black),
+                  Expanded(
+                    child: Text(
+                      widget.MP['tirpname'],
+                      style: bodyText20w700(color: black),
+                    ),
                   ),
                   Text(', ',
                     style: TextStyle(fontWeight: FontWeight.w500,color: Colors.black),

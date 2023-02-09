@@ -20,6 +20,7 @@ import 'package:travel_app/views/start/sign_up_screen.dart';
 import 'package:travel_app/widget/my_bottom_navbar.dart';
 //import 'package:provider/provider.dart';
 import 'package:travel_app/widget/my_drawer.dart';
+
 import '../../providers/location_provider.dart';
 import '../../widget/custom_overlaping_widget.dart';
 import '../../widget/slider_widget.dart';
@@ -29,8 +30,6 @@ import '../start/sign_in_screen.dart';
 import '../start/signup_with_social_media_screen.dart';
 
 String? finalEmail;
-Map<String, dynamic>? featuredBannerDetails = {};
-
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({super.key});
@@ -47,6 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
     ));
   }
 
+
   festivalsdetail() async {
     final _fireStore = FirebaseFirestore.instance;
     await _fireStore
@@ -62,29 +62,28 @@ class _HomeScreenState extends State<HomeScreen> {
   String _image ="";
   String _festivalname ="";
   var date;
+  CollectionReference _collectionRef =
+  FirebaseFirestore.instance.collection('festivals');
 
-  void getfestivals() async{
-    if (FirebaseAuth.instance.currentUser != null) {
-      var festival = await FirebaseFirestore.instance
-          .collection('festivals')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .get();
-      _festivalname = festival.data()?['festivalname'];
-      _image = festival.data()?['imageUrl'];
-      date = festival.data()?['Date'].toDate().toString().split(" ").first;
-
-    }
+  Future<void> getData() async {
+    // Get docs from collection reference
+    QuerySnapshot querySnapshot = await _collectionRef.get();
+    // Get data from docs and convert map to List
+    allData = querySnapshot.docs.map((doc) => doc.data()).toList();
     setState(() {
-
     });
+    print(allData);
   }
+  List allData = [];
+
+  List nameList=[];
   String c1 = "";
   String c2 = "";
   String c3 = "";
   String c4 = "";
   String c5 = "";
   String c6 = "";
-  void getquick() async{
+  void getquicks() async{
     if (FirebaseAuth.instance.currentUser != null) {
       var profile = await FirebaseFirestore.instance
           .collection('Quick_Escape')
@@ -96,7 +95,6 @@ class _HomeScreenState extends State<HomeScreen> {
       c4 = profile.data()?['Lucknow'];
       c5 = profile.data()?['Mumbai'];
       c6 = profile.data()?['Dehli'];
-
     }
     setState(() {
       quickEscapeList = [
@@ -109,6 +107,19 @@ class _HomeScreenState extends State<HomeScreen> {
       ];
     });
   }
+  String _1name = "";
+  // void getQuickEscape() async{
+  //   if (FirebaseAuth.instance.currentUser != null) {
+  //     var festival = await FirebaseFirestore.instance
+  //         .collection('festivals')
+  //         .doc(FirebaseAuth.instance.currentUser!.uid)
+  //         .get();
+  //
+  //   }
+  //   setState(() {
+  //
+  //   });
+  // }
 
   festivalslocation() async {
 
@@ -127,6 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     });
   }
+
   registerUser() async {
 
     LocationProvider _locationProvider = LocationProvider();
@@ -141,46 +153,19 @@ class _HomeScreenState extends State<HomeScreen> {
       'lng': _locationProvider.long,
     });
   }
-  // registerUser() async {
-  //   LocationProvider _locationProvider = LocationProvider();
-  //   final _fireStore = FirebaseFirestore.instance;
-  //   print('test');
 
-  //   print(_locationProvider.lat);
-  //   print(_locationProvider.long);
-  //   await _fireStore
-  //       .collection("users")
-  //       .doc(FirebaseAuth.instance.currentUser!.uid)
-  //       .update({
-  //     'address': _locationProvider.fetchCurrentPosition(),
-  //     'lat': _locationProvider.lat,
-  //     'lng': _locationProvider.long,
-  //   });
-  // }
 
   void screenNavigate(context) {}
 
-  getFeaturedBannerDetails() async {
-    var x = await FirebaseFirestore.instance
-        .collection('Features')
-        .doc('bannerDetails')
-        .get();
-    featuredBannerDetails = x.data();
-    print('====================================');
-    print(featuredBannerDetails);
-    setState(() {});
-  }
-   List sliderImg = [
+  final List sliderImg = [
     'assets/images/slider1.png',
     'assets/images/slider1.png',
     'assets/images/slider1.png',
   ];
   @override
   void initState() {
-    getfestivals();
+    getquicks();
     getData();
-    getquick();
-
     LocationProvider _locationProvider = LocationProvider();
     _locationProvider.fetchCurrentPosition();
     _locationProvider.getLocation();
@@ -197,24 +182,20 @@ class _HomeScreenState extends State<HomeScreen> {
     //      });
     //    }
     //  });
-    getFeaturedBannerDetails();
-    print(FirebaseAuth.instance.currentUser!.uid+'================');
-    getData();
+
     super.initState();
   }
-  CollectionReference _collectionRef =
-  FirebaseFirestore.instance.collection('festivals');
 
-  Future<void> getData() async {
-    // Get docs from collection reference
-    QuerySnapshot querySnapshot = await _collectionRef.get();
-    // Get data from docs and convert map to List
-    allData = querySnapshot.docs.map((doc) => doc.data()).toList();
-    setState(() {
-    });
-    print(allData);
-  }
-  List allData = [];
+  // Future getValidationData() async {
+  //   final SharedPreferences sharedPreferences =
+  //       await SharedPreferences.getInstance();
+  //   var obtainEmail = sharedPreferences.getString('email');
+  //   setState(() {
+  //     finalEmail = obtainEmail;
+  //   });
+  // }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -343,11 +324,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Events & Festival',
+                      'Events & Festivals',
                       style: bodyText20w700(color: black),
                     ),
                     InkWell(
-                      onTap: () {
+                      onTap: () async{
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -367,8 +348,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: SizedBox(
                   height: height(context) * 0.205,
                   child: ListView.builder(
-                      physics: const BouncingScrollPhysics(),
-                      itemCount: 2,
+                      physics: BouncingScrollPhysics(),
+                      itemCount: allData.length,
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (ctx, i) {
                         return i == allData.length-1
@@ -388,7 +369,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       height: height(context) * 0.13,
                                       width: width(context),
                                       child: Image.network(
-                                        _image,
+                                        allData[1]['imageUrl'],
                                         fit: BoxFit.fill,
                                       ),
                                     ),
@@ -404,13 +385,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                             CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                '$_festivalname',
+                                                allData[1]['festivalname'],
                                                 style: bodyText16w600(
                                                     color: black),
                                               ),
-                                              addVerticalSpace(5),
                                               Text(
-                                                '$date',
+                                                allData[1]['Date'],
                                                 style: bodyText12Small(
                                                     color: black),
                                               )
@@ -461,8 +441,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 SizedBox(
                                   height: height(context) * 0.13,
                                   width: width(context),
-                                  child: Image.network(allData[i]['imageUrl']
-                                    ,
+                                  child: Image.network(
+                                    allData[i]['imageUrl'],
                                     fit: BoxFit.fill,
                                   ),
                                 ),
@@ -482,9 +462,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                             style:
                                             bodyText16w600(color: black),
                                           ),
-                                          addVerticalSpace(5),
                                           Text(
-                                            allData[i]['Date'].toDate().toString().split(" ").first,
+                                            allData[i]['Date'],
                                             style:
                                             bodyText12Small(color: black),
                                           )
@@ -541,7 +520,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Padding(
                 padding: const EdgeInsets.only(left: 12.0),
                 child: Text(
-                  'Experience grouped',
+                  'Trips grouped together',
                   style: bodyText12Small(color: black.withOpacity(0.5)),
                 ),
               ),
@@ -701,7 +680,7 @@ class GoPrimaSubscriptionsWidget extends StatelessWidget {
   }
 }
 
-class ProfileFeedWidget extends StatelessWidget {
+class ProfileFeedWidget extends StatefulWidget {
   const ProfileFeedWidget({
     Key? key,
     required this.overlap,
@@ -710,20 +689,59 @@ class ProfileFeedWidget extends StatelessWidget {
   final List overlap;
 
   @override
+  State<ProfileFeedWidget> createState() => _ProfileFeedWidgetState();
+}
+
+
+class _ProfileFeedWidgetState extends State<ProfileFeedWidget> {
+  CollectionReference _collectionRef =
+  FirebaseFirestore.instance.collection('festivals');
+
+  Future<void> getData() async {
+    // Get docs from collection reference
+    QuerySnapshot querySnapshot = await _collectionRef.get();
+    // Get data from docs and convert map to List
+    allData = querySnapshot.docs.map((doc) => doc.data()).toList();
+    setState(() {
+    });
+    print(allData);
+  }
+  List allData = [];
+
+  @override
+  void initState() {
+    getData();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: height(context) * 0.68,
+      height: height(context) * 0.45,
       child: ListView.builder(
-          itemCount: 3,
+          itemCount: 2,
           physics: const NeverScrollableScrollPhysics(),
           padding: EdgeInsets.zero,
-          itemBuilder: (ctx, i) {
+          itemBuilder: (ctx, i,) {
             return InkWell(
               onTap: () {
-                Navigator.push(
+                if(FirebaseAuth.instance.currentUser != null){
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ShowDetailsOfFestivals(MP: allData[i],)));
+                }
+
+                else
+                  //  if (_count == 10)
+                    {
+                  Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => ShowDetailsOfFestivals()));
+                      builder: (context) => SignupWithSocialMediaScreen(),
+                    ),
+                  );
+                }
               },
               child: Container(
                 margin: EdgeInsets.symmetric(horizontal: 8),
@@ -737,11 +755,11 @@ class ProfileFeedWidget extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'February 25, 2022',
+                          allData[i]['Date'],
                           style: bodyText14normal(color: black),
                         ),
                         Text(
-                          '2.30',
+                          allData[i]['time'],
                           style: bodyText12Small(color: black),
                         ),
                         addVerticalSpace(17),
@@ -752,8 +770,8 @@ class ProfileFeedWidget extends StatelessWidget {
                                 child: SizedBox(
                                   width: width(context) * 0.5,
                                   height: height(context) * 0.13,
-                                  child: Image.asset(
-                                    'assets/images/profilefeed.png',
+                                  child: Image.network(
+                                    allData[i]['imageUrl'],
                                     fit: BoxFit.fill,
                                   ),
                                 )),
@@ -764,13 +782,13 @@ class ProfileFeedWidget extends StatelessWidget {
                                 SizedBox(
                                   width: width(context) * 0.28,
                                   child: Text(
-                                    'Lorem ipsum isa place holder text',
+                                    allData[i]['tripsport'],
                                     style: bodyText14w600(
                                         spacing: 1.3, color: black),
                                   ),
                                 ),
                                 addVerticalSpace(20),
-                                OverlapingImageCustomWidget(overlap: overlap)
+                                OverlapingImageCustomWidget(overlap: widget.overlap)
                               ],
                             )
                           ],
@@ -784,5 +802,4 @@ class ProfileFeedWidget extends StatelessWidget {
           }),
     );
   }
-
 }

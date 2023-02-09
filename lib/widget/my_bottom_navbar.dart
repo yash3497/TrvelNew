@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:travel_app/providers/locProvider.dart';
 import 'package:travel_app/providers/location_provider.dart';
@@ -102,8 +103,45 @@ class _MyBottomBarState extends State<MyBottomBar>
   @override
   void initState() {
     _getCurrentPosition(context);
+   // getData();
+    checkupcoming();
+    getprimDetails();
     super.initState();
+
     tabController = TabController(initialIndex: 0, length: 5, vsync: this);
+  }
+
+  String check = "";
+  void checkupcoming() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      var profile = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection('upcomingtrip')
+          .doc('check')
+          .get();
+      check = profile.data()?['upcoming'];
+
+    }
+    setState(() {
+
+    });
+  }
+  String Name = "";
+  void getprimDetails() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      var profile = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection('primaAccount')
+          .doc('profile')
+          .get();
+      Name = profile.data()?['firstName'];
+
+    }
+    setState(() {
+
+    });
   }
 
   @override
@@ -120,114 +158,174 @@ class _MyBottomBarState extends State<MyBottomBar>
         ),
       ),
       bottomNavigationBar: SafeArea(
-        child: BottomAppBar(
-          // notchMargin: 8,
-          child: TabBar(
-              tabs: [
-                const Tab(
-                  icon: ImageIcon(
-                    AssetImage(
-                      'assets/images/navbar1.png',
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    if (FirebaseAuth.instance.currentUser != null) {
-                      tabController?.animateTo(1);
-                      // Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //         builder: (ctx) => const UpcomingTripsScreen()));
-                    } else {
-                      showSnackBar(context, "Please Login First!", Colors.red);
-                    }
-                  },
-                  child: const Tab(
+        child: Container(
+          height: 40,
+          child: BottomAppBar(
+            // notchMargin: 8,
+            child: TabBar(
+                tabs: [
+                  const Tab(
                     icon: ImageIcon(
                       AssetImage(
-                        'assets/images/navbar2.png',
+                        'assets/images/navbar1.png',
                       ),
                     ),
                   ),
-                ),
-                InkWell(
-                  onTap: () async {
-                    if (_counT == 0) {
-                      _counT++;
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (ctx) =>
-                                  const GoPrimaSubscriptionScreen()));
-                    } else {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (ctx) => const PrimaMyBottomBar()));
-                    }
-                  },
-                  child: const Tab(
-                    icon: SizedBox(
-                      height: 50,
-                      width: 50,
-                      child: ImageIcon(
+                  InkWell(
+                    onTap: () {
+                      if (check == "") {
+                        if(FirebaseAuth.instance.currentUser != null){
+                          empatycomingtrip(context);
+                        }else{
+                          empatycomingtrip(context);
+                          Navigator.pop(context);
+                          showSnackBar(context, "Please Login First!", Colors.red);
+
+                        }
+                      } else {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (ctx) =>  UpcomingTripsScreen()));
+                      }
+                    },
+                    child: const Tab(
+                      icon: ImageIcon(
                         AssetImage(
-                          'assets/images/navbar3.png',
+                          'assets/images/navbar2.png',
                         ),
                       ),
                     ),
                   ),
-                ),
-                InkWell(
-                  onTap: () {
-                    if (FirebaseAuth.instance.currentUser != null) {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (ctx) =>  InboxScreen()));
-                    } else {
-                      showSnackBar(context, "Please Login First!", Colors.red);
-                    }
-                  },
-                  child: const Tab(
-                    icon: ImageIcon(
-                      AssetImage(
-                        'assets/images/navbar4.png',
-                      ),
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    _globalKey.currentState!.openDrawer();
-                  },
-                  child: const Tab(
-                    icon: SizedBox(
-                      height: 50,
-                      width: 50,
-                      child: ImageIcon(
-                        AssetImage(
-                          'assets/images/navbar5.png',
+                  InkWell(
+                    onTap: () async {
+                      if (_counT == 0) {
+                        _counT++;
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (ctx) =>
+                                    const GoPrimaSubscriptionScreen()));
+                      } else if(FirebaseAuth.instance.currentUser != null){
+                        if(Name==""){
+                          empatyprimaccout(context);
+                        }else{
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (ctx) => const PrimaMyBottomBar()));
+                        }
+
+                      } else{
+                        showSnackBar(context, "Please Login First!", Colors.red);
+                      }
+                    },
+                    child: const Tab(
+                      icon: SizedBox(
+                        height: 50,
+                        width: 50,
+                        child: ImageIcon(
+                          AssetImage(
+                            'assets/images/navbar3.png',
+                          ),
                         ),
                       ),
                     ),
                   ),
-                )
-              ],
-              labelPadding: const EdgeInsets.all(8),
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              labelColor: primary,
-              unselectedLabelColor: Colors.grey.shade400,
-              isScrollable: false,
-              indicatorSize: TabBarIndicatorSize.tab,
-              indicatorPadding: const EdgeInsets.all(0.0),
-              indicatorColor: primary,
-              controller: tabController,
-              indicator: const CustomTabIndicator()),
+                  InkWell(
+                    onTap: () {
+                      if (FirebaseAuth.instance.currentUser != null) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (ctx) =>  InboxScreen()));
+                      } else {
+                        showSnackBar(context, "Please Login First!", Colors.red);
+                      }
+                    },
+                    child: const Tab(
+                      icon: ImageIcon(
+                        AssetImage(
+                          'assets/images/navbar4.png',
+                        ),
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      _globalKey.currentState!.openDrawer();
+                    },
+                    child: const Tab(
+                      icon: SizedBox(
+                        height: 50,
+                        width: 50,
+                        child: ImageIcon(
+                          AssetImage(
+                            'assets/images/navbar5.png',
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+                labelPadding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                labelColor: primary,
+                unselectedLabelColor: Colors.grey.shade400,
+                isScrollable: false,
+                indicatorSize: TabBarIndicatorSize.tab,
+                indicatorPadding: const EdgeInsets.all(0.0),
+                indicatorColor: primary,
+                controller: tabController,
+                indicator: const CustomTabIndicator()),
+          ),
         ),
       ),
     );
+  }
+  empatycomingtrip(BuildContext context) {
+
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          contentPadding: const EdgeInsets.all(6),
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          content: Builder(
+            builder: (context) {
+              var height = MediaQuery.of(context).size.height;
+              var width = MediaQuery.of(context).size.width;
+
+              return Container(
+                height: 200,
+                child: Center(child: Text('You not have any upcoming tirp.',style: TextStyle(fontFamily: GoogleFonts.roboto().fontFamily),)),
+
+              );
+            },
+          ),
+        ));
+  }
+  empatyprimaccout(BuildContext context) {
+
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          contentPadding: const EdgeInsets.all(6),
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          content: Builder(
+            builder: (context) {
+              var height = MediaQuery.of(context).size.height;
+              var width = MediaQuery.of(context).size.width;
+
+              return Container(
+                height: 200,
+                child: Center(child: Text('You not have Prima Account.',style: TextStyle(fontFamily: GoogleFonts.roboto().fontFamily),)),
+
+              );
+            },
+          ),
+        ));
   }
 }
 
@@ -295,3 +393,5 @@ Future<void> _getAddressFromLatLng(Position position) async {
     debugPrint(e);
   });
 }
+
+

@@ -24,7 +24,12 @@ class _SignInScreenState extends State<SignInScreen> {
   String email="";
 
   String password="";
-
+  showSnackBar(BuildContext context, String str, [Color clr = Colors.black]) {
+    return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(str),
+      backgroundColor: clr,
+    ));
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,6 +81,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                     addVerticalSpace(20),
                     TextField(
+                      obscureText: true,
                       onChanged: (value) {
                         password = value;
                       },
@@ -129,8 +135,12 @@ class _SignInScreenState extends State<SignInScreen> {
                                   builder: ((context) => MyBottomBar())));
                         } on FirebaseAuthException catch (e) {
                           if (e.code == 'user-not-found') {
+                            showSnackBar(
+                                context, "Your email is not exist", Colors.red);
                             print('No user found for that email.');
                           } else if (e.code == 'wrong-password') {
+                            showSnackBar(
+                                context, "Your password is Rong", Colors.red);
                             print('Wrong password provided for that user.');
                           }
                         }

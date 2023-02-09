@@ -95,7 +95,7 @@ class MysavedPinsTabbarWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
         height: height(context) * 0.87,
-        child: ListView.builder(itemBuilder: (ctx, index) {
+        child: ListView.builder(itemCount: 1,itemBuilder: (ctx, index) {
           return Column(
             children: [
               InkWell(

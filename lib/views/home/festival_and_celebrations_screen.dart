@@ -14,6 +14,7 @@ import 'package:travel_app/utils/constant.dart';
 import '../../../utils/constant.dart';
 import '../../widget/custom_overlaping_widget.dart';
 import '../../widget/custom_textfield.dart';
+import '../aspired_trip/save_festival_trip_and_get_qoute.dart';
 import '../humburger_flow/my_account/trip_intrest_screen.dart';
 import '../humburger_flow/trip_library_screen.dart';
 
@@ -63,10 +64,18 @@ class _FestivalAndCelebrationsScreenState
           style: bodyText20w700(color: black),
 
         ),
+
         actions: [
           InkWell(
             onTap: () {
-              filterDialog(context);
+              if (FirebaseAuth.instance.currentUser != null) {
+                filterDialog(context);
+              } else {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (ctx) => SignupWithSocialMediaScreen()));
+              }
             },
             child: Row(
               children: [
@@ -236,32 +245,27 @@ class _FestivalsDataListState extends State<FestivalsDataList> {
             children: [
               InkWell(
                 onTap: () {
-                  if( FirebaseAuth.instance.currentUser != null){
+                  if(FirebaseAuth.instance.currentUser != null){
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => ShowDetailsOfFestivals()));
+                            builder: (context) => ShowDetailsOfFestivals(MP: allData[index],)));
                   }
 
                   else
-                  if (_count == 10) {
+                //  if (_count == 10)
+                  {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => SignupWithSocialMediaScreen(),
                       ),
                     );
-                  } else {
-                    _count++;
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ShowDetailsOfFestivals()));
                   }
                 },
                 child: Container(
                   margin: EdgeInsets.only(top: 10, bottom: 5),
-                  height: height(context) * 0.370,
+                  height: height(context) * 0.385,
                   width: width(context) * 0.93,
                   decoration: shadowDecoration(15, 2),
                   child: Column(
@@ -342,7 +346,7 @@ class _FestivalsDataListState extends State<FestivalsDataList> {
                                         ),
                                         addHorizontalySpace(5),
                                         Text(
-                                          allData[index]['Date'].toDate().toString().split(" ").first,
+                                          allData[index]['Date'],
                                           style: TextStyle(
                                               fontWeight: FontWeight.w500,
                                               color: white),
@@ -396,9 +400,17 @@ class _FestivalsDataListState extends State<FestivalsDataList> {
                                 addHorizontalySpace(5),
                                 SizedBox(
                                   width: width(context) * 0.15,
-                                  child: Text(
-                                    allData[index]['CarTime'].toString(),
-                                    style: bodytext12Bold(color: black),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        allData[index]['CarTime'].toString(),
+                                        style: bodytext12Bold(color: black),
+                                      ),
+                                      Text(
+                                        ' hours',
+                                        style: bodytext12Bold(color: black),
+                                      ),
+                                    ],
                                   ),
                                 ),
                                 Text(
@@ -411,9 +423,17 @@ class _FestivalsDataListState extends State<FestivalsDataList> {
                                 addHorizontalySpace(5),
                                 SizedBox(
                                   width: width(context) * 0.15,
-                                  child: Text(
-                                    allData[index]['TrainTime'].toString(),
-                                    style: bodytext12Bold(color: black),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        allData[index]['TrainTime'].toString(),
+                                        style: bodytext12Bold(color: black),
+                                      ),
+                                      Text(
+                                       ' hours',
+                                        style: bodytext12Bold(color: black),
+                                      ),
+                                    ],
                                   ),
                                 ),
                                 Text(
@@ -447,7 +467,8 @@ class _FestivalsDataListState extends State<FestivalsDataList> {
 }
 
 class ShowDetailsOfFestivals extends StatefulWidget {
-  ShowDetailsOfFestivals({super.key});
+  final Map<String,dynamic> MP;
+   ShowDetailsOfFestivals({super.key, required this.MP,});
 
   @override
   State<ShowDetailsOfFestivals> createState() => _ShowDetailsOfFestivalsState();
@@ -457,39 +478,39 @@ class _ShowDetailsOfFestivalsState extends State<ShowDetailsOfFestivals> {
 
   @override
   void initState() {
-    getfestivals();
+   //getfestivals();
     getpermission();
     super.initState();
   }
-  String _address = "";
-  var _date;
-  String _image ="";
-  String _festivalname = "";
-  String _about = "";
-  var cartime;
-  var traintime;
-  List _nearbytouristname = [];
-  List _nearbyturistimage = [];
-  String _includes="";
-  void getfestivals() async{
-    if (FirebaseAuth.instance.currentUser != null) {
-      var festival = await FirebaseFirestore.instance
-          .collection('festivals')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .get();
-
-      _festivalname = festival.data()?['festivalname'];
-      _image = festival.data()?['imageUrl'];
-      _date = festival.data()?['Date'].toDate().toString().split(" ").first;
-      _address = festival.data()?['locality'];
-      _about = festival.data()?['about'];
-      _nearbytouristname = festival.data()?['nearbytouristname'];
-      _nearbyturistimage = festival.data()?['nearbyturistimage'];
-      _includes = festival.data()?['includes'];
-    }
-
-    setState(() {});
-  }
+  // String _address = "";
+  // var _date;
+  // String _image ="";
+  // String _festivalname = "";
+  // String _about = "";
+  // var cartime;
+  // var traintime;
+  // List _nearbytouristname = [];
+  // List _nearbyturistimage = [];
+  // String _includes="";
+  // void getfestivals() async{
+  //   if (FirebaseAuth.instance.currentUser != null) {
+  //     var festival = await FirebaseFirestore.instance
+  //         .collection('festivals')
+  //         .doc('K5WCDLS8g0fZPM9Bgg9FPfcyuiu2')
+  //         .get();
+  //
+  //     _festivalname = festival.data()?['festivalname'];
+  //     _image = festival.data()?['imageUrl'];
+  //     _date = festival.data()?['Date'];
+  //     _address = festival.data()?['locality'];
+  //     _about = festival.data()?['about'];
+  //     _nearbytouristname = festival.data()?['nearbytouristname'];
+  //     _nearbyturistimage = festival.data()?['nearbyturistimage'];
+  //     _includes = festival.data()?['includes'];
+  //   }
+  //
+  //   setState(() {});
+  // }
   String _mobileNum = "";
   String _email = "";
   void getpermission() async{
@@ -595,7 +616,7 @@ class _ShowDetailsOfFestivalsState extends State<ShowDetailsOfFestivals> {
                   decoration:  BoxDecoration(
                       image: DecorationImage(
                           fit: BoxFit.fill,
-                          image: NetworkImage(_image))),
+                          image: NetworkImage(widget.MP['imageUrl']))),
                   child: SafeArea(
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -637,7 +658,7 @@ class _ShowDetailsOfFestivalsState extends State<ShowDetailsOfFestivals> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '$_festivalname',
+                        widget.MP['festivalname'],
                         style: bodyText30W600(color: black),
                       ),
                       // Text(
@@ -651,7 +672,7 @@ class _ShowDetailsOfFestivalsState extends State<ShowDetailsOfFestivals> {
                             color: primary,
                           ),
                           Text(
-                            '$_address',
+                            widget.MP['locality'],
                             style: bodyText16normal(color: black),
                           )
                         ],
@@ -663,7 +684,7 @@ class _ShowDetailsOfFestivalsState extends State<ShowDetailsOfFestivals> {
                       ),
                       addVerticalSpace(5),
                       Text(
-                        '$_about',
+                        widget.MP['about'],
                         style: TextStyle(
                             height: 1.3,
                             fontSize: 18,
@@ -728,15 +749,15 @@ class _ShowDetailsOfFestivalsState extends State<ShowDetailsOfFestivals> {
                                     margin: EdgeInsets.only(right: 8),
                                     height: height(context) * 0.12,
                                     width: width(context) * 0.37,
-                                    child: Image.asset(
-                                      _nearbyturistimage[i],
+                                    child: Image.network(
+                                      widget.MP['nearbyturistimage'][i],
                                       fit: BoxFit.fill,
                                     ),
                                   ),
                                 ),
                                 addVerticalSpace(5),
                                 Text(
-                                  _nearbytouristname[i],
+                                 widget.MP['nearbytouristname'][i],
                                 )
                               ]);
                             }),
@@ -748,7 +769,7 @@ class _ShowDetailsOfFestivalsState extends State<ShowDetailsOfFestivals> {
                       ),
                       addVerticalSpace(5),
                       Text(
-                        '$_includes',
+                        widget.MP['includes'],
                         style: TextStyle(
                             height: 1.3,
                             fontSize: 18,
@@ -784,7 +805,7 @@ class _ShowDetailsOfFestivalsState extends State<ShowDetailsOfFestivals> {
                         context,
                         MaterialPageRoute(
                             builder: (ctx) =>
-                                SaveTripAndGetQuote(
+                                SaveFestivalTripAndGetQuote(
                                     message1:
                                     'The best mode of travel and travel booking will be suggested by our travel partner for this trip',
                                     message2: '')));

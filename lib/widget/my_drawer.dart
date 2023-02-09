@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:travel_app/providers/location_provider.dart';
 
 import 'package:travel_app/utils/constant.dart';
@@ -68,12 +69,28 @@ class _MyDrawerState extends State<MyDrawer> {
   @override
   void initState() {
     getDetails();
+    checkupcoming();
     // registerUser();
     //LocationProvider _locationProvider = LocationProvider();
     // _locationProvider.fetchCurrentPosition();
     super.initState();
   }
+  String check = "";
+  void checkupcoming() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      var profile = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection('upcomingtrip')
+          .doc('check')
+          .get();
+      check = profile.data()?['upcoming'];
 
+    }
+    setState(() {
+
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -92,71 +109,76 @@ class _MyDrawerState extends State<MyDrawer> {
                   backgroundImage: NetworkImage(url),
                 ),
                 addHorizontalySpace(5),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    addVerticalSpace(height(context) * 0.045),
-                    Row(
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Hii, $userName',
-                          style: bodyText22w700(color: white),
+                        addVerticalSpace(height(context) * 0.045),
+                        Row(
+                          children: [
+                            Text(
+                              'Hii, $userName',
+                              style: bodyText22w700(color: white),
+                            ),
+                            addHorizontalySpace(3),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 15.0),
+                              child: Icon(
+                                Icons.edit_note,
+                                color: white,
+                              ),
+                            )
+                          ],
                         ),
-                        addHorizontalySpace(3),
+                        // addVerticalSpace(6),
+                        Container(
+                          height: 23,
+                          width: width(context) * 0.35,
+                          decoration: myFillBoxDecoration(0, white, 7),
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Icon(
+                                  Icons.star_rate_rounded,
+                                  color: primary,
+                                  size: 20,
+                                ),
+                                Text(
+                                  'Verified Member',
+                                  style: bodytext12Bold(color: black),
+                                )
+                              ]),
+                        ),
+                        addVerticalSpace(6),
                         Padding(
-                          padding: const EdgeInsets.only(bottom: 15.0),
-                          child: Icon(
-                            Icons.edit_note,
-                            color: white,
-                          ),
+                          padding: const EdgeInsets.only(left: 2.0),
+                          child: InkWell(
+                              onTap: () {
+                                if (FirebaseAuth.instance.currentUser != null) {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => MyAccountScreen()));
+                                } else {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              SignupWithSocialMediaScreen()));
+                                  showSnackBar(
+                                      context, "Please Login First!", Colors.red);
+                                }
+                              },
+                              child: Text(
+                                'View/ Edit account',
+                                style: bodyText14w600(color: black),
+                              )),
                         )
                       ],
                     ),
-                    // addVerticalSpace(6),
-                    Container(
-                      height: 23,
-                      width: width(context) * 0.35,
-                      decoration: myFillBoxDecoration(0, white, 7),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Icon(
-                              Icons.star_rate_rounded,
-                              color: primary,
-                              size: 20,
-                            ),
-                            Text(
-                              'Verified Member',
-                              style: bodytext12Bold(color: black),
-                            )
-                          ]),
-                    ),
-                    addVerticalSpace(6),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 2.0),
-                      child: InkWell(
-                          onTap: () {
-                            if (FirebaseAuth.instance.currentUser != null) {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => MyAccountScreen()));
-                            } else {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          SignupWithSocialMediaScreen()));
-                              showSnackBar(
-                                  context, "Please Login First!", Colors.red);
-                            }
-                          },
-                          child: Text(
-                            'View/ Edit account',
-                            style: bodyText14w600(color: black),
-                          )),
-                    )
-                  ],
+                  ),
                 )
               ],
             ),
@@ -189,11 +211,21 @@ class _MyDrawerState extends State<MyDrawer> {
                       padding: EdgeInsets.only(left: width(context) * 0.19),
                       child: InkWell(
                           onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        UpcomingTripsScreen()));
+                            if (check == "") {
+                              if(FirebaseAuth.instance.currentUser != null){
+                                empatycomingtrip(context);
+                              }else{
+                                empatycomingtrip(context);
+                                Navigator.pop(context);
+                                showSnackBar(context, "Please Login First!", Colors.red);
+
+                              }
+                            } else {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (ctx) =>  UpcomingTripsScreen()));
+                            }
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -211,10 +243,15 @@ class _MyDrawerState extends State<MyDrawer> {
                           EdgeInsets.only(left: width(context) * 0.195, top: 8),
                       child: InkWell(
                         onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => TripLibraryScreen()));
+                          if (FirebaseAuth.instance.currentUser != null) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (ctx) =>  TripLibraryScreen()));
+                          } else {
+                            Navigator.pop(context);
+                            showSnackBar(context, "Please Login First!", Colors.red);
+                          }
                         },
                         child: Row(
                           children: [
@@ -261,11 +298,15 @@ class _MyDrawerState extends State<MyDrawer> {
                       padding: EdgeInsets.only(left: width(context) * 0.195),
                       child: InkWell(
                           onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        CreatePrimaProfile()));
+                            if (FirebaseAuth.instance.currentUser != null) {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (ctx) =>  CreatePrimaProfile()));
+                            } else {
+                              Navigator.pop(context);
+                              showSnackBar(context, "Please Login First!", Colors.red);
+                            }
                           },
                           child: Row(
                             children: [
@@ -280,11 +321,15 @@ class _MyDrawerState extends State<MyDrawer> {
                           EdgeInsets.only(left: width(context) * 0.195, top: 8),
                       child: InkWell(
                         onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      PublishYourTripScreen()));
+                          if (FirebaseAuth.instance.currentUser != null) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (ctx) =>  PublishYourTripScreen()));
+                          } else {
+                            Navigator.pop(context);
+                            showSnackBar(context, "Please Login First!", Colors.red);
+                          }
                         },
                         child: Row(
                           children: [
@@ -302,12 +347,17 @@ class _MyDrawerState extends State<MyDrawer> {
                           EdgeInsets.only(left: width(context) * 0.195, top: 8),
                       child: InkWell(
                         onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => MyTripFriendsScreen(
-                                        title: 'Friends in vicinity',
-                                      )));
+                          if (FirebaseAuth.instance.currentUser != null) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MyTripFriendsScreen(
+                                      title: 'Friends in vicinity',
+                                    )));
+                          } else {
+                            Navigator.pop(context);
+                            showSnackBar(context, "Please Login First!", Colors.red);
+                          }
                         },
                         child: Row(
                           children: [
@@ -408,42 +458,21 @@ class _MyDrawerState extends State<MyDrawer> {
               style: bodyText14w600(color: black),
             ),
             onTap: () async {
-              final user = await FirebaseAuth.instance.currentUser;
 
-              // if (FirebaseAuth.instance.currentUser != null) {
-              //             LocationProvider _locationProvider =
-              //                 LocationProvider();
-              //             await _locationProvider.fetchCurrentPosition();
-              //             registerUser();
-              //             Navigator.push(
-              //                 context,
-              //                 MaterialPageRoute(
-              //                     builder: (ctx) => QuickEscapeScreen()));
-              //           } else {
-              //             showSnackBar(
-              //                 context, "Please Login First!", Colors.red);
-              //             Navigator.push(
-              //                 context,
-              //                 MaterialPageRoute(
-              //                     builder: (ctx) =>
-              //                         SignupWithSocialMediaScreen()));
-              //           }
-              //  if (user != null) {
-              //    LocationProvider _locationProvider = LocationProvider();
-              //    await _locationProvider.fetchCurrentPosition();
-              //    registerUser();
-              //    Navigator.push(context,
-              //        MaterialPageRoute(builder: (ctx) => QuickEscapeScreen()));
-              //    Navigator.push(
-              //       context,
-              //       MaterialPageRoute(
-              //          builder: (context) => QuickEscapeScreen()));
-              //  } else {
-              //    Navigator.push(
-              //        context,
-              //   MaterialPageRoute(
-              //         builder: (context) => SignupWithSocialMediaScreen()));
-              // }
+              if (FirebaseAuth.instance.currentUser != null) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (ctx) => QuickEscapeScreen()));
+              } else {
+                showSnackBar(
+                    context, "Please Login First!", Colors.red);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (ctx) =>
+                            SignupWithSocialMediaScreen()));
+              }
             },
           ),
           Theme(
@@ -476,10 +505,15 @@ class _MyDrawerState extends State<MyDrawer> {
                           left: width(context) * 0.03, bottom: 10),
                       child: InkWell(
                         onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => MySavedPinsScreens()));
+                          if (FirebaseAuth.instance.currentUser != null) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (ctx) =>  MySavedPinsScreens()));
+                          } else {
+                            Navigator.pop(context);
+                            showSnackBar(context, "Please Login First!", Colors.red);
+                          }
                         },
                         child: Text('Trip City'),
                       ),
@@ -489,10 +523,15 @@ class _MyDrawerState extends State<MyDrawer> {
                           left: width(context) * 0.03, bottom: 10),
                       child: InkWell(
                         onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => MySavedPinsScreens()));
+                          if (FirebaseAuth.instance.currentUser != null) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (ctx) =>  MySavedPinsScreens()));
+                          } else {
+                            Navigator.pop(context);
+                            showSnackBar(context, "Please Login First!", Colors.red);
+                          }
                         },
                         child: Text('Tourist Spots'),
                       ),
@@ -557,5 +596,27 @@ class _MyDrawerState extends State<MyDrawer> {
         ],
       ),
     );
+  }
+  empatycomingtrip(BuildContext context) {
+
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          contentPadding: const EdgeInsets.all(6),
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          content: Builder(
+            builder: (context) {
+              var height = MediaQuery.of(context).size.height;
+              var width = MediaQuery.of(context).size.width;
+
+              return Container(
+                height: 200,
+                child: Center(child: Text('You not have any upcoming tirp.',style: TextStyle(fontFamily: GoogleFonts.roboto().fontFamily),)),
+
+              );
+            },
+          ),
+        ));
   }
 }

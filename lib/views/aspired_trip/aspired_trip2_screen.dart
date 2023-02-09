@@ -141,30 +141,42 @@ class AspiredTrip2Screen extends StatefulWidget {
 class _AspiredTrip2ScreenState extends State<AspiredTrip2Screen> {
   bool isShow = false;
 
-  String _destination = "";
-  String _state ="";
-  String _tripdays ="";
-  String _excerpttrip ="";
-  String _budget ="";
-  String _image ="";
-  String _tripname ="";
+  CollectionReference _collectionRef =
+  FirebaseFirestore.instance.collection('Aspired_trips');
 
-  void getDetails() async{
-    if (FirebaseAuth.instance.currentUser != null) {
-      var trip = await FirebaseFirestore.instance
-          .collection('Aspired_trips')
-          .doc('Trip1')
-          .get();
-      _destination = trip.data()?['destinationname'];
-       _state = trip.data()?['statename'];
-       _tripdays = trip.data()?['tripdays'];
-       _excerpttrip = trip.data()?['Excerpt_of_trip'];
-       _budget = trip.data()?['Budget'];
-       _image = trip.data()?['imageUrl'];
-       _tripname = trip.data()?['tripname'];
-    }
-    setState(() {});
+  Future<void> getData() async {
+    // Get docs from collection reference
+    QuerySnapshot querySnapshot = await _collectionRef.get();
+    // Get data from docs and convert map to List
+    allData = querySnapshot.docs.map((doc) => doc.data()).toList();
+    setState(() {
+    });
+    print(allData);
   }
+  List allData = [];
+
+  // String _destination = "";
+  // String _state ="";
+  // String _tripdays ="";
+  // String _excerpttrip ="";
+  // String _budget ="";
+  // String _image ="";
+  // String _tripname ="";
+  //
+  // void getDetails() async{
+  //     var trip = await FirebaseFirestore.instance
+  //         .collection('Aspired_trips')
+  //         .doc('Trip1')
+  //         .get();
+  //     _destination = trip.data()?['destinationname'];
+  //      _state = trip.data()?['statename'];
+  //      _tripdays = trip.data()?['tripdays'];
+  //      _excerpttrip = trip.data()?['Excerpt_of_trip'];
+  //      _budget = trip.data()?['Budget'];
+  //      _image = trip.data()?['imageUrl'];
+  //      _tripname = trip.data()?['tripname'];
+  //   setState(() {});
+  // }
 
   String _id = "";
   String _location = "";
@@ -214,7 +226,8 @@ class _AspiredTrip2ScreenState extends State<AspiredTrip2Screen> {
 
   @override
   void initState() {
-    getDetails();
+    // getDetails();
+    getData();
     super.initState();
   }
   @override
@@ -222,32 +235,26 @@ class _AspiredTrip2ScreenState extends State<AspiredTrip2Screen> {
     return Scaffold(
       body: Column(
         children: [
-          Expanded(child: ListView.builder(itemCount:1,itemBuilder: (ctx, i) {
+          Expanded(child: ListView.builder(itemCount:allData.length,itemBuilder: (ctx, i) {
             return InkWell(
               onTap: () {
                 if (FirebaseAuth.instance.currentUser != null) {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => AspiredTripDetailsScreen()));
-                } else if (_count == 10) {
+                          builder: (context) => AspiredTripDetailsScreen(MP: allData[i],)));
+                } else{
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => SignupWithSocialMediaScreen(),
                     ),
                   );
-                } else {
-                  _count++;
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => AspiredTripDetailsScreen()));
                 }
               },
               child: Container(
                 margin: EdgeInsets.all(10),
-                height: height(context) * 0.36,
+                height: height(context) * 0.450,
                 width: width(context) * 0.95,
                 decoration: shadowDecoration(15, 0.2),
                 child: Column(
@@ -258,7 +265,7 @@ class _AspiredTrip2ScreenState extends State<AspiredTrip2Screen> {
                             borderRadius: const BorderRadius.only(
                                 topLeft: Radius.circular(15),
                                 topRight: Radius.circular(15)),
-                            child: Image.network(_image)),
+                            child: Image.network(allData[i]['imageUrl'])),
                         Positioned(
                           top: -5,
                           right: -5,
@@ -326,16 +333,34 @@ class _AspiredTrip2ScreenState extends State<AspiredTrip2Screen> {
                                           size: 20,
                                         ),
                                         addHorizontalySpace(5),
-                                        Text(
-                                          '$_destination, $_state',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                              color: white),
+                                        Row(
+                                          children: [
+                                            Text(
+                                             allData[i]['destinationname'],
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  color: white),
+                                            ),
+                                            Text(
+                                              allData[i]['statename'],
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  color: white),
+                                            ),
+                                          ],
                                         ),
                                         Spacer(),
-                                        Text(
-                                          '$_tripdays Days',
-                                          style: bodyText14w600(color: Colors.yellow),
+                                        Row(
+                                          children: [
+                                            Text(
+                                             allData[i]['tripdays'],
+                                              style: bodyText14w600(color: Colors.yellow),
+                                            ),
+                                            Text(
+                                             '  Days',
+                                              style: bodyText14w600(color: Colors.yellow),
+                                            ),
+                                          ],
                                         )
                                       ],
                                     ),
@@ -349,32 +374,46 @@ class _AspiredTrip2ScreenState extends State<AspiredTrip2Screen> {
                       padding: const EdgeInsets.all(10.0),
                       child: Row(
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '$_tripname',
-                                style: bodyText22w700(color: black),
-                              ),
-                              addVerticalSpace(7),
-                              Text(
-                                '$_excerpttrip',
-                                style: bodyText14normal(color: black),
-                              ),
-                           //   addVerticalSpace(4),
-                              Row(
-                                children: [
-                                  Text(
-                                    'Expected ₹: $_budget /per person',
-                                    style: bodyText14w600(color: black),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 140),
-                                    child: TextButton(child: Text('get quotes'), onPressed: (){}),
-                                  )
-                                ],
-                              )
-                            ],
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  allData[i]['tripname'],
+                                  style: bodyText22w700(color: black),
+                                ),
+                                addVerticalSpace(10),
+                                Text(
+                                  allData[i]['Excerpt_of_trip'],
+                                  style: bodyText14normal(color: black),
+                                ),
+                               addVerticalSpace(4),
+                                Row(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'Expected ₹: ',
+                                          style: bodyText14w600(color: black),
+                                        ),
+                                        Text(
+                                          allData[i]['Budget'],
+                                          style: bodyText14w600(color: black),
+                                        ),
+                                        Text(
+                                          ' /per person',
+                                          style: bodyText14w600(color: black),
+                                        ),
+                                      ],
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 60),
+                                      child: TextButton(child: Text('get quotes'), onPressed: (){}),
+                                    )
+                                  ],
+                                )
+                              ],
+                            ),
                           ),
                         ],
                       ),

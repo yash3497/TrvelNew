@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:travel_app/model/prima_profile_model.dart';
 import 'package:travel_app/views/humburger_flow/prima_profile/about_me_screen.dart';
@@ -412,9 +413,11 @@ class _PrimaProfileScreenState extends State<PrimaProfileScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            'Travel Photos of  $Name',
-                            style: bodyText20w700(color: black),
+                          Expanded(
+                            child: Text(
+                              'Travel Photos of  $Name',
+                              style: bodyText20w700(color: black),
+                            ),
                           ),
                           TextButton(
                               onPressed: () {
@@ -827,31 +830,32 @@ class _TripFriendsAndMutualFriendsWidgetState
       decoration: myFillBoxDecoration(0, black.withOpacity(0.08), 15),
       child: Column(
         children: [
-          TabBar(
-            indicatorSize: TabBarIndicatorSize.tab,
-            unselectedLabelColor: Colors.grey,
-            controller: controller,
-            // onTap: (value) {},
-            isScrollable: false,
-            indicator: BoxDecoration(
-                shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.circular(10),
-                color: primary),
-            indicatorColor: primary,
-            labelColor: black,
-            labelStyle:
-                const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-            unselectedLabelStyle:
-                const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
-            tabs: const [
-              Tab(
-                text: 'Trip Friends',
-              ),
-              // Tab(
-              //   text: 'Mutual Friends',
-              // ),
-            ],
-          ),
+          Text('Trip Friend',style: TextStyle( fontFamily: GoogleFonts.roboto().fontFamily,fontSize: 20),),
+          // TabBar(
+          //   indicatorSize: TabBarIndicatorSize.tab,
+          //   unselectedLabelColor: Colors.grey,
+          //   controller: controller,
+          //   // onTap: (value) {},
+          //   isScrollable: false,
+          //   indicator: BoxDecoration(
+          //       shape: BoxShape.rectangle,
+          //       borderRadius: BorderRadius.circular(10),
+          //       color: primary),
+          //   indicatorColor: primary,
+          //   labelColor: black,
+          //   labelStyle:
+          //       const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+          //   unselectedLabelStyle:
+          //       const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+          //   tabs: const [
+          //     Tab(
+          //       text: 'Trip Friends',
+          //     ),
+          //     // Tab(
+          //     //   text: 'Mutual Friends',
+          //     // ),
+          //   ],
+          // ),
           Expanded(
             child: TabBarView(controller: controller, children: [
               Column(

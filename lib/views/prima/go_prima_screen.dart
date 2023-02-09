@@ -671,7 +671,7 @@ class _PlanDetailsWidgetState extends State<PlanDetailsWidget> {
                   },
                   child: Container(
                     margin: const EdgeInsets.all(7),
-                    height: 135,
+                    height: 143,
                     width: 100,
                     decoration: selectedIndex == i
                         ? BoxDecoration(

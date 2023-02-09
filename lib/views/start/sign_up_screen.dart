@@ -199,9 +199,27 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       controller: field2,
                     ),
                     addVerticalSpace(15),
-                    CustomTextFieldWidget(
-                      icon: Icon(Icons.perm_contact_cal_rounded),
-                      labelText: 'Mobile Number',
+                    TextFormField(
+                        decoration: InputDecoration(
+                          suffixIcon: Icon(Icons.perm_contact_cal_rounded,color: primary,),
+                          labelText: 'Mobile Number',
+                          // labelStyle: bodyText14w600(color: primarhy),
+
+                          focusColor: primary,
+
+                          enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.black26, width: 1.0),
+                              borderRadius: BorderRadius.circular(10)),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: primary, width: 1.5),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          contentPadding: const EdgeInsets.only(
+                            left: 20,
+                          ),
+                        ),
+
+                      keyboardType: TextInputType.number,
                       controller: field3,
                     ),
                     addVerticalSpace(15),
@@ -211,7 +229,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         password = value;
                       },
                       decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.remove_red_eye_sharp),
+                        // prefixIcon: Icon(Icons.remove_red_eye_sharp),
                         suffixIcon: IconButton(
                             onPressed: () {
                               showSnackBar(
@@ -296,36 +314,39 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ),
                           ),
                         ),
-                        SizedBox(
-                          width: width(context) * 0.7,
-                          child: CustomButton(
-                            name: 'Sign up',
-                            onPressed: () async {
-                              try {
-                                final credential = await FirebaseAuth.instance
-                                    .createUserWithEmailAndPassword(
-                                  email: email,
-                                  password: password,
-                                );
-                                registerUser();
-                                showSnackBar(
-                                    context, "Signed Up", Colors.green);
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: ((context) =>
-                                            SignInScreen())));
-                              } on FirebaseAuthException catch (e) {
-                                if (e.code == 'weak-password') {
-                                  print('The password provided is too weak.');
-                                } else if (e.code == 'email-already-in-use') {
-                                  print(
-                                      'The account already exists for that email.');
+                        Padding(
+                          padding: const EdgeInsets.only(right: 20),
+                          child: SizedBox(
+                            width: width(context) * 0.7,
+                            child: CustomButton(
+                              name: 'Sign up',
+                              onPressed: () async {
+                                try {
+                                  final credential = await FirebaseAuth.instance
+                                      .createUserWithEmailAndPassword(
+                                    email: email,
+                                    password: password,
+                                  );
+                                  registerUser();
+                                  showSnackBar(
+                                      context, "Signed Up", Colors.green);
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: ((context) =>
+                                              SignInScreen())));
+                                } on FirebaseAuthException catch (e) {
+                                  if (e.code == 'weak-password') {
+                                    print('The password provided is too weak.');
+                                  } else if (e.code == 'email-already-in-use') {
+                                    print(
+                                        'The account already exists for that email.');
+                                  }
+                                } catch (e) {
+                                  print(e);
                                 }
-                              } catch (e) {
-                                print(e);
-                              }
-                            },
+                              },
+                            ),
                           ),
                         ),
                       ],

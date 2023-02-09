@@ -102,7 +102,7 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
         .catchError((error) => print("Failed to Update users Details: $error"));
   }
   String _image ="";
-
+String firstname = "";
   void getDetails() async {
     if (FirebaseAuth.instance.currentUser != null) {
       var profile = await FirebaseFirestore.instance
@@ -114,6 +114,7 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
       _image = profile.data()?['imageUrl'];
       // url = profile.data()?['document'];
       firstnameController.text = profile.data()?['firstName'];
+      firstname = profile.data()?['firstName'];
       dateOfBirth.text = profile.data()?['DOB'];
       annivarsaryDate.text = profile.data()?['Annivarsary'];
       professionController.text = profile.data()?['profession'];
@@ -635,6 +636,7 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
               CustomButton(
                   name: 'Create my profile',
                   onPressed: () {
+                    updatetravelphoto();
                     showDialog<String>(
                       context: context,
                       builder: (BuildContext context) => AlertDialog(
@@ -644,8 +646,7 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
                         actions: <Widget>[
                           TextButton(
                             onPressed: () {
-                              if (FirebaseAuth.instance.currentUser!.uid !=
-                                  null) {
+                              if (firstname != "") {
                                 updatePrimaAccountDetails();
                                 Navigator.push(
                                     context,
@@ -726,7 +727,6 @@ class _TripometerWidgetState extends State<TripometerWidget> {
         .collection("tripoMeter")
         .doc("profile")
         .update({
-
       "Adventure" : adventure,
       "City" : city,
       "Nature" : nature,
@@ -793,8 +793,12 @@ class _TripometerWidgetState extends State<TripometerWidget> {
                                   nature = tripoMeterList[2]['value'];
                                   religlous = tripoMeterList[3]['value'];
                                 });
-                              //  addTripometerDetails();
-                                updateTripometerDetails();
+                                if(city != 0.0 ){
+                                  addTripometerDetails();
+                                }else{
+                                  updateTripometerDetails();
+                                }
+
                                 getTripometerDetails();
                               },
                               max: 100,
@@ -822,7 +826,25 @@ class _TripometerWidgetState extends State<TripometerWidget> {
     );
   }
 }
-
+String _image1 = "";
+String _image2 = "";
+String _image3 = "";
+String _image4 = "";
+updatetravelphoto() async {
+  CollectionReference users = FirebaseFirestore.instance.collection('users');
+  users
+      .doc(FirebaseAuth.instance.currentUser!.uid)
+      .collection("primaAccount")
+      .doc("profile")
+      .update({
+    "TravelPhoto1": _image1,
+    "TravelPhoto2": _image2,
+    "TravelPhoto3": _image3,
+    "TravelPhoto4": _image4,
+  })
+      .then((value) => print("Details Updated"))
+      .catchError((error) => print("Failed to Update users Details: $error"));
+}
 class UploadTravelsPhotos extends StatefulWidget {
   const UploadTravelsPhotos({super.key});
 
@@ -831,25 +853,110 @@ class UploadTravelsPhotos extends StatefulWidget {
 }
 
 class _UploadTravelsPhotosState extends State<UploadTravelsPhotos> {
-  File? _image1;
-  File? _image2;
-  File? _image3;
-  File? _image4;
+  // File? _image1;
+  // File? _image2;
+  // File? _image3;
+  // File? _image4;
 
-  Future pickImage() async {
-    final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (image == null) {
-      return;
-    }
-    final imagepath = File(image.path);
-    setState(() {
-      _image1 = imagepath;
-      _image2 = imagepath;
-      _image3 = imagepath;
-      _image4 = imagepath;
+  // Future pickImage() async {
+  //   final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+  //   if (image == null) {
+  //     return;
+  //   }
+  //   final imagepath = File(image.path);
+  //   setState(() {
+  //     _image1 = imagepath;
+  //     _image2 = imagepath;
+  //     _image3 = imagepath;
+  //     _image4 = imagepath;
+  //   });
+  // }
+  // String _image1 = "";
+  // String _image2 = "";
+  // String _image3 = "";
+  // String _image4 = "";
+  void pickUploadImage1() async{
+    final image = await ImagePicker().pickImage(source: ImageSource.gallery,
+        maxWidth: MediaQuery.of(context).size.width,
+        maxHeight: MediaQuery.of(context).size.height,
+        imageQuality: 75);
+    Reference ref = FirebaseStorage.instance.ref().child('profileImg');
+
+    await ref.putFile(File(image!.path));
+    ref.getDownloadURL().then((value){
+      print(value);
+      setState(() {
+        _image1 = value;
+      });
+    });
+  }
+  void pickUploadImage2() async{
+    final image = await ImagePicker().pickImage(source: ImageSource.gallery,
+        maxWidth: MediaQuery.of(context).size.width,
+        maxHeight: MediaQuery.of(context).size.height,
+        imageQuality: 75);
+    Reference ref = FirebaseStorage.instance.ref().child('profileImg');
+
+    await ref.putFile(File(image!.path));
+    ref.getDownloadURL().then((value){
+      print(value);
+      setState(() {
+        _image2 = value;
+      });
+    });
+  }
+  void pickUploadImage3() async{
+    final image = await ImagePicker().pickImage(source: ImageSource.gallery,
+        maxWidth: MediaQuery.of(context).size.width,
+        maxHeight: MediaQuery.of(context).size.height,
+        imageQuality: 75);
+    Reference ref = FirebaseStorage.instance.ref().child('profileImg');
+
+    await ref.putFile(File(image!.path));
+    ref.getDownloadURL().then((value){
+      print(value);
+      setState(() {
+        _image3= value;
+      });
+    });
+  }
+  void pickUploadImage4() async{
+    final image = await ImagePicker().pickImage(source: ImageSource.gallery,
+        maxWidth: MediaQuery.of(context).size.width,
+        maxHeight: MediaQuery.of(context).size.height,
+        imageQuality: 75);
+    Reference ref = FirebaseStorage.instance.ref().child('profileImg');
+
+    await ref.putFile(File(image!.path));
+    ref.getDownloadURL().then((value){
+      print(value);
+      setState(() {
+        _image4 = value;
+      });
     });
   }
 
+  void getDetails() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      var profile = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection("primaAccount")
+          .doc("profile")
+          .get();
+      _image1 = profile.data()?['TravelPhoto1'];
+      _image2 = profile.data()?['TravelPhoto2'];
+      _image3 = profile.data()?['TravelPhoto3'];
+      _image4 = profile.data()?['TravelPhoto4'];
+
+      setState(() {});
+    }
+  }
+@override
+  void initState() {
+    getDetails();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -865,58 +972,157 @@ class _UploadTravelsPhotosState extends State<UploadTravelsPhotos> {
           style: bodyText12Small(color: black),
         ),
         addVerticalSpace(15),
-        Center(
-          child: Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            children: List.generate(4, (i) {
-              return InkWell(
-                onTap: () {
-                  pickImage();
-                },
-                child: _image1 != null
-                    ? Image.file(
-                  _image1!,
-                  height: height(context) * 0.15,
-                  width: width(context) * 0.35,
-                  fit: BoxFit.cover,
-                )
-                    : _image2 != null
-                    ? Image.file(
-                  _image2!,
-                  height: height(context) * 0.15,
-                  width: width(context) * 0.35,
-                  fit: BoxFit.cover,
-                )
-                    : _image3 != null
-                    ? Image.file(
-                  _image3!,
-                  height: height(context) * 0.15,
-                  width: width(context) * 0.35,
-                  fit: BoxFit.cover,
-                )
-                    : _image4 != null
-                    ? Image.file(
-                  _image4!,
-                  height: height(context) * 0.15,
-                  width: width(context) * 0.35,
-                  fit: BoxFit.cover,
-                )
-                    : Container(
-                  height: height(context) * 0.15,
-                  width: width(context) * 0.35,
-                  decoration: myOutlineBoxDecoration(
-                      1, black.withOpacity(0.3), 10),
-                  child: Center(
-                      child: Icon(
-                        Icons.add,
-                        color: black.withOpacity(0.3),
-                      )),
-                ),
-              );
-            }),
+        Padding(
+          padding: const EdgeInsets.only(left: 50),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child:
+                    InkWell(
+                      onTap: (){
+                        pickUploadImage1();
+                      },
+                      child: Container(
+                        height: height(context) * 0.15,
+                        width: width(context) * 0.3,
+                        decoration: _image1== ""
+                            ? BoxDecoration(
+                            image: DecorationImage(
+                                fit: BoxFit.fill,
+                                image: NetworkImage('https://creazilla-store.fra1.digitaloceanspaces.com/icons/3175753/ic-fluent-add-square-24-regular-icon-sm.png')))
+                            : BoxDecoration(
+                            image: DecorationImage(
+                                fit: BoxFit.fill, image: NetworkImage(_image1))),
+                      ),
+                    ),
+                  ),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child:
+                    InkWell(
+                      onTap: (){
+                        pickUploadImage2();
+                      },
+                      child: Container(
+                        height: height(context) * 0.15,
+                        width: width(context) * 0.3,
+                        decoration: _image2== ""
+                            ? BoxDecoration(
+                            image: DecorationImage(
+                                fit: BoxFit.fill,
+                                image: NetworkImage('https://creazilla-store.fra1.digitaloceanspaces.com/icons/3175753/ic-fluent-add-square-24-regular-icon-sm.png')))
+                            : BoxDecoration(
+                            image: DecorationImage(
+                                fit: BoxFit.fill, image: NetworkImage(_image2))),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child:
+                    InkWell(
+                      onTap: (){
+                        pickUploadImage3();
+                      },
+                      child: Container(
+                        height: height(context) * 0.15,
+                        width: width(context) * 0.3,
+                        decoration: _image3== ""
+                            ? BoxDecoration(
+                            image: DecorationImage(
+                                fit: BoxFit.fill,
+                                image: NetworkImage('https://creazilla-store.fra1.digitaloceanspaces.com/icons/3175753/ic-fluent-add-square-24-regular-icon-sm.png')))
+                            : BoxDecoration(
+                            image: DecorationImage(
+                                fit: BoxFit.fill, image: NetworkImage(_image3))),
+                      ),
+                    ),
+                  ),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child:
+                    InkWell(
+                      onTap: (){
+                        pickUploadImage4();
+                      },
+                      child: Container(
+                        height: height(context) * 0.15,
+                        width: width(context) * 0.3,
+                        decoration: _image4== ""
+                            ? BoxDecoration(
+                            image: DecorationImage(
+                                fit: BoxFit.fill,
+                                image: NetworkImage('https://creazilla-store.fra1.digitaloceanspaces.com/icons/3175753/ic-fluent-add-square-24-regular-icon-sm.png')))
+                            : BoxDecoration(
+                            image: DecorationImage(
+                                fit: BoxFit.fill, image: NetworkImage(_image4))),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
+        // Center(
+        //   child: Wrap(
+        //     spacing: 10,
+        //     runSpacing: 10,
+        //     children: List.generate(4, (i) {
+        //       return InkWell(
+        //         onTap: () {
+        //           pickUploadImage();
+        //         },
+        //         child: _image1 != null
+        //             ? Image.file(
+        //           _image1!,
+        //           height: height(context) * 0.15,
+        //           width: width(context) * 0.35,
+        //           fit: BoxFit.cover,
+        //         )
+        //             : _image2 != null
+        //             ? Image.file(
+        //           _image2!,
+        //           height: height(context) * 0.15,
+        //           width: width(context) * 0.35,
+        //           fit: BoxFit.cover,
+        //         )
+        //             : _image3 != null
+        //             ? Image.file(
+        //           _image3!,
+        //           height: height(context) * 0.15,
+        //           width: width(context) * 0.35,
+        //           fit: BoxFit.cover,
+        //         )
+        //             : _image4 != null
+        //             ? Image.file(
+        //           _image4!,
+        //           height: height(context) * 0.15,
+        //           width: width(context) * 0.35,
+        //           fit: BoxFit.cover,
+        //         )
+        //             : Container(
+        //           height: height(context) * 0.15,
+        //           width: width(context) * 0.35,
+        //           decoration: myOutlineBoxDecoration(
+        //               1, black.withOpacity(0.3), 10),
+        //           child: Center(
+        //               child: Icon(
+        //                 Icons.add,
+        //                 color: black.withOpacity(0.3),
+        //               )),
+        //         ),
+        //       );
+        //     }),
+        //   ),
+        // ),
         addVerticalSpace(15),
         Container(
           decoration: myOutlineBoxDecoration(1, black.withOpacity(0.4), 9),
@@ -980,11 +1186,13 @@ class WhatExcitesYouWidget extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              SizedBox(
-                                  width: width(context) * 0.3,
-                                  child: Text(
-                                    whatExcitesYou[i]['subTitle'],
-                                  )),
+                              Expanded(
+                                child: SizedBox(
+                                    width: width(context) * 0.3,
+                                    child: Text(
+                                      whatExcitesYou[i]['subTitle'],
+                                    )),
+                              ),
                               TextButton(
                                   onPressed: () {
                                     Navigator.push(context, MaterialPageRoute(builder:

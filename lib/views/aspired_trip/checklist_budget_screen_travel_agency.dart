@@ -151,7 +151,7 @@ class _CheckListAndBudgetScreenState extends State<CheckListAndBudgetScreen> {
                                   ),
                                 ),
                                 SizedBox(
-                                  height: 40,
+                                  height: 50,
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment
                                         .start,
@@ -166,11 +166,10 @@ class _CheckListAndBudgetScreenState extends State<CheckListAndBudgetScreen> {
                                         ),
                                       ]
                                       ),
-
-                                      // Text(
-                                      //   'Total',
-                                      //   style: bodyText14w600(color: black),
-                                      // )
+                                      Text(
+                                        'Total',
+                                        style: bodyText14w600(color: black),
+                                      )
                                     ],
                                   ),
                                 ),
@@ -187,10 +186,10 @@ class _CheckListAndBudgetScreenState extends State<CheckListAndBudgetScreen> {
                                         style: bodyText14w600(color: black),
                                       ),
 
-                                      // Text(
-                                      //   '1,000',
-                                      //   style: bodyText14w600(color: black),
-                                      // ),
+                                      Text(
+                                        '1,000',
+                                        style: bodyText14w600(color: black),
+                                      ),
                                     ],
                                   ),
                                 ),

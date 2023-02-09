@@ -161,7 +161,7 @@ List allData = [];
                       },
                       child: Container(
                         margin: EdgeInsets.only(top: 10, bottom: 5),
-                        height: height(context) * 0.370,
+                        height: height(context) * 0.380,
                         width: width(context) * 0.93,
                         decoration: shadowDecoration(15, 2),
                         child: Column(

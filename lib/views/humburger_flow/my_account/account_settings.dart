@@ -43,8 +43,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
     },
     {'title': 'Payment preference', 'subTitle': 'Saved card, UPI'},
   ];
-  final List<String> settingList = ['Everyone', 'Only me', 'My friends'];
-  var subTitle = 'Everyone';
+  // final List<String> settingList = ['Everyone', 'Only me', 'My friends'];
   selectCity value = selectCity.two;
 
   bool isSelect = false;
@@ -63,13 +62,61 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
+    getData();
     super.initState();
     _getUId();
   }
   //----------Future------------//
 
   final _future = FirebaseFirestore.instance.collection('users');
+
+  String subTitle1 = "Everyone";
+  String subTitle2 = "Everyone";
+  String subTitle3 = "Everyone";
+  String subTitle4 = "Everyone";
+  String subTitle5 = "Everyone";
+  String subTitle6 = "Everyone";
+  String subTitle7 = "Everyone";
+  accountprivacy() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      DocumentReference profile =  FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection("accountprivacy")
+          .doc('privacy');
+      profile.set({
+       "Who can see your age": subTitle1,
+       "Who can see your marital Status":subTitle2,
+       "Who can see your trip friend list":subTitle3,
+       "Who can see your travel photos":subTitle4,
+       "Who can see your prima profile":subTitle5,
+       "Who can see your other interest":subTitle6,
+       "Who can see your profile": subTitle7
+      });
+      setState(() {});
+    }
+  }
+  void getData() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      var privacy = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection("accountprivacy")
+          .doc('privacy')
+          .get();
+      subTitle1 = privacy.data()?['Who can see your age'];
+      subTitle2 = privacy.data()?['Who can see your marital Status'];
+      subTitle3 = privacy.data()?['Who can see your trip friend list'];
+      subTitle4 = privacy.data()?['Who can see your travel photos'];
+      subTitle5 = privacy.data()?['Who can see your prima profile'];
+      subTitle6 = privacy.data()?['Who can see your other interest'];
+      subTitle7 = privacy.data()?['Who can see your profile'];
+
+    }
+    setState(() {
+
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,39 +140,487 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                 thickness: 1,
               ),
               SizedBox(
-                height: height(context) * 0.55,
-                child: FutureBuilder<DocumentSnapshot>(
-                    future: _future
-                        .doc(uid)
-                        .collection('accountPrivacy')
-                        .doc('Q7golCVjSlWRoZW6DZnG')
-                        .get(),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return const SizedBox(
-                          height: 60,
-                          width: 60,
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              color: Colors.amber,
+                height: 75,
+                child: ListView.builder(
+                    padding: EdgeInsets.zero,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: 1,
+                    itemBuilder: (ctx, i) {
+                      return Column(
+                        children: [
+                          ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(
+                              privacyList[0],
+                              style: const TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.w400),
+                            ),
+                            subtitle: SizedBox(
+                              height: 30,
+                              child: DropdownButton<String>(
+                                value: subTitle1,
+                                isExpanded: true,
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    subTitle1 = newValue!;
+                                    accountprivacy();
+                                  });
+                                },
+                                items:  ['Only me', 'My friends', 'Everyone']
+                                    .map<DropdownMenuItem<String>>(
+                                        (String value) =>
+                                        DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(
+                                            value,
+                                            style: bodyText16normal(
+                                                color:
+                                                black.withOpacity(0.4)),
+                                          ),
+                                        ))
+                                    .toList(),
+
+                                // add extra sugar..
+                                icon: const Padding(
+                                  padding: EdgeInsets.only(bottom: 8.0),
+                                  child: Icon(
+                                    Icons.arrow_drop_down,
+                                  ),
+                                ),
+                                iconSize: 0,
+                                iconEnabledColor: white,
+                                iconDisabledColor: white,
+                                underline: const SizedBox(),
+                              ),
                             ),
                           ),
-                        );
-                      }
-                      return ListView.builder(
-                          padding: EdgeInsets.zero,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: privacyList.length,
-                          itemBuilder: (ctx, i) {
-                            String value = snapshot.data![privacyList[i]];
-                            return AccountDropdown(
-                              privacyList: privacyList[i],
-                              settingList: settingList,
-                              subTitle: value ?? subTitle,
-                            );
-                          });
+
+                          const Divider(
+                            height: 0,
+                            thickness: 1,
+                          ),
+                        ],
+                      );
                     }),
               ),
+              SizedBox(
+                height: 75,
+                child: ListView.builder(
+                    padding: EdgeInsets.zero,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: 1,
+                    itemBuilder: (ctx, i) {
+                      return Column(
+                        children: [
+                          ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(
+                              privacyList[1],
+                              style: const TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.w400),
+                            ),
+                            subtitle: SizedBox(
+                              height: 30,
+                              child: DropdownButton<String>(
+                                value: subTitle2,
+                                isExpanded: true,
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    subTitle2 = newValue!;
+                                    accountprivacy();
+                                  });
+                                },
+                                items:  ['Only me', 'My friends', 'Everyone']
+                                    .map<DropdownMenuItem<String>>(
+                                        (String value) =>
+                                        DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(
+                                            value,
+                                            style: bodyText16normal(
+                                                color:
+                                                black.withOpacity(0.4)),
+                                          ),
+                                        ))
+                                    .toList(),
+
+                                // add extra sugar..
+                                icon: const Padding(
+                                  padding: EdgeInsets.only(bottom: 8.0),
+                                  child: Icon(
+                                    Icons.arrow_drop_down,
+                                  ),
+                                ),
+                                iconSize: 0,
+                                iconEnabledColor: white,
+                                iconDisabledColor: white,
+                                underline: const SizedBox(),
+                              ),
+                            ),
+                          ),
+
+                          const Divider(
+                            height: 0,
+                            thickness: 1,
+                          ),
+                        ],
+                      );
+                    }),
+              ),
+              SizedBox(
+                height: 75,
+                child: ListView.builder(
+                    padding: EdgeInsets.zero,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: 1,
+                    itemBuilder: (ctx, i) {
+                      return Column(
+                        children: [
+                          ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(
+                              privacyList[2],
+                              style: const TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.w400),
+                            ),
+                            subtitle: SizedBox(
+                              height: 30,
+                              child: DropdownButton<String>(
+                                value: subTitle3,
+                                isExpanded: true,
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    subTitle3 = newValue!;
+                                    accountprivacy();
+                                  });
+                                },
+                                items:  ['Only me', 'My friends', 'Everyone']
+                                    .map<DropdownMenuItem<String>>(
+                                        (String value) =>
+                                        DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(
+                                            value,
+                                            style: bodyText16normal(
+                                                color:
+                                                black.withOpacity(0.4)),
+                                          ),
+                                        ))
+                                    .toList(),
+
+                                // add extra sugar..
+                                icon: const Padding(
+                                  padding: EdgeInsets.only(bottom: 8.0),
+                                  child: Icon(
+                                    Icons.arrow_drop_down,
+                                  ),
+                                ),
+                                iconSize: 0,
+                                iconEnabledColor: white,
+                                iconDisabledColor: white,
+                                underline: const SizedBox(),
+                              ),
+                            ),
+                          ),
+
+                          const Divider(
+                            height: 0,
+                            thickness: 1,
+                          ),
+                        ],
+                      );
+                    }),
+              ),
+              SizedBox(
+                height: 75,
+                child: ListView.builder(
+                    padding: EdgeInsets.zero,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: 1,
+                    itemBuilder: (ctx, i) {
+                      return Column(
+                        children: [
+                          ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(
+                              privacyList[3],
+                              style: const TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.w400),
+                            ),
+                            subtitle: SizedBox(
+                              height: 30,
+                              child: DropdownButton<String>(
+                                value: subTitle4,
+                                isExpanded: true,
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    subTitle4 = newValue!;
+                                    accountprivacy();
+                                  });
+                                },
+                                items:  ['Only me', 'My friends', 'Everyone']
+                                    .map<DropdownMenuItem<String>>(
+                                        (String value) =>
+                                        DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(
+                                            value,
+                                            style: bodyText16normal(
+                                                color:
+                                                black.withOpacity(0.4)),
+                                          ),
+                                        ))
+                                    .toList(),
+
+                                // add extra sugar..
+                                icon: const Padding(
+                                  padding: EdgeInsets.only(bottom: 8.0),
+                                  child: Icon(
+                                    Icons.arrow_drop_down,
+                                  ),
+                                ),
+                                iconSize: 0,
+                                iconEnabledColor: white,
+                                iconDisabledColor: white,
+                                underline: const SizedBox(),
+                              ),
+                            ),
+                          ),
+
+                          const Divider(
+                            height: 0,
+                            thickness: 1,
+                          ),
+                        ],
+                      );
+                    }),
+              ),
+              SizedBox(
+                height: 75,
+                child: ListView.builder(
+                    padding: EdgeInsets.zero,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: 1,
+                    itemBuilder: (ctx, i) {
+                      return Column(
+                        children: [
+                          ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(
+                              privacyList[4],
+                              style: const TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.w400),
+                            ),
+                            subtitle: SizedBox(
+                              height: 30,
+                              child: DropdownButton<String>(
+                                value: subTitle5,
+                                isExpanded: true,
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    subTitle5 = newValue!;
+                                    accountprivacy();
+                                  });
+                                },
+                                items:  ['Only me', 'My friends', 'Everyone']
+                                    .map<DropdownMenuItem<String>>(
+                                        (String value) =>
+                                        DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(
+                                            value,
+                                            style: bodyText16normal(
+                                                color:
+                                                black.withOpacity(0.4)),
+                                          ),
+                                        ))
+                                    .toList(),
+
+                                // add extra sugar..
+                                icon: const Padding(
+                                  padding: EdgeInsets.only(bottom: 8.0),
+                                  child: Icon(
+                                    Icons.arrow_drop_down,
+                                  ),
+                                ),
+                                iconSize: 0,
+                                iconEnabledColor: white,
+                                iconDisabledColor: white,
+                                underline: const SizedBox(),
+                              ),
+                            ),
+                          ),
+
+                          const Divider(
+                            height: 0,
+                            thickness: 1,
+                          ),
+                        ],
+                      );
+                    }),
+              ),
+              SizedBox(
+                height: 75,
+                child: ListView.builder(
+                    padding: EdgeInsets.zero,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: 1,
+                    itemBuilder: (ctx, i) {
+                      return Column(
+                        children: [
+                          ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(
+                              privacyList[5],
+                              style: const TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.w400),
+                            ),
+                            subtitle: SizedBox(
+                              height: 30,
+                              child: DropdownButton<String>(
+                                value: subTitle6,
+                                isExpanded: true,
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    subTitle6 = newValue!;
+                                    accountprivacy();
+                                  });
+                                },
+                                items:  ['Only me', 'My friends', 'Everyone']
+                                    .map<DropdownMenuItem<String>>(
+                                        (String value) =>
+                                        DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(
+                                            value,
+                                            style: bodyText16normal(
+                                                color:
+                                                black.withOpacity(0.4)),
+                                          ),
+                                        ))
+                                    .toList(),
+
+                                // add extra sugar..
+                                icon: const Padding(
+                                  padding: EdgeInsets.only(bottom: 8.0),
+                                  child: Icon(
+                                    Icons.arrow_drop_down,
+                                  ),
+                                ),
+                                iconSize: 0,
+                                iconEnabledColor: white,
+                                iconDisabledColor: white,
+                                underline: const SizedBox(),
+                              ),
+                            ),
+                          ),
+
+                          const Divider(
+                            height: 0,
+                            thickness: 1,
+                          ),
+                        ],
+                      );
+                    }),
+              ),
+              SizedBox(
+                height: 75,
+                child: ListView.builder(
+                    padding: EdgeInsets.zero,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: 1,
+                    itemBuilder: (ctx, i) {
+                      return Column(
+                        children: [
+                          ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(
+                              privacyList[6],
+                              style: const TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.w400),
+                            ),
+                            subtitle: SizedBox(
+                              height: 30,
+                              child: DropdownButton<String>(
+                                value: subTitle7,
+                                isExpanded: true,
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    subTitle7 = newValue!;
+                                    accountprivacy();
+                                  });
+                                },
+                                items:  ['Only me', 'My friends', 'Everyone']
+                                    .map<DropdownMenuItem<String>>(
+                                        (String value) =>
+                                        DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(
+                                            value,
+                                            style: bodyText16normal(
+                                                color:
+                                                black.withOpacity(0.4)),
+                                          ),
+                                        ))
+                                    .toList(),
+
+                                // add extra sugar..
+                                icon: const Padding(
+                                  padding: EdgeInsets.only(bottom: 8.0),
+                                  child: Icon(
+                                    Icons.arrow_drop_down,
+                                  ),
+                                ),
+                                iconSize: 0,
+                                iconEnabledColor: white,
+                                iconDisabledColor: white,
+                                underline: const SizedBox(),
+                              ),
+                            ),
+                          ),
+
+                          const Divider(
+                            height: 0,
+                            thickness: 1,
+                          ),
+                        ],
+                      );
+                    }),
+              ),
+              // SizedBox(
+              //   height: height(context) * 0.55,
+              //   child: FutureBuilder<DocumentSnapshot>(
+              //       future: _future
+              //           .doc(uid)
+              //           .collection('accountPrivacy')
+              //           .doc('Q7golCVjSlWRoZW6DZnG')
+              //           .get(),
+              //       builder: (context, snapshot) {
+              //         if (!snapshot.hasData) {
+              //           return const SizedBox(
+              //             height: 60,
+              //             width: 60,
+              //             child: Center(
+              //               child: CircularProgressIndicator(
+              //                 color: Colors.amber,
+              //               ),
+              //             ),
+              //           );
+              //         }
+              //         return ListView.builder(
+              //             padding: EdgeInsets.zero,
+              //             physics: const NeverScrollableScrollPhysics(),
+              //             itemCount: privacyList.length,
+              //             itemBuilder: (ctx, i) {
+              //               String value = snapshot.data![privacyList[i]];
+              //               return AccountDropdown(
+              //                 privacyList: privacyList[i],
+              //                 settingList: settingList,
+              //                 subTitle: value ?? subTitle,
+              //               );
+              //             });
+              //       }),
+              // ),
               addVerticalSpace(20),
               Text(
                 'Account Changes',

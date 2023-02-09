@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:travel_app/services/firebase_services.dart';
 import 'package:travel_app/utils/constant.dart';
 import 'package:travel_app/views/start/sign_in_screen.dart';
 import 'package:travel_app/widget/my_bottom_navbar.dart';
 
-class SignupWithSocialMediaScreen extends StatelessWidget {
+class SignupWithSocialMediaScreen extends StatefulWidget {
   const SignupWithSocialMediaScreen({super.key});
+
+  @override
+  State<SignupWithSocialMediaScreen> createState() => _SignupWithSocialMediaScreenState();
+}
+
+class _SignupWithSocialMediaScreenState extends State<SignupWithSocialMediaScreen> {
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   @override
   Widget build(BuildContext context) {
@@ -64,9 +72,9 @@ class SignupWithSocialMediaScreen extends StatelessWidget {
             addVerticalSpace(height(context) * 0.06),
             InkWell(
               onTap: () async {
-                await FirebaseServices().signInWithGoogle();
-                Navigator.push(context,
-                    MaterialPageRoute(builder: ((context) => MyBottomBar())));
+                _googleSignIn.signIn().then((value) => MyBottomBar());
+                // Navigator.push(context,
+                //     MaterialPageRoute(builder: ((context) => MyBottomBar())));
               },
               child: Container(
                 height: 50,

@@ -16,8 +16,8 @@ import '../home/festival_and_celebrations_screen.dart';
 import '../humburger_flow/trip_library_screen.dart';
 
 class AspiredTripDetailsScreen extends StatefulWidget {
-
-  const AspiredTripDetailsScreen({super.key});
+  final Map<String,dynamic> MP;
+  const AspiredTripDetailsScreen({super.key, required this.MP});
 
   @override
   State<AspiredTripDetailsScreen> createState() => _AspiredTripDetailsScreenState();
@@ -47,40 +47,40 @@ class _AspiredTripDetailsScreenState extends State<AspiredTripDetailsScreen> {
   //       .then((value) => print("User Added"))
   //       .catchError((error) => print("Failed to add user: $error"));
   // }
-  String _picimage = "";
-  String _destination = "";
-  String _state = "";
-  String _tripdays = "";
-  String _tripname = "";
-  String _experiences = "";
-  String _about = "";
-  String _include = "";
-  String _Expected_Budget = "";
-  List _days = [];
-  List _sportimage = [];
-  List _daysnumber = [];
-  void getDetails() async{
-    if (FirebaseAuth.instance.currentUser != null) {
-      var trip = await FirebaseFirestore.instance
-          .collection('Aspired_trips')
-          .doc('Trip1')
-          .get();
-
-      _picimage = trip.data()?['imageUrl'];
-      _destination = trip.data()?['destinationname'];
-      _state = trip.data()?['statename'];
-      _tripdays = trip.data()?['tripdays'];
-      _tripname = trip.data()?['tripname'];
-      _experiences = trip.data()?['experiences'];
-      _about = trip.data()?['about'];
-      _include = trip.data()?['includes'];
-      _Expected_Budget = trip.data()?['Expected_Budget'];
-      _days = trip.data()?['Days'];
-      _sportimage = trip.data()?['shportImage'];
-      _daysnumber = trip.data()?['daysnumber'];
-    }
-    setState(() {});
-  }
+  // String _picimage = "";
+  // String _destination = "";
+  // String _state = "";
+  // String _tripdays = "";
+  // String _tripname = "";
+  // String _experiences = "";
+  // String _about = "";
+  // String _include = "";
+  // String _Expected_Budget = "";
+  // List _days = [];
+  // List _sportimage = [];
+  // List _daysnumber = [];
+  // void getDetails() async{
+  //   if (FirebaseAuth.instance.currentUser != null) {
+  //     var trip = await FirebaseFirestore.instance
+  //         .collection('Aspired_trips')
+  //         .doc('Trip1')
+  //         .get();
+  //
+  //     _picimage = trip.data()?['imageUrl'];
+  //     _destination = trip.data()?['destinationname'];
+  //     _state = trip.data()?['statename'];
+  //     _tripdays = trip.data()?['tripdays'];
+  //     _tripname = trip.data()?['tripname'];
+  //     _experiences = trip.data()?['experiences'];
+  //     _about = trip.data()?['about'];
+  //     _include = trip.data()?['includes'];
+  //     _Expected_Budget = trip.data()?['Expected_Budget'];
+  //     _days = trip.data()?['Days'];
+  //     _sportimage = trip.data()?['shportImage'];
+  //     _daysnumber = trip.data()?['daysnumber'];
+  //   }
+  //   setState(() {});
+  // }
   String _mobileNum = "";
   String _email = "";
   void getpermission() async{
@@ -148,7 +148,7 @@ class _AspiredTripDetailsScreenState extends State<AspiredTripDetailsScreen> {
   }
   @override
   void initState() {
-    getDetails();
+    // getDetails();
     getpermission();
         super.initState();
   }
@@ -166,7 +166,7 @@ class _AspiredTripDetailsScreenState extends State<AspiredTripDetailsScreen> {
                         borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(15),
                             topRight: Radius.circular(15)),
-                        child: Image.network(_picimage)),
+                        child: Image.network(widget.MP['imageUrl'])),
                     SafeArea(
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -265,16 +265,34 @@ class _AspiredTripDetailsScreenState extends State<AspiredTripDetailsScreen> {
                                       size: 20,
                                     ),
                                     addHorizontalySpace(5),
-                                    Text(
-                                      '$_destination, $_state',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          color: white),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          widget.MP['destinationname'],
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              color: white),
+                                        ),
+                                        Text(
+                                          widget.MP['statename'],
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              color: white),
+                                        )
+                                      ],
                                     ),
                                     Spacer(),
-                                    Text(
-                                      '$_tripdays Days',
-                                      style: bodyText14w600(color: Colors.yellow),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          widget.MP['tripdays'],
+                                          style: bodyText14w600(color: Colors.yellow),
+                                        ),
+                                        Text(
+                                          '  Days',
+                                          style: bodyText14w600(color: Colors.yellow),
+                                        ),
+                                      ],
                                     )
                                   ],
                                 ),
@@ -290,11 +308,11 @@ class _AspiredTripDetailsScreenState extends State<AspiredTripDetailsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '$_tripname',
+                        widget.MP['tripname'],
                         style: bodyText30W600(color: black),
                       ),
                       Text(
-                        '$_experiences',
+                      widget.MP['experiences'],
                       ),
                       addVerticalSpace(10),
                       Text(
@@ -303,7 +321,7 @@ class _AspiredTripDetailsScreenState extends State<AspiredTripDetailsScreen> {
                       ),
                       addVerticalSpace(5),
                       Text(
-                        '$_about',
+                        widget.MP['about'],
                         style: TextStyle(
                             height: 1.3,
                             fontSize: 18,
@@ -321,7 +339,7 @@ class _AspiredTripDetailsScreenState extends State<AspiredTripDetailsScreen> {
                         child: ListView.builder(
                             physics: NeverScrollableScrollPhysics(),
                             padding: EdgeInsets.zero,
-                            itemCount: _daysnumber.length,
+                            itemCount: widget.MP['daysnumber'].length,
                             itemBuilder: (ctx, i) {
                               return Column(
                                 children: [
@@ -333,7 +351,7 @@ class _AspiredTripDetailsScreenState extends State<AspiredTripDetailsScreen> {
                                         height: height(context) * 0.13,
                                         width: width(context) * 0.37,
                                         child: Image.network(
-                                          _sportimage[i],
+                                          widget.MP['shportImage'][i],
                                           fit: BoxFit.fill,
                                         ),
                                       ),
@@ -343,14 +361,14 @@ class _AspiredTripDetailsScreenState extends State<AspiredTripDetailsScreen> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          _daysnumber[i],
+                                          widget.MP['daysnumber'][i],
                                           style: bodyText16w600(color: black),
                                         ),
                                         addVerticalSpace(5),
                                         SizedBox(
                                           width: width(context) * 0.55,
                                           child: Text(
-                                            _days[i],
+                                            widget.MP['Days'][i],
                                             style: TextStyle(height: 1.3),
                                           ),
                                         )
@@ -382,7 +400,7 @@ class _AspiredTripDetailsScreenState extends State<AspiredTripDetailsScreen> {
                       ),
                       addVerticalSpace(4),
                       Text(
-                        '$_include',
+                        widget.MP['includes'],
                         style: TextStyle(
                             height: 1.3,
                             fontSize: 18,
@@ -394,9 +412,16 @@ class _AspiredTripDetailsScreenState extends State<AspiredTripDetailsScreen> {
                         'Expected Budget',
                         style: bodyText20w700(color: black),
                       ),
-                       Text(
-                        '₹ $_Expected_Budget/person',
+                       Row(
+                         children: [
+                           Text(
+                            widget.MP['Expected_Budget'],
                       ),
+                           Text(
+                             '₹  /person',
+                           ),
+                         ],
+                       ),
                       addVerticalSpace(height(context) * 0.1),
                       addVerticalSpace(8)
                     ],

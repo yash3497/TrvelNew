@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -8,13 +9,39 @@ import '../../model/home_model.dart';
 import '../../utils/constant.dart';
 import '../../widget/custom_appbar.dart';
 import '../../widget/custom_overlaping_widget.dart';
+import '../start/signup_with_social_media_screen.dart';
 import 'festival_and_celebrations_screen.dart';
 
-class ProfileFeedScreen extends StatelessWidget {
+class ProfileFeedScreen extends StatefulWidget {
+
   ProfileFeedScreen({super.key});
 
+  @override
+  State<ProfileFeedScreen> createState() => _ProfileFeedScreenState();
+}
+
+class _ProfileFeedScreenState extends State<ProfileFeedScreen> {
   final _future = FirebaseFirestore.instance.collection('profileFeeds');
 
+  CollectionReference _collectionRef =
+  FirebaseFirestore.instance.collection('festivals');
+
+  Future<void> getData() async {
+    // Get docs from collection reference
+    QuerySnapshot querySnapshot = await _collectionRef.get();
+    // Get data from docs and convert map to List
+    allData = querySnapshot.docs.map((doc) => doc.data()).toList();
+    setState(() {
+    });
+    print(allData);
+  }
+  List allData = [];
+
+  @override
+  void initState() {
+    getData();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,11 +66,23 @@ class ProfileFeedScreen extends StatelessWidget {
                         itemBuilder: (ctx, i) {
                           return InkWell(
                             onTap: () {
-                              Navigator.push(
+                              if(FirebaseAuth.instance.currentUser != null){
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ShowDetailsOfFestivals(MP: allData[i],)));
+                              }
+
+                              else
+                                //  if (_count == 10)
+                                  {
+                                Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) =>
-                                          ShowDetailsOfFestivals()));
+                                    builder: (context) => SignupWithSocialMediaScreen(),
+                                  ),
+                                );
+                              }
                             },
                             child: Container(
                               margin: EdgeInsets.symmetric(horizontal: 8),
@@ -58,11 +97,11 @@ class ProfileFeedScreen extends StatelessWidget {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        'February 25, 2022',
+                                        allData[i]['Date'],
                                         style: bodyText14normal(color: black),
                                       ),
                                       Text(
-                                        '2.30 PM',
+                                       allData[i]['time'],
                                         style: bodyText12Small(color: black),
                                       ),
                                       addVerticalSpace(16),
@@ -74,8 +113,8 @@ class ProfileFeedScreen extends StatelessWidget {
                                               child: SizedBox(
                                                 width: width(context) * 0.5,
                                                 height: height(context) * 0.13,
-                                                child: Image.asset(
-                                                  'assets/images/profilefeed.png',
+                                                child: Image.network(
+                                                  allData[i]['imageUrl'],
                                                   fit: BoxFit.fill,
                                                 ),
                                               )),
@@ -87,7 +126,7 @@ class ProfileFeedScreen extends StatelessWidget {
                                               SizedBox(
                                                 width: width(context) * 0.28,
                                                 child: Text(
-                                                  'Lorem ipsum isa place holder text',
+                                                  allData[i]['tripsport'],
                                                   style: bodyText14w600(
                                                       color: black),
                                                 ),
@@ -109,17 +148,29 @@ class ProfileFeedScreen extends StatelessWidget {
                   } else {
                     //----------Show-Data-From-Snapshot--------//
                     return ListView.builder(
-                        itemCount: 6,
+                        itemCount: allData.length,
                         // physics: const NeverScrollableScrollPhysics(),
                         padding: EdgeInsets.zero,
                         itemBuilder: (ctx, i) {
                           return InkWell(
                             onTap: () {
-                              Navigator.push(
+                              if(FirebaseAuth.instance.currentUser != null){
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ShowDetailsOfFestivals(MP: allData[i],)));
+                              }
+
+                              else
+                                //  if (_count == 10)
+                                  {
+                                Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) =>
-                                          ShowDetailsOfFestivals()));
+                                    builder: (context) => SignupWithSocialMediaScreen(),
+                                  ),
+                                );
+                              }
                             },
                             child: Container(
                               margin: EdgeInsets.symmetric(horizontal: 8),
@@ -134,11 +185,11 @@ class ProfileFeedScreen extends StatelessWidget {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        'February 25, 2022',
+                                       allData[i]['Date'],
                                         style: bodyText14normal(color: black),
                                       ),
                                       Text(
-                                        '2.30 PM',
+                                        allData[i]['time'],
                                         style: bodyText12Small(color: black),
                                       ),
                                       addVerticalSpace(16),
@@ -150,8 +201,8 @@ class ProfileFeedScreen extends StatelessWidget {
                                               child: SizedBox(
                                                 width: width(context) * 0.5,
                                                 height: height(context) * 0.13,
-                                                child: Image.asset(
-                                                  'assets/images/profilefeed.png',
+                                                child: Image.network(
+                                                  allData[i]['imageUrl'],
                                                   fit: BoxFit.fill,
                                                 ),
                                               )),
@@ -163,7 +214,7 @@ class ProfileFeedScreen extends StatelessWidget {
                                               SizedBox(
                                                 width: width(context) * 0.28,
                                                 child: Text(
-                                                  'Lorem ipsum isa place holder text',
+                                                  allData[i]['tripsport'],
                                                   style: bodyText14w600(
                                                       color: black),
                                                 ),
