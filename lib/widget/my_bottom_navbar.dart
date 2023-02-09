@@ -25,21 +25,39 @@ registerUserSignupPage(
     String address, String lati, String lngi, String locality) async {
   LocationProvider _locationProvider = LocationProvider();
   List abc = [];
-  abc.add(locality+'/$lati/$lngi');
+  abc.add(locality + '/$lati/$lngi');
   final _fireStore = FirebaseFirestore.instance;
   if (FirebaseAuth.instance.currentUser != null) {
     print('=========================================');
-    await _fireStore
+    var x = await _fireStore
         .collection("users")
         .doc(FirebaseAuth.instance.currentUser!.uid)
-        .set({
-      'address': address,
-      'lat': lati,
-      'lng': lngi,
-      'locality': locality,
-      'homeLocations':FieldValue.arrayUnion(abc),
-      'homeLocationIndex':0
-    }, SetOptions(merge: true));
+        .get();
+    List y = x.data()!['homeLocations'];
+    if (y.contains('$locality/$lati/$lngi')) {
+      await _fireStore
+          .collection("users")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .set({
+        'address': address,
+        'lat': lati,
+        'lng': lngi,
+        'locality': locality,
+        'homeLocationIndex': 0
+      }, SetOptions(merge: true));
+    } else {
+      await _fireStore
+          .collection("users")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .set({
+        'address': address,
+        'lat': lati,
+        'lng': lngi,
+        'locality': locality,
+        'homeLocations': FieldValue.arrayUnion(abc),
+        'homeLocationIndex': 0
+      }, SetOptions(merge: true));
+    }
   }
   print('-----lat' + lati);
   print('-----lat' + lngi);
@@ -59,7 +77,7 @@ class _MyBottomBarState extends State<MyBottomBar>
   TabController? tabController;
   final List<Widget> mainScreens = [
     HomeScreen(),
-     UpcomingTripsScreen(),
+    UpcomingTripsScreen(),
     const Text(''),
     const InboxScreen(),
     const Text(''),
@@ -103,9 +121,13 @@ class _MyBottomBarState extends State<MyBottomBar>
   @override
   void initState() {
     _getCurrentPosition(context);
+<<<<<<< HEAD
    // getData();
     checkupcoming();
     getprimDetails();
+=======
+    // addPr();
+>>>>>>> 1c4207a2fecdeccee7ddcd55e4682449a0720deb
     super.initState();
 
     tabController = TabController(initialIndex: 0, length: 5, vsync: this);
@@ -171,6 +193,7 @@ class _MyBottomBarState extends State<MyBottomBar>
                       ),
                     ),
                   ),
+<<<<<<< HEAD
                   InkWell(
                     onTap: () {
                       if (check == "") {
@@ -182,21 +205,55 @@ class _MyBottomBarState extends State<MyBottomBar>
                           showSnackBar(context, "Please Login First!", Colors.red);
 
                         }
+=======
+                ),
+                InkWell(
+                  onTap: () async {
+                    if (FirebaseAuth.instance.currentUser != null) {
+                      var x = await FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(FirebaseAuth.instance.currentUser!.uid)
+                          .get();
+                      bool y = x.data()!['isPrima'];
+                      print(y);
+                      print(FirebaseAuth.instance.currentUser!.uid);
+                      if (!y) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (ctx) =>
+                                    const GoPrimaSubscriptionScreen()));
+>>>>>>> 1c4207a2fecdeccee7ddcd55e4682449a0720deb
                       } else {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
+<<<<<<< HEAD
                                 builder: (ctx) =>  UpcomingTripsScreen()));
                       }
                     },
                     child: const Tab(
                       icon: ImageIcon(
+=======
+                                builder: (ctx) => const PrimaMyBottomBar()));
+                      }
+                    } else {
+                      showSnackBar(context, "Please Login First!", Colors.red);
+                    }
+                  },
+                  child: const Tab(
+                    icon: SizedBox(
+                      height: 50,
+                      width: 50,
+                      child: ImageIcon(
+>>>>>>> 1c4207a2fecdeccee7ddcd55e4682449a0720deb
                         AssetImage(
                           'assets/images/navbar2.png',
                         ),
                       ),
                     ),
                   ),
+<<<<<<< HEAD
                   InkWell(
                     onTap: () async {
                       if (_counT == 0) {
@@ -228,6 +285,37 @@ class _MyBottomBarState extends State<MyBottomBar>
                           AssetImage(
                             'assets/images/navbar3.png',
                           ),
+=======
+                ),
+                InkWell(
+                  onTap: () {
+                    if (FirebaseAuth.instance.currentUser != null) {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (ctx) => InboxScreen()));
+                    } else {
+                      showSnackBar(context, "Please Login First!", Colors.red);
+                    }
+                  },
+                  child: const Tab(
+                    icon: ImageIcon(
+                      AssetImage(
+                        'assets/images/navbar4.png',
+                      ),
+                    ),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    _globalKey.currentState!.openDrawer();
+                  },
+                  child: const Tab(
+                    icon: SizedBox(
+                      height: 50,
+                      width: 50,
+                      child: ImageIcon(
+                        AssetImage(
+                          'assets/images/navbar5.png',
+>>>>>>> 1c4207a2fecdeccee7ddcd55e4682449a0720deb
                         ),
                       ),
                     ),
@@ -386,8 +474,8 @@ Future<void> _getAddressFromLatLng(Position position) async {
 
     registerUserSignupPage(
         _currentAddress,
-        _currentPosition!.latitude.toString(),
-        _currentPosition!.longitude.toString(),
+        _currentPosition!.latitude.toStringAsFixed(2),
+        _currentPosition!.longitude.toStringAsFixed(2),
         place.locality ?? '');
   }).catchError((e) {
     debugPrint(e);

@@ -441,7 +441,6 @@ class _GoPrimaSubscriptionScreenState extends State<GoPrimaSubscriptionScreen> {
     });
 
     // var x= FirebaseFirestore.instance.collection(collectionPath)
-
   }
 
   showAlertDialog(BuildContext context) {
@@ -636,6 +635,28 @@ class _PlanDetailsWidgetState extends State<PlanDetailsWidget> {
     x.data()!.forEach((key, value) {
       planDetails.add(value);
     });
+    planDetails.forEach((element) {
+      print(element['no']);
+    });
+    List plans = [];
+    planDetails.forEach((element) {
+      plans.add(element);
+    });
+    print('[[[[[[[[[[[[[[[object]]]]]]]]]]]]]]]');
+    print(plans);
+
+    planDetails.clear();
+    for (int i = 0; i < 4; i++) {
+      print(plans);
+      for (int j = 0; j <= 4; j++) {
+        print('$i $j ${plans[j]}');
+        if (plans[j]['no'] == (i + 1)) {
+          planDetails.add(plans[j]);
+          break;
+        }
+      }
+    }
+
     print(planDetails);
     setState(() {
       loading = false;

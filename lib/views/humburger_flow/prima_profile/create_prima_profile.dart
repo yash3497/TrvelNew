@@ -33,7 +33,7 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
   final TextEditingController professionController = TextEditingController();
   final TextEditingController emailId = TextEditingController();
   // final TextEditingController statusController = TextEditingController();
-   final TextEditingController genderController = TextEditingController();
+  final TextEditingController genderController = TextEditingController();
   final TextEditingController mobileNumber = TextEditingController();
   final TextEditingController emergencyNumber = TextEditingController();
   final TextEditingController userInterestController = TextEditingController();
@@ -49,25 +49,24 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
         .collection("primaAccount")
         .doc("profile")
         .set({
-        "imageUrl": _image,
-        "fullName":
-        firstnameController.text + " " + lastnameController.text,
-        "firstName": firstnameController.text,
-        "lastName": lastnameController.text,
-        "DOB": dateOfBirth.text,
-        "Annivarsary": annivarsaryDate.text,
-        'profession': professionController.text,
-        // "maritalStatus": statusController,
-        // "gender": genderController,
-   // John Doe
-      "governmentId": IdUrl, // 42
+          "imageUrl": _image,
+          "fullName": firstnameController.text + " " + lastnameController.text,
+          "firstName": firstnameController.text,
+          "lastName": lastnameController.text,
+          "DOB": dateOfBirth.text,
+          "Annivarsary": annivarsaryDate.text,
+          'profession': professionController.text,
+          // "maritalStatus": statusController,
+          // "gender": genderController,
+          // John Doe
+          "governmentId": IdUrl, // 42
 
-        "emailId": emailId.text,
-        "mobileNumber": mobileNumber.text,
-        "emergencyNumber": emergencyNumber.text,
-         "aboutme":   aboutMeController.text,
-      "userInterest": userInterestController.text,
-    })
+          "emailId": emailId.text,
+          "mobileNumber": mobileNumber.text,
+          "emergencyNumber": emergencyNumber.text,
+          "aboutme": aboutMeController.text,
+          "userInterest": userInterestController.text,
+        })
         .then((value) => print("User Added"))
         .catchError((error) => print("Failed to add user: $error"));
   }
@@ -79,30 +78,35 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
         .collection("primaAccount")
         .doc("profile")
         .update({
-        "imageUrl": _image ?? "",
-        "fullName":
-        firstnameController.text + "" + lastnameController.text,
-        "firstName": firstnameController.text,
-        "lastName": lastnameController.text,
-        "DOB": dateOfBirth.text,
-        "Annivarsary": annivarsaryDate.text,
-        'profession': professionController.text,
-        // "maritalStatus": statusController,
-     // "gender": FieldValue.arrayRemove([genderController]),
-       // John Doe
-      //"governmentId": IdUrl, // 42
-      "aboutme":   aboutMeController.text,
-      "emailId": emailId.text,
-        "mobileNumber": mobileNumber.text,
-        "emergencyNumber": emergencyNumber.text,
+          "imageUrl": _image ?? "",
+          "fullName": firstnameController.text + "" + lastnameController.text,
+          "firstName": firstnameController.text,
+          "lastName": lastnameController.text,
+          "DOB": dateOfBirth.text,
+          "Annivarsary": annivarsaryDate.text,
+          'profession': professionController.text,
+          // "maritalStatus": statusController,
+          // "gender": FieldValue.arrayRemove([genderController]),
+          // John Doe
+          //"governmentId": IdUrl, // 42
+          "aboutme": aboutMeController.text,
+          "emailId": emailId.text,
+          "mobileNumber": mobileNumber.text,
+          "emergencyNumber": emergencyNumber.text,
 
-      "userInterest": userInterestController.text,
-    })
+          "userInterest": userInterestController.text,
+        })
         .then((value) => print("Details Updated"))
         .catchError((error) => print("Failed to Update users Details: $error"));
   }
+<<<<<<< HEAD
   String _image ="";
 String firstname = "";
+=======
+
+  String _image = "";
+
+>>>>>>> 1c4207a2fecdeccee7ddcd55e4682449a0720deb
   void getDetails() async {
     if (FirebaseAuth.instance.currentUser != null) {
       var profile = await FirebaseFirestore.instance
@@ -138,21 +142,23 @@ String firstname = "";
 
   final user = FirebaseAuth.instance.currentUser;
 
-  void pickUploadImage() async{
-    final image = await ImagePicker().pickImage(source: ImageSource.gallery,
+  void pickUploadImage() async {
+    final image = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
         maxWidth: MediaQuery.of(context).size.width,
         maxHeight: MediaQuery.of(context).size.height,
         imageQuality: 75);
     Reference ref = FirebaseStorage.instance.ref().child('profileImg');
 
     await ref.putFile(File(image!.path));
-    ref.getDownloadURL().then((value){
+    ref.getDownloadURL().then((value) {
       print(value);
       setState(() {
         _image = value;
       });
     });
   }
+
   File? pdfFile;
   String? _filename;
   Future pickIdProof() async {
@@ -174,21 +180,24 @@ String firstname = "";
       ScaffoldMessenger.of(context).showSnackBar(snackbar);
     }
   }
+
   String? IdUrl;
   Future uploadId(File pdfFile) async {
     String imgid = DateTime.now().microsecondsSinceEpoch.toString();
     Reference ref =
-    FirebaseStorage.instance.ref().child('pdfs').child('users$imgid');
+        FirebaseStorage.instance.ref().child('pdfs').child('users$imgid');
     await ref.putFile(pdfFile);
     IdUrl = await ref.getDownloadURL();
     print(IdUrl);
   }
+
   void initState() {
     getDetails();
     //addPrimaAccountDetails();
     //  updatePrimaAccountDetails();
-   super.initState();
+    super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -214,18 +223,19 @@ String firstname = "";
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(25),
-                    child:
-                    Container(
+                    child: Container(
                       height: height(context) * 0.15,
                       width: width(context) * 0.3,
-                      decoration: _image== ""
+                      decoration: _image == ""
                           ? BoxDecoration(
-                          image: DecorationImage(
-                              fit: BoxFit.fill,
-                              image: AssetImage('assets/images/prima3.png')))
+                              image: DecorationImage(
+                                  fit: BoxFit.fill,
+                                  image:
+                                      AssetImage('assets/images/prima3.png')))
                           : BoxDecoration(
-                          image: DecorationImage(
-                              fit: BoxFit.fill, image: NetworkImage(_image))),
+                              image: DecorationImage(
+                                  fit: BoxFit.fill,
+                                  image: NetworkImage(_image))),
                     ),
                   ),
                   InkWell(
@@ -237,7 +247,7 @@ String firstname = "";
                       height: 25,
                       width: width(context) * 0.43,
                       decoration:
-                      myFillBoxDecoration(0, black.withOpacity(0.1), 6),
+                          myFillBoxDecoration(0, black.withOpacity(0.1), 6),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: const [
@@ -294,7 +304,7 @@ String firstname = "";
                           if (pickedDate != null) {
                             print(pickedDate);
                             String formattedDate =
-                            DateFormat('yyyy-MM-dd').format(pickedDate);
+                                DateFormat('yyyy-MM-dd').format(pickedDate);
 
                             setState(() {
                               dateOfBirth.text = formattedDate;
@@ -324,7 +334,7 @@ String firstname = "";
                           if (pickedDate != null) {
                             print(pickedDate);
                             String formattedDate =
-                            DateFormat('yyyy-MM-dd').format(pickedDate);
+                                DateFormat('yyyy-MM-dd').format(pickedDate);
 
                             setState(() {
                               annivarsaryDate.text = formattedDate;
@@ -370,7 +380,7 @@ String firstname = "";
                         'Other',
                       ],
                       lableText: 'Gender',
-                       controller: genderController,
+                      controller: genderController,
                     ),
                   ),
                 ],
@@ -462,19 +472,19 @@ String firstname = "";
                       ? width(context) * 0.9
                       : width(context) * 0.55,
                   decoration:
-                  myFillBoxDecoration(0, black.withOpacity(0.1), 10),
+                      myFillBoxDecoration(0, black.withOpacity(0.1), 10),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       pdfFile != null
                           ? Text.rich(TextSpan(children: [
-                        WidgetSpan(child: Icon(Icons.picture_as_pdf)),
-                        TextSpan(text: _filename)
-                      ]))
+                              WidgetSpan(child: Icon(Icons.picture_as_pdf)),
+                              TextSpan(text: _filename)
+                            ]))
                           : Text(
-                        'Address Proof',
-                        style: bodyText16w600(color: black),
-                      ),
+                              'Address Proof',
+                              style: bodyText16w600(color: black),
+                            ),
                       addHorizontalySpace(12),
                       const Icon(
                         Icons.edit_note_outlined,
@@ -512,9 +522,9 @@ String firstname = "";
                         border: InputBorder.none,
                         contentPadding: EdgeInsets.all(10),
                         hintStyle:
-                        bodyText16normal(color: black.withOpacity(0.5)),
+                            bodyText16normal(color: black.withOpacity(0.5)),
                         hintText:
-                        'Whats amazing about me? \nWhy I’m on travel new?')),
+                            'Whats amazing about me? \nWhy I’m on travel new?')),
               ),
               addVerticalSpace(15),
               const Text(
@@ -536,9 +546,9 @@ String firstname = "";
                         border: InputBorder.none,
                         contentPadding: EdgeInsets.all(10),
                         hintStyle:
-                        bodyText16normal(color: black.withOpacity(0.5)),
+                            bodyText16normal(color: black.withOpacity(0.5)),
                         hintText:
-                        'Example: Loves to cook, workout, books etc')),
+                            'Example: Loves to cook, workout, books etc')),
               ),
               addVerticalSpace(10),
               const Divider(
@@ -568,11 +578,11 @@ String firstname = "";
                                   onChanged: (value) {
                                     setState(() {
                                       for (var element
-                                      in selectOtherInterestList) {
+                                          in selectOtherInterestList) {
                                         element.isSelected = false;
                                       }
                                       selectOtherInterestList[i].isSelected =
-                                      value!;
+                                          value!;
                                     });
                                   },
                                 ),
@@ -640,7 +650,8 @@ String firstname = "";
                     showDialog<String>(
                       context: context,
                       builder: (BuildContext context) => AlertDialog(
-                        title: const Text(' Are You Ready to be a Prima Member!'),
+                        title:
+                            const Text(' Are You Ready to be a Prima Member!'),
                         content: const Text(
                             ' You will be directed to payment Gateway fill free to click on Confirm '),
                         actions: <Widget>[
@@ -689,18 +700,17 @@ class TripometerWidget extends StatefulWidget {
 }
 
 class _TripometerWidgetState extends State<TripometerWidget> {
-      List tripoMeterList = [
+  List tripoMeterList = [
     {'name': 'Adventure', 'value': 30.0},
     {'name': 'City', 'value': 60.0},
     {'name': 'Nature', 'value': 80.0},
     {'name': 'Religlous', 'value': 30.0},
-
   ];
 
-  double city=0.0;
-  double nature=0.0;
-  double adventure=0.0;
-  double religlous=0.0;
+  double city = 0.0;
+  double nature = 0.0;
+  double adventure = 0.0;
+  double religlous = 0.0;
   double _value = 50;
 
   addTripometerDetails() async {
@@ -712,12 +722,13 @@ class _TripometerWidgetState extends State<TripometerWidget> {
         .collection("tripoMeter")
         .doc("profile")
         .set({
-      "Adventure" : adventure,
-      "City" : city,
-      "Nature" : nature,
-      "Religlous" : religlous
+      "Adventure": adventure,
+      "City": city,
+      "Nature": nature,
+      "Religlous": religlous
     });
   }
+
   updateTripometerDetails() async {
     // Call the user's CollectionReference to add a new user
 
@@ -727,12 +738,19 @@ class _TripometerWidgetState extends State<TripometerWidget> {
         .collection("tripoMeter")
         .doc("profile")
         .update({
+<<<<<<< HEAD
       "Adventure" : adventure,
       "City" : city,
       "Nature" : nature,
+=======
+      "Adventure": adventure,
+      "City": city,
+      "Nature": nature,
+>>>>>>> 1c4207a2fecdeccee7ddcd55e4682449a0720deb
       "Religlous": religlous
-        });
+    });
   }
+
   void getTripometerDetails() async {
     if (FirebaseAuth.instance.currentUser != null) {
       var profile = await FirebaseFirestore.instance
@@ -755,11 +773,13 @@ class _TripometerWidgetState extends State<TripometerWidget> {
       });
     }
   }
+
   @override
   void initState() {
     getTripometerDetails();
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -767,7 +787,6 @@ class _TripometerWidgetState extends State<TripometerWidget> {
       children: [
         Row(
           children: [
-
             SizedBox(
               height: height(context) * 0.28,
               width: width(context) * 0.95,
@@ -777,7 +796,7 @@ class _TripometerWidgetState extends State<TripometerWidget> {
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (ctx, i) {
                     return Padding(
-                      padding: const EdgeInsets.only(right: 23,left: 23),
+                      padding: const EdgeInsets.only(right: 23, left: 23),
                       child: Column(
                         children: [
                           RotatedBox(
@@ -793,12 +812,17 @@ class _TripometerWidgetState extends State<TripometerWidget> {
                                   nature = tripoMeterList[2]['value'];
                                   religlous = tripoMeterList[3]['value'];
                                 });
+<<<<<<< HEAD
                                 if(city != 0.0 ){
                                   addTripometerDetails();
                                 }else{
                                   updateTripometerDetails();
                                 }
 
+=======
+                                //  addTripometerDetails();
+                                updateTripometerDetails();
+>>>>>>> 1c4207a2fecdeccee7ddcd55e4682449a0720deb
                                 getTripometerDetails();
                               },
                               max: 100,
@@ -813,7 +837,6 @@ class _TripometerWidgetState extends State<TripometerWidget> {
                                 fontWeight: FontWeight.w600,
                                 color: black),
                           ),
-
                         ],
                       ),
                     );
@@ -821,7 +844,6 @@ class _TripometerWidgetState extends State<TripometerWidget> {
             ),
           ],
         ),
-
       ],
     );
   }
@@ -853,6 +875,7 @@ class UploadTravelsPhotos extends StatefulWidget {
 }
 
 class _UploadTravelsPhotosState extends State<UploadTravelsPhotos> {
+<<<<<<< HEAD
   // File? _image1;
   // File? _image2;
   // File? _image3;
@@ -933,6 +956,47 @@ class _UploadTravelsPhotosState extends State<UploadTravelsPhotos> {
       setState(() {
         _image4 = value;
       });
+=======
+  File? _image1;
+  File? _image2;
+  File? _image3;
+  File? _image4;
+ bool _images1 =false;
+ bool _images3=false;
+ bool _images2 =false;
+ bool _images4 =false;
+  
+
+  Future pickImage(int i) async {
+    final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (image == null) {
+      return;
+    }
+    final imagepath = File(image.path);
+    print(i);
+    setState(() {
+      switch (i) {
+        case 0:
+          _image1 = imagepath;
+          setState(() {
+            print(i);
+          });
+          break;
+        case 1:
+          _image2 = imagepath;
+          setState(() {});print(i);
+          break;
+        case 2:
+          _image3 = imagepath;
+          setState(() {});print(i);
+          break;
+        case 3:
+          _image4 = imagepath;
+          setState(() {});print(i);
+          break;
+        default:
+      }
+>>>>>>> 1c4207a2fecdeccee7ddcd55e4682449a0720deb
     });
   }
 
@@ -972,6 +1036,7 @@ class _UploadTravelsPhotosState extends State<UploadTravelsPhotos> {
           style: bodyText12Small(color: black),
         ),
         addVerticalSpace(15),
+<<<<<<< HEAD
         Padding(
           padding: const EdgeInsets.only(left: 50),
           child: Column(
@@ -1069,6 +1134,59 @@ class _UploadTravelsPhotosState extends State<UploadTravelsPhotos> {
                 ],
               ),
             ],
+=======
+        Center(
+          child: Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: List.generate(4, (i) {
+              return InkWell(
+                onTap: () {
+                  pickImage(i);
+                },
+                child: 
+                _images1 != false
+                    ? Image.file(
+                        _image1!,
+                        height: height(context) * 0.15,
+                        width: width(context) * 0.35,
+                        fit: BoxFit.cover,
+                      )
+                    : _images2 != false
+                        ? Image.file(
+                            _image2!,
+                            height: height(context) * 0.15,
+                            width: width(context) * 0.35,
+                            fit: BoxFit.cover,
+                          )
+                        : _images3 != false
+                            ? Image.file(
+                                _image3!,
+                                height: height(context) * 0.15,
+                                width: width(context) * 0.35,
+                                fit: BoxFit.cover,
+                              )
+                            : _images4 != false
+                                ? Image.file(
+                                    _image4!,
+                                    height: height(context) * 0.15,
+                                    width: width(context) * 0.35,
+                                    fit: BoxFit.cover,
+                                  )
+                                : Container(
+                                    height: height(context) * 0.15,
+                                    width: width(context) * 0.35,
+                                    decoration: myOutlineBoxDecoration(
+                                        1, black.withOpacity(0.3), 10),
+                                    child: Center(
+                                        child: Icon(
+                                      Icons.add,
+                                      color: black.withOpacity(0.3),
+                                    )),
+                                  ),
+              );
+            }),
+>>>>>>> 1c4207a2fecdeccee7ddcd55e4682449a0720deb
           ),
         ),
         // Center(
@@ -1148,7 +1266,11 @@ class WhatExcitesYouWidget extends StatelessWidget {
     {'title': 'Adventure', 'subTitle': 'Camping Waterfalls Hills and Trek'},
     {'title': 'Nature', 'subTitle': 'Hill area Safari Wildlife Sa'},
     {'title': 'City', 'subTitle': 'Shopping Nightlife Water sports'},
-    {'title': 'Religlous','subTitle': 'A religion is a set of beliefs regarding the purpose of existence'}
+    {
+      'title': 'Religlous',
+      'subTitle':
+          'A religion is a set of beliefs regarding the purpose of existence'
+    }
   ];
   final List ViewFunction = [
     {'function': YourAdventureInterest()},
@@ -1163,7 +1285,7 @@ class WhatExcitesYouWidget extends StatelessWidget {
         height: height(context) * 0.15,
         child: CarouselSlider(
           options: CarouselOptions(height: 400.0),
-          items: [0, 1, 2,3].map((i) {
+          items: [0, 1, 2, 3].map((i) {
             return Builder(
               builder: (BuildContext context) {
                 return Column(
@@ -1174,7 +1296,7 @@ class WhatExcitesYouWidget extends StatelessWidget {
                       height: height(context) * 0.13,
                       width: width(context) * 1.32,
                       decoration:
-                      myFillBoxDecoration(0, black.withOpacity(0.1), 10),
+                          myFillBoxDecoration(0, black.withOpacity(0.1), 10),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1195,8 +1317,11 @@ class WhatExcitesYouWidget extends StatelessWidget {
                               ),
                               TextButton(
                                   onPressed: () {
-                                    Navigator.push(context, MaterialPageRoute(builder:
-                                        (context)=> ViewFunction[i]['function']));
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                ViewFunction[i]['function']));
                                   },
                                   child: Text(
                                     'View all',
@@ -1220,13 +1345,14 @@ class WhatExcitesYouWidget extends StatelessWidget {
           }).toList(),
         ));
   }
-
 }
+
 class SelectOtherInterest {
   String name;
   bool isSelected;
   SelectOtherInterest({required this.name, required this.isSelected});
 }
+
 List<SelectOtherInterest> selectOtherInterestList = [
   SelectOtherInterest(name: 'My trip friends', isSelected: true),
   SelectOtherInterest(name: 'Everyone', isSelected: true),
@@ -1286,33 +1412,33 @@ class _StepperWidgetState extends State<StepperWidget> {
     ),
   ];
   List<Step> stepList() => [
-    Step(
-        state: _activeCurrentStep <= 1
-            ? StepState.editing
-            : StepState.complete,
-        isActive: _activeCurrentStep >= 0,
-        label: const Text('Account'),
-        title: const SizedBox(),
-        content: SizedBox()),
-    Step(
-        state: StepState.complete,
-        isActive: _activeCurrentStep >= 1,
-        label: const Text('Travel Photos'),
-        title: const SizedBox(),
-        content: SizedBox()),
-    Step(
-        state: StepState.complete,
-        isActive: _activeCurrentStep >= 2,
-        label: const Text('About'),
-        title: const SizedBox(),
-        content: SizedBox()),
-    Step(
-        state: StepState.complete,
-        isActive: _activeCurrentStep >= 3,
-        label: const Text('Tripometer'),
-        title: const SizedBox(),
-        content: SizedBox())
-  ];
+        Step(
+            state: _activeCurrentStep <= 1
+                ? StepState.editing
+                : StepState.complete,
+            isActive: _activeCurrentStep >= 0,
+            label: const Text('Account'),
+            title: const SizedBox(),
+            content: SizedBox()),
+        Step(
+            state: StepState.complete,
+            isActive: _activeCurrentStep >= 1,
+            label: const Text('Travel Photos'),
+            title: const SizedBox(),
+            content: SizedBox()),
+        Step(
+            state: StepState.complete,
+            isActive: _activeCurrentStep >= 2,
+            label: const Text('About'),
+            title: const SizedBox(),
+            content: SizedBox()),
+        Step(
+            state: StepState.complete,
+            isActive: _activeCurrentStep >= 3,
+            label: const Text('Tripometer'),
+            title: const SizedBox(),
+            content: SizedBox())
+      ];
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -1320,8 +1446,8 @@ class _StepperWidgetState extends State<StepperWidget> {
       child: Theme(
         data: ThemeData(
           colorScheme: Theme.of(context).colorScheme.copyWith(
-            primary: primary,
-          ),
+                primary: primary,
+              ),
         ),
         child: Stepper(
           elevation: 0,

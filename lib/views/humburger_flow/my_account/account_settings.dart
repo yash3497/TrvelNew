@@ -716,7 +716,9 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                 builder: (context) {
                   var height = MediaQuery.of(context).size.height;
                   var width = MediaQuery.of(context).size.width;
-
+                  TextEditingController old = new TextEditingController();
+                  TextEditingController new1 = new TextEditingController();
+                  TextEditingController new2 = new TextEditingController();
                   return Container(
                       height: height * 0.38,
                       padding: const EdgeInsets.all(10),
@@ -728,19 +730,31 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                           ),
                           addVerticalSpace(30),
                           CustomTextFieldWidget(
-                              labelText: '  Enter old password  '),
+                            labelText: '  Enter old password  ',
+                            controller: old,
+                          ),
                           addVerticalSpace(20),
                           CustomTextFieldWidget(
-                              labelText: '  Enter new password  '),
+                            labelText: '  Enter new password  ',
+                            controller: new1,
+                          ),
                           addVerticalSpace(20),
                           CustomTextFieldWidget(
-                              labelText: '  Confirm new password  '),
+                            labelText: '  Confirm new password  ',
+                            controller: new2,
+                          ),
                           addVerticalSpace(30),
                           SizedBox(
                             width: width * 0.4,
                             child: CustomButton(
                                 name: 'Save',
-                                onPressed: () {
+                                onPressed: () async {
+                                  if (new1.text == new2.text) {
+                                    _changePassword(new1.text);
+                                  } else {
+                                    showSnackBar(
+                                        context, 'Enter same new password',Colors.red);
+                                  }
                                   Navigator.pop(context);
                                 }),
                           )
@@ -749,6 +763,27 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                 },
               ),
             ));
+  }
+
+  showSnackBar(BuildContext context, String str, [Color clr = Colors.black]) {
+    return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(str),
+      backgroundColor: clr,
+    ));
+  }
+
+  void _changePassword(String password) async {
+    //Create an instance of the current user.
+    User user = await FirebaseAuth.instance.currentUser!;
+
+    //Pass in the password to updatePassword.
+    user.updatePassword(password).then((_) {
+      print("Successfully changed password");
+      showSnackBar(context, "Password changed successfully!", Colors.red);
+    }).catchError((error) {
+      showSnackBar(context, "Unsucessful!", Colors.red);
+      //This might happen, when the wrong password is in, the user isn't found, or if the user hasn't logged in recently.
+    });
   }
 
   Future<dynamic> manageDestinationDialog(BuildContext context) async {
@@ -797,7 +832,6 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
 
                   return StatefulBuilder(builder: (context, setState) {
                     return Container(
-                        height: height * 0.35,
                         width: width * 0.95,
                         padding: const EdgeInsets.all(10),
                         child: Column(
@@ -845,11 +879,12 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                                           child: Text(
                                               homeLoc[index].split('/')[0])),
                                     ),
-
                                     homeLoc.length != 1
                                         ? IconButton(
                                             onPressed: () {
                                               deleteHomeLoc(index);
+                                              Navigator.pop(context);
+                                              manageDestinationDialog(context);
                                             },
                                             icon: Icon(Icons.delete))
                                         : SizedBox(

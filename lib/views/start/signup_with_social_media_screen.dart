@@ -4,6 +4,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:travel_app/services/firebase_services.dart';
 import 'package:travel_app/utils/constant.dart';
+import 'package:travel_app/utils/firebaseAuth.dart';
 import 'package:travel_app/views/start/sign_in_screen.dart';
 import 'package:travel_app/widget/my_bottom_navbar.dart';
 
@@ -72,9 +73,14 @@ class _SignupWithSocialMediaScreenState extends State<SignupWithSocialMediaScree
             addVerticalSpace(height(context) * 0.06),
             InkWell(
               onTap: () async {
+<<<<<<< HEAD
                 _googleSignIn.signIn().then((value) => MyBottomBar());
                 // Navigator.push(context,
                 //     MaterialPageRoute(builder: ((context) => MyBottomBar())));
+=======
+                FirebaseAuthen _auth = new FirebaseAuthen();
+                await _auth.signInWithGoogle(context);
+>>>>>>> 1c4207a2fecdeccee7ddcd55e4682449a0720deb
               },
               child: Container(
                 height: 50,
