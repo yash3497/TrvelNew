@@ -3,6 +3,7 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:travel_app/services/firebase_services.dart';
 import 'package:travel_app/utils/constant.dart';
+import 'package:travel_app/utils/firebaseAuth.dart';
 import 'package:travel_app/views/start/sign_in_screen.dart';
 import 'package:travel_app/widget/my_bottom_navbar.dart';
 
@@ -64,9 +65,8 @@ class SignupWithSocialMediaScreen extends StatelessWidget {
             addVerticalSpace(height(context) * 0.06),
             InkWell(
               onTap: () async {
-                await FirebaseServices().signInWithGoogle();
-                Navigator.push(context,
-                    MaterialPageRoute(builder: ((context) => MyBottomBar())));
+                FirebaseAuthen _auth = new FirebaseAuthen();
+                await _auth.signInWithGoogle(context);
               },
               child: Container(
                 height: 50,

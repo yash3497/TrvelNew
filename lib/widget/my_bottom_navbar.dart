@@ -24,21 +24,39 @@ registerUserSignupPage(
     String address, String lati, String lngi, String locality) async {
   LocationProvider _locationProvider = LocationProvider();
   List abc = [];
-  abc.add(locality+'/$lati/$lngi');
+  abc.add(locality + '/$lati/$lngi');
   final _fireStore = FirebaseFirestore.instance;
   if (FirebaseAuth.instance.currentUser != null) {
     print('=========================================');
-    await _fireStore
+    var x = await _fireStore
         .collection("users")
         .doc(FirebaseAuth.instance.currentUser!.uid)
-        .set({
-      'address': address,
-      'lat': lati,
-      'lng': lngi,
-      'locality': locality,
-      'homeLocations':FieldValue.arrayUnion(abc),
-      'homeLocationIndex':0
-    }, SetOptions(merge: true));
+        .get();
+    List y = x.data()!['homeLocations'];
+    if (y.contains('$locality/$lati/$lngi')) {
+      await _fireStore
+          .collection("users")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .set({
+        'address': address,
+        'lat': lati,
+        'lng': lngi,
+        'locality': locality,
+        'homeLocationIndex': 0
+      }, SetOptions(merge: true));
+    } else {
+      await _fireStore
+          .collection("users")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .set({
+        'address': address,
+        'lat': lati,
+        'lng': lngi,
+        'locality': locality,
+        'homeLocations': FieldValue.arrayUnion(abc),
+        'homeLocationIndex': 0
+      }, SetOptions(merge: true));
+    }
   }
   print('-----lat' + lati);
   print('-----lat' + lngi);
@@ -58,7 +76,7 @@ class _MyBottomBarState extends State<MyBottomBar>
   TabController? tabController;
   final List<Widget> mainScreens = [
     HomeScreen(),
-     UpcomingTripsScreen(),
+    UpcomingTripsScreen(),
     const Text(''),
     const InboxScreen(),
     const Text(''),
@@ -102,6 +120,7 @@ class _MyBottomBarState extends State<MyBottomBar>
   @override
   void initState() {
     _getCurrentPosition(context);
+    // addPr();
     super.initState();
     tabController = TabController(initialIndex: 0, length: 5, vsync: this);
   }
@@ -153,18 +172,28 @@ class _MyBottomBarState extends State<MyBottomBar>
                 ),
                 InkWell(
                   onTap: () async {
-                    if (_counT == 0) {
-                      _counT++;
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (ctx) =>
-                                  const GoPrimaSubscriptionScreen()));
+                    if (FirebaseAuth.instance.currentUser != null) {
+                      var x = await FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(FirebaseAuth.instance.currentUser!.uid)
+                          .get();
+                      bool y = x.data()!['isPrima'];
+                      print(y);
+                      print(FirebaseAuth.instance.currentUser!.uid);
+                      if (!y) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (ctx) =>
+                                    const GoPrimaSubscriptionScreen()));
+                      } else {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (ctx) => const PrimaMyBottomBar()));
+                      }
                     } else {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (ctx) => const PrimaMyBottomBar()));
+                      showSnackBar(context, "Please Login First!", Colors.red);
                     }
                   },
                   child: const Tab(
@@ -182,10 +211,8 @@ class _MyBottomBarState extends State<MyBottomBar>
                 InkWell(
                   onTap: () {
                     if (FirebaseAuth.instance.currentUser != null) {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (ctx) =>  InboxScreen()));
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (ctx) => InboxScreen()));
                     } else {
                       showSnackBar(context, "Please Login First!", Colors.red);
                     }
@@ -288,8 +315,8 @@ Future<void> _getAddressFromLatLng(Position position) async {
 
     registerUserSignupPage(
         _currentAddress,
-        _currentPosition!.latitude.toString(),
-        _currentPosition!.longitude.toString(),
+        _currentPosition!.latitude.toStringAsFixed(2),
+        _currentPosition!.longitude.toStringAsFixed(2),
         place.locality ?? '');
   }).catchError((e) {
     debugPrint(e);

@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:travel_app/utils/constant.dart';
 import 'package:travel_app/views/humburger_flow/my_account/B2B_registration.dart';
@@ -21,6 +22,7 @@ import 'package:travel_app/views/start/forgot_password.dart';
 import 'package:travel_app/views/start/sign_up_screen.dart';
 import 'package:travel_app/views/start/signup_with_social_media_screen.dart';
 import 'package:travel_app/widget/custom_textfield.dart';
+import 'package:travel_app/utils/firebaseAuth.dart';
 
 import '../../../widget/custom_button.dart';
 
@@ -41,7 +43,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .get();
       url = profile.data()?['profileImg'];
-      userName =profile.data()?['fullName'];
+      userName = profile.data()?['fullName'];
       place = profile.data()?['locality'];
       setState(() {});
     }
@@ -86,8 +88,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
             InkWell(
               onTap: () {
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (ctx) =>
-                        PrimaProfileScreen()));
+                    MaterialPageRoute(builder: (ctx) => PrimaProfileScreen()));
               },
               child: SizedBox(
                   width: width(context) * 0.1,
@@ -100,7 +101,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
         ),
         body: SingleChildScrollView(
           child:
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             addVerticalSpace(15),
             Row(
               children: [
@@ -131,7 +132,9 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                       children: [
                         Text(
                           "$userName",
-                          style: TextStyle(fontStyle: FontStyle.normal,fontWeight: FontWeight.bold ),
+                          style: TextStyle(
+                              fontStyle: FontStyle.normal,
+                              fontWeight: FontWeight.bold),
                           //style: bodyText20w700(color: black),
                         ),
                       ],
@@ -174,8 +177,8 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (ctx) => MyTripFriendsScreen(
-                                      title: 'My Trip Friends',
-                                    )));
+                                          title: 'My Trip Friends',
+                                        )));
                           },
                           child: Text(
                             ' 32 Trip Friends',
@@ -266,27 +269,39 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                 },
                 child: RichText(
                     text: TextSpan(children: [
-                      TextSpan(
-                          text: 'Are you a Business?',
-                          style: bodyText14normal(color: black)),
-                      TextSpan(
-                          text: ' Get started here!',
-                          style: TextStyle(fontSize: 14, color: primary))
-                    ])),
+                  TextSpan(
+                      text: 'Are you a Business?',
+                      style: bodyText14normal(color: black)),
+                  TextSpan(
+                      text: ' Get started here!',
+                      style: TextStyle(fontSize: 14, color: primary))
+                ])),
               ),
             ),
             addVerticalSpace(height(context) * 0.06),
             InkWell(
               onTap: () async {
-                if( FirebaseAuth.instance.currentUser != null)
-                { final SharedPreferences sharedPreferences =
-                await SharedPreferences.getInstance();
-                sharedPreferences.remove('email');
-                await FirebaseAuth.instance.signOut();
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: ((context) => SignupWithSocialMediaScreen())));}
+                if (FirebaseAuth.instance.currentUser != null) {
+                  final SharedPreferences sharedPreferences =
+                      await SharedPreferences.getInstance();
+                  sharedPreferences.remove('email');
+                  await FirebaseAuth.instance.signOut();
+                  print('l1');
+  final _googleSignIn = GoogleSignIn();
+
+                  final GoogleSignInAccount? googleSignInAccount =
+          await _googleSignIn.signIn();
+
+                  print('l2');
+await googleSignInAccount!.clearAuthCache();
+                  print('l3');
+
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: ((context) =>
+                              SignupWithSocialMediaScreen())));
+                }
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -339,60 +354,60 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
     showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          contentPadding: const EdgeInsets.all(6),
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10.0))),
-          content: Builder(
-            builder: (context) {
-              var height = MediaQuery.of(context).size.height;
-              var width = MediaQuery.of(context).size.width;
+              contentPadding: const EdgeInsets.all(6),
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0))),
+              content: Builder(
+                builder: (context) {
+                  var height = MediaQuery.of(context).size.height;
+                  var width = MediaQuery.of(context).size.width;
 
-              return Container(
-                  height: height * 0.38,
-                  padding: EdgeInsets.all(10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      const Text(
-                        'Sign in / Sign up',
-                        style: TextStyle(fontSize: 20),
-                      ),
-                      Text(
-                        'Do Business with exciting \nTravelers',
-                        style: bodyText16w600(color: black),
-                      ),
-                      addVerticalSpace(8),
-                      CustomTextFieldWidget(labelText: 'Email Address'),
-                      CustomTextFieldWidget(
-                        labelText: 'Password',
-                        icon: Icon(
-                          Icons.remove_red_eye,
-                          color: primary,
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (ctx) => ForgotPassword()));
-                        },
-                        child: Text(
-                          'Forgot password?',
-                          style: bodyText12Small(
-                              color: black.withOpacity(0.5)),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (ctx) => SignUpScreen()));
-                        },
-                        child: RichText(
-                            text: TextSpan(children: [
+                  return Container(
+                      height: height * 0.38,
+                      padding: EdgeInsets.all(10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          const Text(
+                            'Sign in / Sign up',
+                            style: TextStyle(fontSize: 20),
+                          ),
+                          Text(
+                            'Do Business with exciting \nTravelers',
+                            style: bodyText16w600(color: black),
+                          ),
+                          addVerticalSpace(8),
+                          CustomTextFieldWidget(labelText: 'Email Address'),
+                          CustomTextFieldWidget(
+                            labelText: 'Password',
+                            icon: Icon(
+                              Icons.remove_red_eye,
+                              color: primary,
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (ctx) => ForgotPassword()));
+                            },
+                            child: Text(
+                              'Forgot password?',
+                              style: bodyText12Small(
+                                  color: black.withOpacity(0.5)),
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (ctx) => SignUpScreen()));
+                            },
+                            child: RichText(
+                                text: TextSpan(children: [
                               TextSpan(
                                   text: 'Not our business member?',
                                   style: bodyText12Small(
@@ -405,21 +420,21 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                                       color: primary,
                                       decoration: TextDecoration.underline))
                             ])),
-                      ),
-                      addVerticalSpace(height * 0.02),
-                      CustomButton(
-                          name: 'Sign in',
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (ctx) =>
-                                        B2BRegistrationScreen()));
-                          }),
-                    ],
-                  ));
-            },
-          ),
-        ));
+                          ),
+                          addVerticalSpace(height * 0.02),
+                          CustomButton(
+                              name: 'Sign in',
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (ctx) =>
+                                            B2BRegistrationScreen()));
+                              }),
+                        ],
+                      ));
+                },
+              ),
+            ));
   }
 }
