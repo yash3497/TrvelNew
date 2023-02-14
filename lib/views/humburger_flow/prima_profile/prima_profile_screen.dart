@@ -11,6 +11,7 @@ import 'package:travel_app/views/humburger_flow/prima_profile/create_prima_profi
 import 'package:travel_app/views/humburger_flow/prima_profile/prima_my_account_screen.dart';
 import 'package:travel_app/views/humburger_flow/prima_profile/travel_photos_screen.dart';
 import 'package:travel_app/views/humburger_flow/prima_profile/user_prima_profile_screen.dart';
+import 'package:travel_app/views/prima/go_prima_screen.dart';
 import 'package:travel_app/widget/custom_button.dart';
 import 'package:travel_app/widget/custom_dropdown_button.dart';
 
@@ -43,6 +44,8 @@ class _PrimaProfileScreenState extends State<PrimaProfileScreen> {
   String _profession = "";
   String _aboutme = "";
   String _otherintrest = "";
+  String _gender = "";
+  String _merriedstatus = "";
   void getDetails() async {
     if (FirebaseAuth.instance.currentUser != null) {
       var profile = await FirebaseFirestore.instance
@@ -56,6 +59,8 @@ class _PrimaProfileScreenState extends State<PrimaProfileScreen> {
       _profession = profile.data()?['profession'];
       _aboutme = profile.data()?['aboutme'];
       _otherintrest = profile.data()?['userInterest'];
+      _gender = profile.data()?['gender'];
+      _merriedstatus = profile.data()?['maritalStatus'];
 
     }
     setState(() {
@@ -227,7 +232,7 @@ class _PrimaProfileScreenState extends State<PrimaProfileScreen> {
                                         builder: (context) =>
                                             PrimaMyAccount()));
                               } else if (value == 1) {
-                                print("Settings menu is selected.");
+                                Navigator.push(context,MaterialPageRoute(builder: (context)=>GoPrimaSubscriptionScreen()));
                               } else if (value == 2) {
                                 print("Logout menu is selected.");
                               }
@@ -264,7 +269,7 @@ class _PrimaProfileScreenState extends State<PrimaProfileScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.location_on_outlined),
+                          Icon(Icons.location_on_outlined,color: primary,),
                           Text(
                             '$_address',
                             style: TextStyle(fontSize: 20),
@@ -365,7 +370,7 @@ class _PrimaProfileScreenState extends State<PrimaProfileScreen> {
                           ),
                           addHorizontalySpace(8),
                           Text(
-                            'Female, 25',
+                            '$_gender, 19',
                             style: TextStyle(fontSize: 18, color: black),
                           ),
                           addHorizontalySpace(width(context) * 0.1),
@@ -375,12 +380,17 @@ class _PrimaProfileScreenState extends State<PrimaProfileScreen> {
                           ),
                           addHorizontalySpace(8),
                           Text(
-                            'Married',
+                            '$_merriedstatus',
                             style: TextStyle(fontSize: 18, color: black),
                           ),
                         ],
                       ),
                       addVerticalSpace(14),
+                      if(_aboutme == "")
+                        Text(
+                          '    --',
+                          style: bodyText16normal(spacing: 1.5, color: black),
+                        )else
                       Text(
                         '$_aboutme',
                         style: bodyText16normal(spacing: 1.5, color: black),
@@ -471,7 +481,11 @@ class _PrimaProfileScreenState extends State<PrimaProfileScreen> {
                         'Other Interests',
                         style: bodyText20w700(color: black),
                       ),
-
+                       if(_otherintrest == "")
+                      Text(
+                        '   --',
+                        style: bodyText13normal(spacing: 1.4, color: black),
+                      )else
                       Text(
                         '$_otherintrest',
                         style: bodyText13normal(spacing: 1.4, color: black),
@@ -997,7 +1011,7 @@ class _TripometerCircleWidgetState extends State<TripometerCircleWidget> {
       nature = profile.data()?['Nature'];
       religlous = profile.data()?['Religlous'];
       setState(() {
-        tripoMeterValue = [adventure, city, nature, religlous];
+        tripoMeterValue = [adventure.round().toInt().roundToDouble(), city.round().toInt().roundToDouble(), nature.round().toInt().roundToDouble(), religlous.round().toInt().roundToDouble()];
       });
     }
   }

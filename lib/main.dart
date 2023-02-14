@@ -45,7 +45,7 @@ class _MyAppState extends State<MyApp> {
                 ),
               );
             } else if (user.hasData) {
-              return HomeScreen();
+              return MyBottomBar();
             } else {
               return OnBoardingScreen();
             }

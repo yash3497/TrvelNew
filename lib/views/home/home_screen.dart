@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 import 'dart:ui';
+import 'package:location/location.dart' as loco;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -194,7 +195,33 @@ class _HomeScreenState extends State<HomeScreen> {
   //     finalEmail = obtainEmail;
   //   });
   // }
+  LocationPermission? permission;
+  Future<bool> _handleLocationPermission(BuildContext context) async {
+    // bool serviceEnabled;
+    loco.Location location = loco.Location();
+    bool serviceEnabled;
 
+    serviceEnabled = await location.serviceEnabled();
+    if (!serviceEnabled) {
+      serviceEnabled = await location.requestService();
+      if (!serviceEnabled) {
+        serviceEnabled = await location.requestService();
+      }
+    }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        return false;
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      permission = await Geolocator.requestPermission();
+      return false;
+    }
+    return true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -287,6 +314,34 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                     addVerticalSpace(5),
+                    if (permission == LocationPermission.denied)
+                      SizedBox(
+                        height: height(context) * 0.1,
+                        child: ListView.builder(
+                            itemCount: quickEscapeListoff.length,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, index) {
+                              return Column(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 30,
+                                    backgroundColor: Colors.transparent,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(60),
+                                      child: Image.asset(
+                                        quickEscapeListoff[index]['img'],
+                                        fit: BoxFit.fill,
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    quickEscapeListoff[index]['name'],
+                                    style: bodyText12Small(color: white),
+                                  )
+                                ],
+                              );
+                            }),
+                      )else
                     SizedBox(
                       height: height(context) * 0.1,
                       child: ListView.builder(

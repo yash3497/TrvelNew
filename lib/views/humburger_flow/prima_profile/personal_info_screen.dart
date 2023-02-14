@@ -1,6 +1,10 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
 
+import 'package:image_cropper/image_cropper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -42,6 +46,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
   final TextEditingController genderController = new TextEditingController();
   final TextEditingController statusController = new TextEditingController();
   //final TextEditingController emailId = new TextEditingController();
+  bool _prima = false;
   detailUser() async {
     final _fireStore = FirebaseFirestore.instance;
     await _fireStore
@@ -54,6 +59,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
       'anniversary': anniversaryDate.text,
       'profession': profession.text,
       'dob': dateOfBirth.text,
+      'isPrima': _prima,
       //'emailId': emailId.text,
       'emergencyNum': emergencyNum.text,
       'mobNum': mobNum.text,
@@ -66,6 +72,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
   }
 
   File? file;
+  File? imageFile;
   UploadTask? task;
   String url = "";
   String img = "";
@@ -117,7 +124,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
     return Scaffold(
       body: SingleChildScrollView(
         child: SizedBox(
-          height: height(context) * 1.28,
+          height: height(context) * 1.2,
           child: Stack(
               // mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -217,29 +224,13 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                                     width: width(context) * 0.45,
                                     child: CustomTextFieldWidget(
                                       controller: dateOfBirth,
-                                      labelText: 'Date Of Birth',
+                                      labelText: 'Date of Birth',
                                       icon: Icon(
                                         Icons.calendar_month_outlined,
                                         color: primary,
                                       ),
                                       onClick: () async {
-                                        var pickedDate = await showDatePicker(
-                                            context: context,
-                                            initialDate: DateTime.now(),
-                                            firstDate: DateTime(1900),
-                                            lastDate: DateTime(2101));
-                                        if (pickedDate != null) {
-                                          print(pickedDate);
-                                          String formattedDate =
-                                              DateFormat('yyyy-MM-dd')
-                                                  .format(pickedDate);
-
-                                          setState(() {
-                                            dateOfBirth.text = formattedDate;
-                                          });
-                                        } else {
-                                          print("Date is not selected");
-                                        }
+                                        selectDOBdate(context);
                                       },
                                     )),
                                 addHorizontalySpace(10),
@@ -253,24 +244,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                                         color: primary,
                                       ),
                                       onClick: () async {
-                                        var pickedDate = await showDatePicker(
-                                            context: context,
-                                            initialDate: DateTime.now(),
-                                            firstDate: DateTime(1900),
-                                            lastDate: DateTime(2101));
-                                        if (pickedDate != null) {
-                                          print(pickedDate);
-                                          String formattedDate =
-                                              DateFormat('yyyy-MM-dd')
-                                                  .format(pickedDate);
-
-                                          setState(() {
-                                            anniversaryDate.text =
-                                                formattedDate;
-                                          });
-                                        } else {
-                                          print("Date is not selected");
-                                        }
+                                        selectAniversyDate(context);
                                       },
                                     )),
                               ],
@@ -429,6 +403,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                               thickness: 5,
                               color: black.withOpacity(0.05),
                             ),
+                            addVerticalSpace(20),
                             addHorizontalySpace(20),
                             CustomButton(
                                 name: 'Save',
@@ -447,6 +422,94 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
         ),
       ),
     );
+
+  }
+  Future<void> selectDOBdate(BuildContext context) async {
+    DateTime? picked = await showDatePicker(
+        context: context,
+        builder: (BuildContext context, Widget ?child) {
+          return Theme(
+            data: ThemeData(
+              primarySwatch: Colors.grey,
+              splashColor: Colors.black,
+              textTheme: TextTheme(
+                subtitle1: TextStyle(color: Colors.black),
+                button: TextStyle(color: Colors.black),
+              ),
+              accentColor: Colors.black,
+              colorScheme: ColorScheme.light(
+                  primary: Color(0xffffbc00),
+                  primaryVariant: Colors.black,
+                  secondaryVariant: Colors.black,
+                  onSecondary: Colors.black,
+                  onPrimary: Colors.white,
+                  surface: Colors.black,
+                  onSurface: Colors.black,
+                  secondary: Colors.black),
+              dialogBackgroundColor: Colors.white,
+            ),
+            child: child ??Text(""),
+          );
+        },
+        initialDate: DateTime.now(),
+        firstDate: DateTime(1960, 8),
+        lastDate: DateTime.now());
+    if (picked != null) {
+      print(picked);
+      String formattedDate =
+      DateFormat('yyyy-MM-dd')
+          .format(picked);
+
+      setState(() {
+        dateOfBirth.text = formattedDate;
+      });
+    } else {
+      print("Date is not selected");
+    }
+  }
+
+  Future<void> selectAniversyDate(BuildContext context) async {
+    DateTime? picked = await showDatePicker(
+        context: context,
+        builder: (BuildContext context, Widget ?child) {
+          return Theme(
+            data: ThemeData(
+              primarySwatch: Colors.grey,
+              splashColor: Colors.black,
+              textTheme: TextTheme(
+                subtitle1: TextStyle(color: Colors.black),
+                button: TextStyle(color: Colors.black),
+              ),
+              accentColor: Colors.black,
+              colorScheme: ColorScheme.light(
+                  primary: Color(0xffffbc00),
+                  primaryVariant: Colors.black,
+                  secondaryVariant: Colors.black,
+                  onSecondary: Colors.black,
+                  onPrimary: Colors.white,
+                  surface: Colors.black,
+                  onSurface: Colors.black,
+                  secondary: Colors.black),
+              dialogBackgroundColor: Colors.white,
+            ),
+            child: child ??Text(""),
+          );
+        },
+        initialDate: DateTime.now(),
+        firstDate: DateTime(1960, 8),
+        lastDate: DateTime.now());
+    if (picked != null) {
+      print(picked);
+      String formattedDate =
+      DateFormat('yyyy-MM-dd')
+          .format(picked);
+
+      setState(() {
+        anniversaryDate.text = formattedDate;
+      });
+    } else {
+      print("Date is not selected");
+    }
   }
 
   Future<void> selectUploadDocument(BuildContext context) {
@@ -591,7 +654,9 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
         maxHeight: MediaQuery.of(context).size.height,
         imageQuality: 75);
     Reference ref = FirebaseStorage.instance.ref().child('profileImg');
-
+    if(image  == null) return;
+    File? _img = File(image.path);
+   _img = await _cropImage(imageFile: _img);
     await ref.putFile(File(image!.path));
     ref.getDownloadURL().then((value) {
       print(value);
@@ -600,6 +665,25 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
       });
     });
   }
+   Future<File?> _cropImage({required File imageFile}) async {
+    CroppedFile? croppedImage =
+        await ImageCropper().cropImage(sourcePath: imageFile.path);
+    if(croppedImage == null ) return null;
+    return File(croppedImage.path);
+   }
+ // void _cropImage(filePath) async {
+ //    File croppedImage = (await ImageCropper.cropImage(
+ //      sourcePath: filePath,
+ //      maxWidth: 1080,
+ //      maxHeight: 1080,
+ //    )) as File;
+ //    if (croppedImage != null) {
+ //      imageFile = croppedImage;
+ //      setState(() {});
+ //    }
+ //  }
+
+
 
   void cameraPickUploadImage() async {
     final image = await ImagePicker().pickImage(
@@ -691,6 +775,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
       ),
     );
   }
+
 }
 
 class FireBaseApi {

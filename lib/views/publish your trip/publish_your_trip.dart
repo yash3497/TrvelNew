@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:travel_app/utils/constant.dart';
 import 'package:travel_app/views/edit_prima_screen/prima_trip_1to4_screen.dart';
+import 'package:travel_app/views/humburger_flow/prima_profile/prima_profile_screen.dart';
 import 'package:travel_app/views/publish%20your%20trip/step1.dart';
 import 'package:travel_app/views/publish%20your%20trip/step2.dart';
 import 'package:travel_app/widget/custom_appbar.dart';
@@ -15,6 +16,7 @@ import 'package:travel_app/widget/custom_dropdown_button.dart';
 import 'package:travel_app/widget/custom_textfield.dart';
 
 import '../../model/prima_profile_model.dart';
+import '../humburger_flow/my_account/my_trip_friends.dart';
 
 class PublishYourTripScreen extends StatefulWidget {
   const PublishYourTripScreen({Key? key}) : super(key: key);
@@ -113,7 +115,7 @@ class _PublishYourTripScreenState extends State<PublishYourTripScreen> {
                   width: width(context) * 0.42,
                   child: CustomDropDownButton(
                       value: seetripvalue,
-                      itemList: ['Public', 'Private'],
+                      itemList: ['Public', 'My Trip friends'],
                       controller: SeeTripController,
                       lableText: 'Who can see your trip'),
                 ),
@@ -121,7 +123,7 @@ class _PublishYourTripScreenState extends State<PublishYourTripScreen> {
                   width: width(context) * 0.42,
                   child: CustomDropDownButton(
                       value: InvitedMembervalue,
-                      itemList: ['All Members', 'Only Friends'],
+                      itemList: ['All type', ' Only Men','Only Women'],
                       controller: InvitedMemberController,
                       lableText: 'Members Type invited'),
                 )
@@ -152,7 +154,7 @@ class _PublishYourTripScreenState extends State<PublishYourTripScreen> {
                 SizedBox(
                   width: width(context) * 0.44,
                   child: CustomDropDownButton(
-                      itemList: ['For him/her self'],
+                      itemList: ['For him/her self',' Trip host','Except trip host'],
                       value: spendvalue,
                       controller: SpendsController,
                       lableText: 'How spends distributed?'),
@@ -190,13 +192,18 @@ class _PublishYourTripScreenState extends State<PublishYourTripScreen> {
                     addHorizontalySpace(10),
                     Column(
                       children: [
-                        Container(
-                          height: 50,
-                          width: 50,
-                          decoration: myFillBoxDecoration(0, primary, 50),
-                          child: Icon(
-                            Icons.person_add,
-                            color: black,
+                        InkWell(
+                          onTap: (){
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>MyTripFriendsScreen(title: 'added',)));
+                          },
+                          child: Container(
+                            height: 50,
+                            width: 50,
+                            decoration: myFillBoxDecoration(0, primary, 50),
+                            child: Icon(
+                              Icons.person_add,
+                              color: black,
+                            ),
                           ),
                         ),
                       ],
@@ -226,7 +233,7 @@ class _PublishYourTripScreenState extends State<PublishYourTripScreen> {
             SizedBox(
               width: width(context) * 0.8,
               child: Text(
-                'Recommend a travel agency to help in booking for this trip',
+                'Your trip friends can see your profile, and this trip and request you to join',
                 style: bodyText14w600(color: black),
               ),
             ),

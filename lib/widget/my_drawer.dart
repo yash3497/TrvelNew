@@ -81,8 +81,8 @@ class _MyDrawerState extends State<MyDrawer> {
       var profile = await FirebaseFirestore.instance
           .collection('users')
           .doc(FirebaseAuth.instance.currentUser!.uid)
-          .collection('upcomingtrip')
-          .doc('check')
+          .collection("upcomcheck")
+          .doc('checktrip')
           .get();
       check = profile.data()?['upcoming'];
 

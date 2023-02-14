@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -30,6 +31,7 @@ class _SignInScreenState extends State<SignInScreen> {
       backgroundColor: clr,
     ));
   }
+  bool _passwordVisible = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,7 +55,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   ],
                 ),
               ),
-              addVerticalSpace(height(context) * 0.12),
+              addVerticalSpace(height(context) * 0.10),
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
@@ -73,7 +75,12 @@ class _SignInScreenState extends State<SignInScreen> {
                       onChanged: (value) {
                         email = value;
                       },
-                      decoration: InputDecoration(hintText: 'Email'),
+                      decoration: InputDecoration(hintText: 'Email',
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: primary, width: 1.5),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
                       // icon: Icon(
                       //   Icons.help,
                       //   color: primary,
@@ -81,11 +88,27 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                     addVerticalSpace(20),
                     TextField(
-                      obscureText: true,
+                      obscureText: !_passwordVisible,
                       onChanged: (value) {
                         password = value;
                       },
-                      decoration: InputDecoration(hintText: 'Password'),
+                      decoration: InputDecoration(hintText: 'Password',
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: primary, width: 1.5),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                      suffixIcon: IconButton(
+                        onPressed: (){
+                          setState(() {
+                            _passwordVisible = !_passwordVisible;
+                          });
+                        },
+                        icon: Icon(
+                          _passwordVisible ? Icons.visibility:
+                              Icons.visibility_off,color: primary,
+                        ),
+                      )
+                      ),
                       // icon: Icon(
                       //   Icons.help,
                       //   color: primary,
@@ -140,7 +163,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             print('No user found for that email.');
                           } else if (e.code == 'wrong-password') {
                             showSnackBar(
-                                context, "Your password is Rong", Colors.red);
+                                context, "Your password is Wrong", Colors.red);
                             print('Wrong password provided for that user.');
                           }
                         }
@@ -150,21 +173,23 @@ class _SignInScreenState extends State<SignInScreen> {
                     addVerticalSpace(height(context) * 0.08),
                     Padding(
                       padding: const EdgeInsets.only(left: 15.0),
-                      child: InkWell(
-                        onTap: () {},
                         child: RichText(
                             text: TextSpan(children: [
                           TextSpan(
                               text:
-                                  '     By Proceeding further you agree to Travel New’s.\n',
+                                  '     By Proceeding further you agree to Travel New’s.\n               ',
                               style: bodyText14normal(color: black)),
                           TextSpan(
                               text:
-                                  '            Terms of Services and Privacy Policy',
-                              style:
-                                  bodyText14w600(spacing: 1.4, color: black)),
+                                  'Terms of Services and Privacy Policy',
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {},
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                height: 1.4,
+                                color: black,
+                                decoration: TextDecoration.underline),),
                         ])),
-                      ),
                     )
                   ],
                 ),

@@ -143,7 +143,7 @@ class _MyTripFriendsScreenState extends State<MyTripFriendsScreen> {
                             builder: (context) => MyfollowingFriendScreen()));
                   },
                   child: const Text(
-                    'You have trip friend request',
+                    'Trip Friend Request',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.normal,

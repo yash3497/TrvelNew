@@ -6,6 +6,14 @@ List quickEscapeList = [
   {'img': 'assets/images/home2.png', 'name': 'Mumbai'},
   {'img': 'assets/images/home3.png', 'name': 'Delhi'},
 ];
+List quickEscapeListoff = [
+  {'img': 'assets/images/home2.png', 'name': 'Mumbai'},
+  {'img': 'assets/images/home3.png', 'name': 'Delhi'},
+  {'img': 'assets/images/home4.png', 'name': 'Kolakata'},
+  {'img': 'assets/images/home5.png', 'name': 'Hyderabad'},
+  {'img': 'assets/images/home2.png', 'name': 'Mumbai'},
+  {'img': 'assets/images/home3.png', 'name': 'Delhi'},
+];
 final List overlap = [
   'assets/images/overlap1.png',
   'assets/images/overlap2.png',

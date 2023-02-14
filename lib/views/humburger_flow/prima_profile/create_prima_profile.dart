@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:intl/intl.dart';
@@ -17,6 +18,8 @@ import 'package:travel_app/widget/custom_textfield.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../utils/constant.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+
+import '../../prima/go_prima_screen.dart';
 
 class CreatePrimaProfile extends StatefulWidget {
   const CreatePrimaProfile({super.key});
@@ -56,8 +59,8 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
           "DOB": dateOfBirth.text,
           "Annivarsary": annivarsaryDate.text,
           'profession': professionController.text,
-          // "maritalStatus": statusController,
-          // "gender": genderController,
+          "maritalStatus": _string,
+          "gender": _string1,
           // John Doe
           "governmentId": IdUrl, // 42
 
@@ -85,8 +88,8 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
           "DOB": dateOfBirth.text,
           "Annivarsary": annivarsaryDate.text,
           'profession': professionController.text,
-          // "maritalStatus": statusController,
-          // "gender": FieldValue.arrayRemove([genderController]),
+          "maritalStatus": _string,
+          "gender": _string1,
           // John Doe
           //"governmentId": IdUrl, // 42
           "aboutme": aboutMeController.text,
@@ -99,7 +102,20 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
         .then((value) => print("Details Updated"))
         .catchError((error) => print("Failed to Update users Details: $error"));
   }
+bool _prima = true;
+  updateprima() async {
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    users
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .update({
+      "isPrima": _prima
+    })
+        .then((value) => print("Details Updated"))
+        .catchError((error) => print("Failed to Update users Details: $error"));
+  }
 
+  String _string = "Single";
+  String _string1 = "Male";
   String _image = "";
   String firstname = "";
   void getDetails() async {
@@ -188,6 +204,7 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
 
   void initState() {
     getDetails();
+    gerprimacheck();
     //addPrimaAccountDetails();
     //  updatePrimaAccountDetails();
     super.initState();
@@ -351,31 +368,127 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
               addVerticalSpace(22),
               Row(
                 children: [
+                  Text('   Married status'),
+                  Text('                                         Gender')
+                ],
+              ),
+              Row(
+                children: [
                   SizedBox(
                     height: 37,
                     width: width(context) * 0.45,
-                    child: CustomDropDownButton(
-                      itemList: const [
-                        'Single',
-                        'Married',
-                        'Commited',
-                      ],
-                      lableText: 'Marital Status',
-                      // controller: statusController,
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border(
+                              top: BorderSide(
+                                color: Colors.black26
+                                ,                        ),
+                              bottom: BorderSide(
+                                  color: Colors.black26
+                              ),
+                              right: BorderSide(
+                                  color: Colors.black26
+                              ),
+                              left: BorderSide(
+                                  color: Colors.black26
+                              )
+                          )
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: DropdownButton<String>(
+                          borderRadius: BorderRadius.circular(10),
+                          value: _string,
+                          isExpanded: true,
+                          onChanged: (newValue) {
+                            setState(() {
+                              _string = newValue!;
+                            });
+                          },
+                          items: ['Single','Married','Commited']
+                              .map<DropdownMenuItem<String>>(
+                                  (String value) => DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(
+                                  value,
+                                  style: bodytext12Bold(color: black),
+                                ),
+                              ))
+                              .toList(),
+
+                          // add extra sugar..
+                          icon: const Padding(
+                            padding: EdgeInsets.only(bottom: 8.0),
+                            child: Icon(
+                              Icons.arrow_drop_down,
+                            ),
+                          ),
+                          iconSize: 25,
+                          iconEnabledColor: primary,
+                          iconDisabledColor: black.withOpacity(0.7),
+                          underline: const SizedBox(),
+                        ),
+                      ),
                     ),
                   ),
                   addHorizontalySpace(10),
                   SizedBox(
                     height: 37,
                     width: width(context) * 0.45,
-                    child: CustomDropDownButton(
-                      itemList: const [
-                        'Male',
-                        'Female',
-                        'Other',
-                      ],
-                      lableText: 'Gender',
-                      controller: genderController,
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border(
+                              top: BorderSide(
+                                color: Colors.black26
+                                ,                        ),
+                              bottom: BorderSide(
+                                  color: Colors.black26
+                              ),
+                              right: BorderSide(
+                                  color: Colors.black26
+                              ),
+                              left: BorderSide(
+                                  color: Colors.black26
+                              )
+                          )
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: DropdownButton<String>(
+                          borderRadius: BorderRadius.circular(10),
+                          value: _string1,
+                          isExpanded: true,
+                          onChanged: (newValue) {
+                            setState(() {
+                              _string1 = newValue!;
+                            });
+                          },
+                          items: ['Male','Female','Other']
+                              .map<DropdownMenuItem<String>>(
+                                  (String value) => DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(
+                                  value,
+                                  style: bodytext12Bold(color: black),
+                                ),
+                              ))
+                              .toList(),
+
+                          // add extra sugar..
+                          icon: const Padding(
+                            padding: EdgeInsets.only(bottom: 8.0),
+                            child: Icon(
+                              Icons.arrow_drop_down,
+                            ),
+                          ),
+                          iconSize: 25,
+                          iconEnabledColor: primary,
+                          iconDisabledColor: black.withOpacity(0.7),
+                          underline: const SizedBox(),
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -431,18 +544,7 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
                       ))
                 ],
               ),
-              SizedBox(
-                height: 30,
-                child: TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      'Why is this required?',
-                      style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: primary,
-                          decoration: TextDecoration.underline),
-                    )),
-              ),
+              addVerticalSpace(10),
               const Divider(
                 thickness: 1,
               ),
@@ -467,19 +569,19 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
                       ? width(context) * 0.9
                       : width(context) * 0.55,
                   decoration:
-                      myFillBoxDecoration(0, black.withOpacity(0.1), 10),
+                  myFillBoxDecoration(0, black.withOpacity(0.1), 10),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       pdfFile != null
                           ? Text.rich(TextSpan(children: [
-                              WidgetSpan(child: Icon(Icons.picture_as_pdf)),
-                              TextSpan(text: _filename)
-                            ]))
+                        WidgetSpan(child: Icon(Icons.picture_as_pdf)),
+                        TextSpan(text: _filename)
+                      ]))
                           : Text(
-                              'Address Proof',
-                              style: bodyText16w600(color: black),
-                            ),
+                        'Address Proof',
+                        style: bodyText16w600(color: black),
+                      ),
                       addHorizontalySpace(12),
                       const Icon(
                         Icons.edit_note_outlined,
@@ -494,10 +596,25 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
                   ),
                 ),
               ),
+              addVerticalSpace(10),
+              SizedBox(
+                height: 30,
+                child: TextButton(
+                    onPressed: () {},
+                    child: Text(
+                      'Why is this required?',
+                      style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: primary,
+                          decoration: TextDecoration.underline),
+                    )),
+              ),
+              addVerticalSpace(7),
               const Divider(
                 thickness: 1,
               ),
               addVerticalSpace(7),
+
               const Text(
                 'About me',
                 style: TextStyle(
@@ -522,6 +639,7 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
                             'Whats amazing about me? \nWhy I’m on travel new?')),
               ),
               addVerticalSpace(15),
+              addVerticalSpace(10),
               const Text(
                 'Other interest',
                 style: TextStyle(
@@ -541,14 +659,11 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
                         border: InputBorder.none,
                         contentPadding: EdgeInsets.all(10),
                         hintStyle:
-                            bodyText16normal(color: black.withOpacity(0.5)),
+                        bodyText16normal(color: black.withOpacity(0.5)),
                         hintText:
-                            'Example: Loves to cook, workout, books etc')),
+                        'Example: Loves to cook, workout, books etc')),
               ),
               addVerticalSpace(10),
-              const Divider(
-                thickness: 1,
-              ),
               Text(
                 'Show my other interest to',
                 style: bodyText14w600(color: black),
@@ -573,11 +688,11 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
                                   onChanged: (value) {
                                     setState(() {
                                       for (var element
-                                          in selectOtherInterestList) {
+                                      in selectOtherInterestList) {
                                         element.isSelected = false;
                                       }
                                       selectOtherInterestList[i].isSelected =
-                                          value!;
+                                      value!;
                                     });
                                   },
                                 ),
@@ -587,6 +702,40 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
                           ),
                         );
                       })),
+              const Divider(
+                thickness: 1,
+              ),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Tripometer',
+                    style: TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                  IconButton(onPressed: () {}, icon: Icon(Icons.help))
+                ],
+              ),
+              TripometerWidget(),
+              InkWell(
+                  onTap: () {
+                    tripomererequaried(context);
+                  },
+                  child: Text(
+                    'Why is this required',
+                    style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: primary,
+                        decoration: TextDecoration.underline),
+                  )),
+              addVerticalSpace(10),
+              Divider(
+                thickness: 1,
+              ),
+              addVerticalSpace(10),
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -610,33 +759,9 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
               const Divider(
                 thickness: 1,
               ),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Tripometer',
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),
-                  ),
-                  IconButton(onPressed: () {}, icon: Icon(Icons.help))
-                ],
-              ),
-              TripometerWidget(),
-              InkWell(
-                  onTap: () {},
-                  child: Text(
-                    'Why is this required',
-                    style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: primary,
-                        decoration: TextDecoration.underline),
-                  )),
-              const Divider(
-                thickness: 1,
-              ),
               UploadTravelsPhotos(),
+              addVerticalSpace(10),
+
               addVerticalSpace(20),
               CustomButton(
                   name: 'Create my profile',
@@ -652,20 +777,23 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
                         actions: <Widget>[
                           TextButton(
                             onPressed: () {
+                              updateprima();
                               if (firstname != "") {
+                                yesprimprofile(context);
                                 updatePrimaAccountDetails();
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (ctx) =>
-                                            PrimaProfileScreen()));
+                              //   Navigator.push(
+                              //       context,
+                              //       MaterialPageRoute(
+                              //           builder: (ctx) =>
+                              //               PrimaProfileScreen()));
                               } else {
-                                addPrimaAccountDetails().whenComplete(() =>
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (ctx) =>
-                                                PrimaProfileScreen())));
+                                notprimamember(context);
+                                addPrimaAccountDetails();
+                                    // Navigator.push(
+                                    //     context,
+                                    //     MaterialPageRoute(
+                                    //         builder: (ctx) =>
+                                    //             PrimaProfileScreen()));
                               }
                             },
                             child: const Text('Confirm'),
@@ -684,6 +812,93 @@ class _CreatePrimaProfileState extends State<CreatePrimaProfile> {
         ),
       ),
     );
+  }
+  yesprimprofile(BuildContext context) {
+
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          content: const Text(
+              ' You are missing joining trip of your trip friends, getting connected to the  travel community, visiting unexplored places and more features '),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+               Navigator.push(context, MaterialPageRoute(builder: (context)=>GoPrimaSubscriptionScreen()));
+              },
+              child: const Text('Upgrade '),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>PrimaProfileScreen()));
+                },
+              child: const Text('Cancel'),
+            ),
+          ],
+        ),
+    );
+
+  }
+  notprimamember(BuildContext context) {
+
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        content: const Text(
+            ' Hey, You have created your Prima profile. But you cannot avail the complete features like joining trip of your trip friends and more, until you subscribe to Prima. You will direct to payment gateway, fill free to click on Subscribe '),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>GoPrimaSubscriptionScreen()));
+            },
+            child: const Text('Subscribe '),
+          ),
+          TextButton(
+            onPressed: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>PrimaProfileScreen()));
+              },
+            child: const Text('Cancel'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  bool _primacheck = false;
+  void gerprimacheck() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      var profile = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+      _primacheck = profile.data()?['isPrima'];
+    }
+    setState(() {});
+  }
+  tripomererequaried(BuildContext context) {
+
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          contentPadding: const EdgeInsets.all(6),
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          content: Builder(
+            builder: (context) {
+              var height = MediaQuery.of(context).size.height;
+              var width = MediaQuery.of(context).size.width;
+
+              return Container(
+                height: 200,
+                width: 100,
+                child: Center(child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Text('As you like type of trips, adjust the trip-type bar to highlight it in your profile. This helps to know what kind of trips you like and how much’. Remove the ? ',style: TextStyle(fontFamily: GoogleFonts.roboto().fontFamily),),
+                )),
+
+              );
+            },
+          ),
+        ));
   }
 }
 

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:travel_app/services/db/firebaseDB.dart';
 import 'package:travel_app/utils/constant.dart';
@@ -24,6 +25,9 @@ class AccountSettingsScreen extends StatefulWidget {
 }
 
 class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
+ // List items = [];
+  String _string = 'jaipur';
+
   final List privacyList = [
     'Who can see your age?',
     'Who can see your marital Status?',
@@ -63,6 +67,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   @override
   void initState() {
     getData();
+    getlocation();
     super.initState();
     _getUId();
   }
@@ -116,6 +121,38 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
     setState(() {
 
     });
+  }
+  String _home = "";
+  void getlocation() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      var privacy = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+      _home = privacy.data()?['locality'];
+    }
+    setState(() {
+      accountChagesList = [
+        {'title': 'Home location', 'subTitle':_home },
+        {'title': 'Password', 'subTitle': 'Update'},
+        {
+          'title': 'Notifications',
+          'subTitle': 'Messages, Trip mate requests and more'
+        },
+        {'title': 'Payment preference', 'subTitle': 'Saved card, UPI'},
+      ];
+    });
+  }
+  locationupdate() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      var profile = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({
+        "locality": _string
+      });
+      setState(() {});
+    }
   }
 
   @override
@@ -653,7 +690,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                           ),
                           onTap: () {
                             if (i == 0) {
-                              manageDestinationDialog(context);
+                              locationdialog(context);
                             }
                             if (i == 1) {
                               changePasswordDialog(context);
@@ -945,5 +982,97 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                 },
               ),
             ));
+  }
+  locationdialog(BuildContext context) {
+
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          contentPadding: const EdgeInsets.all(6),
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          content: Builder(
+            builder: (context) {
+              var height = MediaQuery.of(context).size.height;
+              var width = MediaQuery.of(context).size.width;
+
+              return  Container(
+                height: 400,
+               width: 500,
+                child: Column(
+                  children: [
+                    addVerticalSpace(20),
+                    Center(child: Text('You change your travel home location',style: TextStyle(fontFamily: GoogleFonts.roboto().fontFamily),)),
+                    addVerticalSpace(20),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border(
+                                top: BorderSide(
+                                  color: Colors.black
+                                  ,                        ),
+                                bottom: BorderSide(
+                                    color: Colors.black
+                                ),
+                                right: BorderSide(
+                                    color: Colors.black
+                                ),
+                                left: BorderSide(
+                                    color: Colors.black
+                                )
+                            )
+                        ),
+                        child: Padding(
+                          padding:  EdgeInsets.only(left: 20),
+                          child: DropdownButton<String>(
+                            borderRadius: BorderRadius.circular(10),
+                            value: _string,
+                            isExpanded: true,
+                            onChanged: (newValue) {
+                              setState(() {
+                                _string = newValue!;
+                              });
+                            },
+                            items: ['jaipur','Bengaluru ','Vadodara','Mysuru','Jaisalmer','Patan','Thanjavur','Kasargod','Belgavi','Ujjain','Wadi','Nizamabad','Karkala','Bhimavaram','Faizabad','Munnar','Manali','Gangtok']
+                                .map<DropdownMenuItem<String>>(
+                                    (String value) => DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(
+                                    value,
+                                    style: bodytext12Bold(color: black),
+                                  ),
+                                ))
+                                .toList(),
+
+                            // add extra sugar..
+                            icon: const Padding(
+                              padding: EdgeInsets.only(bottom: 8.0),
+                              child: Icon(
+                                Icons.arrow_drop_down,
+                              ),
+                            ),
+                            iconSize: 25,
+                            iconEnabledColor: primary,
+                            iconDisabledColor: black.withOpacity(0.7),
+                            underline: const SizedBox(),
+                          ),
+                        ),
+                      ),
+                    ),
+                    addVerticalSpace(60),
+                    Container(
+                        width: 300,
+                        child: CustomButton(name: 'Save', onPressed: (){
+                          Navigator.pop(context);
+                          locationupdate();
+                        }))
+                  ],
+                ),
+              );
+            },
+          ),
+        ));
   }
 }

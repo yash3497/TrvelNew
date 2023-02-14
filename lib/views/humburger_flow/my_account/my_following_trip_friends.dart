@@ -49,7 +49,6 @@ class _MyfollowingFriendScreenState extends State<MyfollowingFriendScreen> {
       body: FutureBuilder(
         future: FirebaseFirestore.instance
             .collection('users')
-
             .get(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {

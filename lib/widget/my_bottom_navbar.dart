@@ -76,11 +76,11 @@ class _MyBottomBarState extends State<MyBottomBar>
   final PageStorageBucket bucket = PageStorageBucket();
   TabController? tabController;
   final List<Widget> mainScreens = [
-    HomeScreen(),
-    UpcomingTripsScreen(),
-    const Text(''),
-    const InboxScreen(),
-    const Text(''),
+     HomeScreen(),
+    // UpcomingTripsScreen(),
+    // const Text(''),
+    // const InboxScreen(),
+    // const Text(''),
   ];
 
   var _counT = 0;
@@ -135,8 +135,8 @@ class _MyBottomBarState extends State<MyBottomBar>
       var profile = await FirebaseFirestore.instance
           .collection('users')
           .doc(FirebaseAuth.instance.currentUser!.uid)
-          .collection('upcomingtrip')
-          .doc('check')
+          .collection("upcomcheck")
+          .doc('checktrip')
           .get();
       check = profile.data()?['upcoming'];
     }
@@ -163,10 +163,11 @@ class _MyBottomBarState extends State<MyBottomBar>
       key: _globalKey,
       drawer: MyDrawer(),
       resizeToAvoidBottomInset: true,
-      body: SafeArea(
+      body:
+      SafeArea(
         child: TabBarView(
           controller: tabController,
-          physics: const NeverScrollableScrollPhysics(),
+         // physics: const NeverScrollableScrollPhysics(),
           children: mainScreens,
         ),
       ),
@@ -202,13 +203,19 @@ class _MyBottomBarState extends State<MyBottomBar>
                                 builder: (ctx) => UpcomingTripsScreen()));
                       }
                     },
-                    child: const Tab(
-                      icon: ImageIcon(
-                        AssetImage(
-                          'assets/images/navbar2.png',
+
+                      child: const Tab(
+                        icon: SizedBox(
+                          height: 100,
+                          width: 100,
+                          child: ImageIcon(
+                            AssetImage(
+                              'assets/images/navbar2.png',
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+
                   ),
                   InkWell(
                     onTap: () async {
@@ -219,24 +226,41 @@ class _MyBottomBarState extends State<MyBottomBar>
                             MaterialPageRoute(
                                 builder: (ctx) =>
                                     const GoPrimaSubscriptionScreen()));
-                      } else if (FirebaseAuth.instance.currentUser != null) {
-                        if (Name == "") {
-                          empatyprimaccout(context);
-                        } else {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (ctx) => const PrimaMyBottomBar()));
-                        }
-                      } else {
-                        showSnackBar(
-                            context, "Please Login First!", Colors.red);
-                      }
+                       } else       {
+                              if (Name == "") {
+                                if (FirebaseAuth.instance.currentUser != null) {
+                                  empatyprimaccout(context);
+                                } else {
+                                  empatyprimaccout(context);
+                                  Navigator.pop(context);
+                                  showSnackBar(
+                                      context, "Please Login First!", Colors.red);
+                                }
+                              } else {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (ctx) => PrimaMyBottomBar()));
+                              }
+                            }
+    //             if (FirebaseAuth.instance.currentUser != null) {
+                      //   if (Name == "") {
+                      //     empatyprimaccout(context);
+                      //   } else {
+                      //     Navigator.push(
+                      //         context,
+                      //         MaterialPageRoute(
+                      //             builder: (ctx) => const PrimaMyBottomBar()));
+                      //   }
+                      // } else {
+                      //   showSnackBar(
+                      //       context, "Please Login First!", Colors.red);
+                      // }
                     },
                     child: const Tab(
                       icon: SizedBox(
-                        height: 50,
-                        width: 50,
+                        height: 100,
+                        width: 100,
                         child: ImageIcon(
                           AssetImage(
                             'assets/images/navbar3.png',
@@ -256,9 +280,13 @@ class _MyBottomBarState extends State<MyBottomBar>
                       }
                     },
                     child: const Tab(
-                      icon: ImageIcon(
-                        AssetImage(
-                          'assets/images/navbar4.png',
+                      icon: SizedBox(
+                        height: 100,
+                        width: 100,
+                        child: ImageIcon(
+                          AssetImage(
+                            'assets/images/navbar4.png',
+                          ),
                         ),
                       ),
                     ),
@@ -269,8 +297,8 @@ class _MyBottomBarState extends State<MyBottomBar>
                     },
                     child: const Tab(
                       icon: SizedBox(
-                        height: 50,
-                        width: 50,
+                        height: 100,
+                        width: 100,
                         child: ImageIcon(
                           AssetImage(
                             'assets/images/navbar5.png',
@@ -280,7 +308,7 @@ class _MyBottomBarState extends State<MyBottomBar>
                     ),
                   )
                 ],
-                labelPadding: const EdgeInsets.all(8),
+                labelPadding: const EdgeInsets.all(0),
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 labelColor: primary,
                 unselectedLabelColor: Colors.grey.shade400,

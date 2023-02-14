@@ -64,6 +64,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
   @override
   void initState() {
     getDetails();
+    gerprimacheck();
     getprimDetails();
     super.initState();
   }
@@ -78,6 +79,17 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
           .doc('profile')
           .get();
       Name = profile.data()?['firstName'];
+    }
+    setState(() {});
+  }
+  bool _prima = false;
+  void gerprimacheck() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      var profile = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+      _prima = profile.data()?['isPrima'];
     }
     setState(() {});
   }
@@ -264,11 +276,17 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                                           builder: (ctx) =>
                                               YourTripInterest()));
                                 } else if (i == 2) {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (ctx) =>
-                                              GoPrimaSubscriptionScreen()));
+                                  if(_prima == true){
+                                    primaSubscriptionSummary(context);
+                                  }
+                                  else{
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (ctx) =>
+                                                GoPrimaSubscriptionScreen()));
+                                  }
+
                                 } else if (i == 3) {
                                   Navigator.push(
                                       context,
@@ -499,5 +517,104 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                 },
               ),
             ));
+  }
+  primaSubscriptionSummary(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          contentPadding: const EdgeInsets.all(6),
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          content: Builder(
+            builder: (context) {
+              var height = MediaQuery.of(context).size.height;
+              var width = MediaQuery.of(context).size.width;
+
+              return Container(
+                height: height * 0.4,
+                width: width * 0.95,
+                padding: EdgeInsets.all(13),
+                child: Column(
+                  children: [
+                    Text(
+                      'Prima Subscription Summary',
+                      style: bodyText16w600(color: black),
+                    ),
+                    addVerticalSpace(20),
+                    RichText(
+                        text: TextSpan(children: [
+                          TextSpan(
+                              text:
+                              'Your subscription is live now. Go explore your \n               trip by access to all',
+                              style: bodyText12Small(color: black)),
+                          TextSpan(
+                              text: ' features.',
+                              style:
+                              bodyText14w600(spacing: 1.2, color: primary))
+                        ])),
+                    addVerticalSpace(20),
+                    Container(
+                      padding: EdgeInsets.all(8),
+                      height: height * 0.13,
+                      width: width * 0.7,
+                      decoration: myFillBoxDecoration(
+                          0, black.withOpacity(0.1), 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Image.asset('assets/images/menu3.png'),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Plan - Hobby',
+                                style: bodytext12Bold(color: black),
+                              ),
+                              addVerticalSpace(4),
+                              Text(
+                                '₹500 for 3 months',
+                                style: bodytext12Bold(color: black),
+                              ),
+                              addVerticalSpace(10),
+                              RichText(
+                                  text: TextSpan(children: [
+                                    TextSpan(
+                                        text:
+                                        'Your subscription ends on \nFeb 03, 2022\n',
+                                        style: TextStyle(
+                                            height: 1.3,
+                                            fontSize: 12,
+                                            color: black)),
+                                    TextSpan(
+                                        text: 'Extend Subscription',
+                                        style: TextStyle(
+                                            decoration:
+                                            TextDecoration.underline,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600,
+                                            color: primary))
+                                  ]))
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    addVerticalSpace(15),
+                    Text(
+                      'Prima member since November 08, 2022',
+                      style: bodyText13normal(color: black),
+                    ),
+                    addVerticalSpace(20),
+                    CustomButton(
+                        name: 'Okay',
+                        onPressed: () {
+                          Navigator.pop(context);
+                        })
+                  ],
+                ),
+              );
+            },
+          ),
+        ));
   }
 }

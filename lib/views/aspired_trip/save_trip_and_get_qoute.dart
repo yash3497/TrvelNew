@@ -91,8 +91,8 @@ class _SaveTripAndGetQuoteState extends State<SaveTripAndGetQuote> {
       DocumentReference profile =  FirebaseFirestore.instance
           .collection('users')
           .doc(FirebaseAuth.instance.currentUser!.uid)
-          .collection("upcomingtrip")
-          .doc('check');
+          .collection("upcomcheck")
+      .doc('checktrip');
       profile.set({
         "upcoming": check
       });

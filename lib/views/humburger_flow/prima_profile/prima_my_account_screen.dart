@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -7,9 +9,36 @@ import 'package:travel_app/views/humburger_flow/prima_profile/tripometer_manage_
 
 import '../../../utils/constant.dart';
 
-class PrimaMyAccount extends StatelessWidget {
+class PrimaMyAccount extends StatefulWidget {
   const PrimaMyAccount({super.key});
 
+  @override
+  State<PrimaMyAccount> createState() => _PrimaMyAccountState();
+}
+
+class _PrimaMyAccountState extends State<PrimaMyAccount> {
+
+  String _name = "";
+  void getDetails() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      var profile = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection('primaAccount')
+          .doc('profile')
+          .get();
+      _name = profile.data()?['fullName'];
+
+    }
+    setState(() {
+
+    });
+  }
+  @override
+  void initState() {
+    getDetails();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,7 +98,7 @@ class PrimaMyAccount extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Alexander Doe',
+                      '$_name',
                       style: bodyText30W600(color: black),
                     ),
                     Container(
@@ -84,10 +113,6 @@ class PrimaMyAccount extends StatelessWidget {
                               color: primary,
                               size: 20,
                             ),
-                            Text(
-                              'Verified Member',
-                              style: bodytext12Bold(color: black),
-                            )
                           ]),
                     ),
                     const Divider(
@@ -126,24 +151,24 @@ class PrimaMyAccount extends StatelessWidget {
                       },
                       trailing: Icon(Icons.arrow_forward_ios),
                     ),
-                    const Divider(
-                      height: 0,
-                      thickness: 1,
-                    ),
-                    ListTile(
-                      title: Text(
-                        'Tripometer',
-                        style: bodyText20w700(color: black),
-                      ),
-                      subtitle: Text('Manage Tripometer'),
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (ctx) => TripoMeterManage()));
-                      },
-                      trailing: Icon(Icons.arrow_forward_ios),
-                    ),
+                    // const Divider(
+                    //   height: 0,
+                    //   thickness: 1,
+                    // ),
+                    // ListTile(
+                    //   title: Text(
+                    //     'Tripometer',
+                    //     style: bodyText20w700(color: black),
+                    //   ),
+                    //   subtitle: Text('Manage Tripometer'),
+                    //   onTap: () {
+                    //     Navigator.push(
+                    //         context,
+                    //         MaterialPageRoute(
+                    //             builder: (ctx) => TripoMeterManage()));
+                    //   },
+                    //   trailing: Icon(Icons.arrow_forward_ios),
+                    // ),
                     const Divider(
                       height: 0,
                       thickness: 1,

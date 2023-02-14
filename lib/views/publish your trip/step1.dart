@@ -1,19 +1,16 @@
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+import 'package:intl/intl.dart';
+import 'package:travel_app/widget/custom_dropdown_button.dart';
+import 'package:travel_app/widget/custom_textfield.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../../utils/constant.dart';
+
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:intl/intl.dart';
-import '../../utils/constant.dart';
-import '../../widget/custom_dropdown_button.dart';
-import '../../widget/custom_textfield.dart';
-import 'dart:developer';
-import 'package:travel_app/views/humburger_flow/upcoming_trips.dart';
-import 'package:travel_app/widget/custom_appbar.dart';
-import 'package:travel_app/widget/custom_button.dart';
-
-import '../../model/save_trip_model.dart';
 
 addPublishTripDetails() async {
   // Call the user's CollectionReference to add a new user
@@ -25,9 +22,9 @@ addPublishTripDetails() async {
       .set({
     "Uid": FirebaseAuth.instance.currentUser!.uid,
     "Star_Trip_location": startLocationController.text,
-    "Specify_type": specifyTripTypeController.text,
-    "where_to": andTripController.text,
-    "Mode_of_travel": modeTravelController.text,
+    "Specify_type": _string1,
+    "where_to": _string2,
+    "Mode_of_travel": _string3,
     "start_date": endDateController.text,
     "End_date": endDateController.text,
     "Specify_trip_name": specitTripNameController.text,
@@ -46,9 +43,9 @@ addStep1PublishTripDetails() async {
       .doc(FirebaseAuth.instance.currentUser!.uid)
       .update({
     "Star_Trip_location": startLocationController.text,
-    "Specify_type": specifyTripTypeController.text,
-    "where_to": andTripController.text,
-    "Mode_of_travel": modeTravelController.text,
+    "Specify_type": _string1,
+    "where_to": _string2,
+    "Mode_of_travel": _string3,
     "start_date": endDateController.text,
     "End_date": endDateController.text,
     "Specify_trip_name": specitTripNameController.text,
@@ -57,12 +54,15 @@ addStep1PublishTripDetails() async {
       .catchError((error) => print("Failed to add user: $error"));
 }
 
-
+String _string1 = "";
+String _string2 = "";
+String _string3 = "";
+String _image = "";
 
 final TextEditingController startLocationController = TextEditingController();
-final TextEditingController specifyTripTypeController = TextEditingController();
-final TextEditingController andTripController = TextEditingController();
-final TextEditingController modeTravelController = TextEditingController();
+// final TextEditingController specifyTripTypeController = TextEditingController();
+// final TextEditingController andTripController = TextEditingController();
+// final TextEditingController modeTravelController = TextEditingController();
 final TextEditingController startDateController = TextEditingController();
 final TextEditingController endDateController = TextEditingController();
 final TextEditingController specitTripNameController = TextEditingController();
@@ -82,6 +82,7 @@ class _Step1State extends State<Step1> {
   @override
   void initState() {
     getDetails();
+    gethomelocation();
     super.initState();
   }
   // final List<String> tripLocation = ['Pune', 'Mumbai', 'chennai'];
@@ -93,10 +94,10 @@ class _Step1State extends State<Step1> {
           .collection('Trip_Plan')
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .get();
-      startLocationController.text = profile.data()?['Star_Trip_location'];
-      specifyTripTypeController.text = profile.data()?['Specify_type'];
-      andTripController.text = profile.data()?['where_to'];
-      modeTravelController.text = profile.data()?['Mode_of_travel'];
+       startLocationController.text = profile.data()?['Star_Trip_location'];
+      _string1 = profile.data()?['Specify_type'];
+      _string2 = profile.data()?['where_to'];
+      _string3 = profile.data()?['Mode_of_travel'];
       startDateController.text = profile.data()?['start_date'];
       endDateController.text = profile.data()?['End_date'];
       specitTripNameController.text = profile.data()?['Specify_trip_name'];
@@ -105,6 +106,17 @@ class _Step1State extends State<Step1> {
     }
   }
 
+  void gethomelocation() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      var profile = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+      startLocationController.text = profile.data()?['locality'];
+
+      setState(() {});
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -115,21 +127,27 @@ class _Step1State extends State<Step1> {
           controller: startLocationController,
           labelText: 'Trip Start Location',
         ),
-        addVerticalSpace(20),
-        CustomTextFieldWidget(
-          // itemList: tripLocation,
-          controller: specifyTripTypeController,
-          labelText: 'Specify trip Type',
+        addVerticalSpace(25),
+        CustomDropDownButton(
+          value: _string1,
+          // controller: specitTripNameController,
+            lableText: 'Specify tirp type',
+            itemList: ['Adventure that thrills','Fairs and Festiva','Road trip']
         ),
-        addVerticalSpace(20),
-        CustomTextFieldWidget(
-            controller: andTripController,
-            labelText: 'Where to?'),
-        addVerticalSpace(20),
-        CustomTextFieldWidget(
-          //itemList: ['Mumbai', 'Pune', 'Banglore'],
-            controller: modeTravelController,
-            labelText: '  Mode of Travel  '),
+        addVerticalSpace(25),
+        CustomDropDownButton(
+          value: _string2,
+            controller: specitTripNameController,
+            lableText: 'Where to ?',
+            itemList: ['jaipur','Bengaluru ','Vadodara','Mysuru','Jaisalmer','Patan','Thanjavur','Kasargod','Belgavi','Ujjain']
+        ),
+        addVerticalSpace(25),
+        CustomDropDownButton(
+          value: _string3,
+           // controller: specitTripNameController,
+            lableText: 'Mode of trip',
+            itemList: ['Flight','Train','Road']
+        ),
         addVerticalSpace(20),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -229,19 +247,71 @@ class _Step1State extends State<Step1> {
                 Icons.image,
                 color: black.withOpacity(0.2),
               ),
-              Text('Choose a cover pic'),
+              InkWell(
+                  onTap: (){
+                      pickUploadImage();
+
+                  },
+                  child: Text('Choose a cover pic')),
             ],
           ),
 
         ),
         addVerticalSpace(20),
-        CustomTextFieldWidget(
-          controller: specitTripNameController,
-          labelText: 'Specify a trip name',
-        ),
+    SizedBox(
+    height: height(context) * 0.05,
+    width: width(context) * 0.95,
+    child: Theme(
+    data: ThemeData(
+    colorScheme: Theme.of(context).colorScheme.copyWith(
+    primary: primary,
+    ),
+    ),
+    child: TextField(
+      minLines: 2,
+    maxLines: 2,
+    controller: specitTripNameController,
+    // onChanged:(String){ onChanged},
+    keyboardType: TextInputType.text,
+    decoration: InputDecoration(
+    labelText: 'Specify a trip name',
+    // labelStyle: bodyText14w600(color: primarhy),
+
+    focusColor: primary,
+
+    enabledBorder: OutlineInputBorder(
+    borderSide: BorderSide(color: Colors.black26, width: 1.0),
+    borderRadius: BorderRadius.circular(10)),
+    focusedBorder: OutlineInputBorder(
+    borderSide: BorderSide(color: primary, width: 1.5),
+    borderRadius: BorderRadius.circular(10),
+    ),
+    contentPadding: const EdgeInsets.only(
+    left: 20,
+    ),
+    ),
+    ),
+    ),
+    ),
         addVerticalSpace(20),
       ],
     );
+  }
+  void pickUploadImage() async {
+    final image = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+        maxWidth: MediaQuery.of(context).size.width,
+        maxHeight: MediaQuery.of(context).size.height,
+        imageQuality: 75);
+    Reference ref = FirebaseStorage.instance.ref().child('profileImg');
+
+    await ref.putFile(File(image!.path));
+    ref.getDownloadURL().then((value) {
+      print(value);
+      setState(() {
+        _image = value;
+      });
+    });
   }
 }
 class Step4 extends StatefulWidget {

@@ -66,29 +66,35 @@ class _HelpScreenState extends State<HelpScreen> {
                   itemBuilder: (context, i) {
                     return Column(
                       children: [
-                        ExpansionTile(
-                          
+                        Theme(
+                          data: ThemeData(
+
+                    ),
+                          child: ExpansionTile(
+                            iconColor: primary,
+
                 initiallyExpanded: i == selectedTile,
-                          onExpansionChanged: ((newState) {
-                            if (newState)
-                              setState(() {
-                                selectedTile = i;
-                              });
-                            else
-                              setState(() {
-                                selectedTile = -1;
-                              });
-                          }),
-                          title: Text(
-                            faqsList[i]['question'] ?? " ",
-                            style: TextStyle(fontSize: 18, color: black),
+                            onExpansionChanged: ((newState) {
+                              if (newState)
+                                setState(() {
+                                  selectedTile = i;
+                                });
+                              else
+                                setState(() {
+                                  selectedTile = -1;
+                                });
+                            }),
+                            title: Text(
+                              faqsList[i]['question'] ?? " ",
+                              style: TextStyle(fontSize: 18, color: black),
+                            ),
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.all(12.0),
+                                child: Text(faqsList[i]['answer'] ?? " "),
+                              )
+                            ],
                           ),
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.all(12.0),
-                              child: Text(faqsList[i]['answer'] ?? " "),
-                            )
-                          ],
                         ),
                         const Divider(
                           height: 0,

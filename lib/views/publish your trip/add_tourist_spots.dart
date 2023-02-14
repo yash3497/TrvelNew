@@ -1,13 +1,38 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:travel_app/utils/constant.dart';
 import 'package:travel_app/widget/custom_button.dart';
 import 'package:travel_app/widget/custom_textfield.dart';
+import 'dart:io';
 
-class AddTouristPointScreen extends StatelessWidget {
+class AddTouristPointScreen extends StatefulWidget {
   const AddTouristPointScreen({super.key});
 
+  @override
+  State<AddTouristPointScreen> createState() => _AddTouristPointScreenState();
+}
+
+class _AddTouristPointScreenState extends State<AddTouristPointScreen> {
+  String _image = "";
+  void pickUploadImage() async {
+    final image = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+        maxWidth: MediaQuery.of(context).size.width,
+        maxHeight: MediaQuery.of(context).size.height,
+        imageQuality: 75);
+    Reference ref = FirebaseStorage.instance.ref().child('profileImg');
+
+    await ref.putFile(File(image!.path));
+    ref.getDownloadURL().then((value) {
+      print(value);
+      setState(() {
+        _image = value;
+      });
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,7 +110,11 @@ class AddTouristPointScreen extends StatelessWidget {
                     Icons.image,
                     color: black.withOpacity(0.2),
                   ),
-                  Text('Upload an Image'),
+                  InkWell(
+                    onTap: (){
+                      pickUploadImage();
+                    },
+                      child: Text('Upload an Image')),
                 ],
               ),
             ),

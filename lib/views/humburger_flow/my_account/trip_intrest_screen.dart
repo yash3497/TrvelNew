@@ -34,76 +34,78 @@ class _YourTripInterestState extends State<YourTripInterest> {
       body: Stack(
         children: [
           SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      "What excites you?",
-                      style: bodyText20w700(color: black),
+            child: SizedBox(
+              height: height(context)*1.02,
+              child: Column(
+                children: <Widget>[
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        "What excites you?",
+                        style: bodyText20w700(color: black),
+                      ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Adventure',
-                        style: bodyText18w600(color: black),
-                      ),
-                      InkWell(onTap: () {}, child: Text('Select all'))
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Adventure',
+                          style: bodyText18w600(color: black),
+                        ),
+                        InkWell(onTap: () {}, child: Text('Select all'))
+                      ],
+                    ),
                   ),
-                ),
-                AdventurefilterChipWidget(chipName: chipList),
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Nature ',
-                        style: bodyText18w600(color: black),
-                      ),
-                      InkWell(onTap: () {}, child: Text('Select all')),
-                    ],
+                  AdventurefilterChipWidget(chipName: chipList),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Nature ',
+                          style: bodyText18w600(color: black),
+                        ),
+                        InkWell(onTap: () {}, child: Text('Select all')),
+                      ],
+                    ),
                   ),
-                ),
-                NaturefilterChipWidget(chipName: chipList),
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'City ',
-                        style: bodyText18w600(color: black),
-                      ),
-                      InkWell(onTap: () {}, child: Text('Select all')),
-                    ],
+                  NaturefilterChipWidget(chipName: chipList),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'City ',
+                          style: bodyText18w600(color: black),
+                        ),
+                        InkWell(onTap: () {}, child: Text('Select all')),
+                      ],
+                    ),
                   ),
-                ),
-                CityfilterChipWidget(chipName: chipList),
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Religlous ',
-                        style: bodyText18w600(color: black),
-                      ),
-                      InkWell(onTap: () {}, child: Text('Select all')),
-                    ],
+                  CityfilterChipWidget(chipName: chipList),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Religlous ',
+                          style: bodyText18w600(color: black),
+                        ),
+                        InkWell(onTap: () {}, child: Text('Select all')),
+                      ],
+                    ),
                   ),
-                ),
-                ReliglousfilterChipWidget(chipName: chipList),
-                addVerticalSpace(height(context) * 0.2)
-              ],
+                  ReliglousfilterChipWidget(chipName: chipList),
+                ],
+              ),
             ),
           ),
           Positioned(

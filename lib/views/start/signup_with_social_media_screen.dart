@@ -1,6 +1,8 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:travel_app/services/firebase_services.dart';
 import 'package:travel_app/utils/constant.dart';
@@ -58,7 +60,9 @@ class _SignupWithSocialMediaScreenState
                         style: bodyText22w700(color: black),
                       ),
                       IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            dialog1(context);
+                          },
                           icon: Icon(
                             Icons.help,
                             color: black.withOpacity(0.5),
@@ -166,7 +170,9 @@ class _SignupWithSocialMediaScreenState
             addVerticalSpace(10),
             Center(
               child: TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    dialog2(context);
+                  },
                   child: Text(
                     'Why Login?',
                     style: TextStyle(
@@ -185,8 +191,10 @@ class _SignupWithSocialMediaScreenState
                         text:
                             'By Proceeding further you agree to Travel New’s ',
                         style: bodyText14normal(spacing: 1.4, color: black)),
-                    TextSpan(
-                      text: 'Terms of Services and Privacy Policy. ',
+                      TextSpan(
+                      text: 'Terms of Services & Privacy Policy. ',
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {},
                       style: TextStyle(
                           fontWeight: FontWeight.w600,
                           height: 1.4,
@@ -203,5 +211,47 @@ class _SignupWithSocialMediaScreenState
         ),
       )),
     );
+  }
+  dialog1(BuildContext context) {
+
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          contentPadding: const EdgeInsets.all(6),
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          content: Builder(
+            builder: (context) {
+              var height = MediaQuery.of(context).size.height;
+              var width = MediaQuery.of(context).size.width;
+
+              return Container(
+                height: 200,
+               child: Center(child: Text('We won’t post anything without\n                your consent',style: TextStyle(fontFamily: GoogleFonts.roboto().fontFamily),)),
+              );
+            },
+          ),
+        ));
+  }
+  dialog2(BuildContext context) {
+
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          contentPadding: const EdgeInsets.all(6),
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          content: Builder(
+            builder: (context) {
+              var height = MediaQuery.of(context).size.height;
+              var width = MediaQuery.of(context).size.width;
+
+              return Container(
+                height: 200,
+                child: Center(child: Text('             Login is required to save your trips, \n               connect with travelers and more. \n  It also enables syncing your trips and data on the \n                    occasion of handset change.',style: TextStyle(fontFamily: GoogleFonts.roboto().fontFamily),)),
+              );
+            },
+          ),
+        ));
   }
 }
