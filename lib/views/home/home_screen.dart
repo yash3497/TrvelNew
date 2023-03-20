@@ -249,8 +249,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     addVerticalSpace(5),
                     InkWell(
-                      onTap: () {
+                      onTap: () async {
                         if (FirebaseAuth.instance.currentUser != null) {
+                          LocationProvider _locationProvider =
+                          LocationProvider();
+                          await _locationProvider.fetchCurrentPosition();
+                          registerUser();
+                          await _locationProvider.locationDeatials();
                           Navigator.push(context,
                               MaterialPageRoute(builder: (ctx) => PlanATrip()));
                         } else {

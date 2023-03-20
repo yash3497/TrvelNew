@@ -1294,3 +1294,332 @@ class _TripLibraryDetailsScreenState extends State<TripLibraryDetailsScreen> {
     );
   }
 }
+
+class TripLibraryDetailsScreen2 extends StatefulWidget {
+  TripLibraryDetailsScreen2({super.key});
+
+  @override
+  State<TripLibraryDetailsScreen2> createState() => _TripLibraryDetailsScreenState2();
+}
+
+class _TripLibraryDetailsScreenState2 extends State<TripLibraryDetailsScreen2> {
+  final List dayWiseList = ['Day 1', 'Day 2','Day 3','Day 4','Day 5','Day 6','Day 7'];
+  //
+  // CollectionReference _collectionRef =
+  // FirebaseFirestore.instance.collection('users')
+  //     .doc(FirebaseAuth.instance.currentUser!.uid)
+  //     .collection("upcomingtrip");
+  // Future<void> getData() async {
+  //   // Get docs from collection reference
+  //   QuerySnapshot querySnapshot = await _collectionRef.get();
+  //   // Get data from docs and convert map to List
+  //   allData = querySnapshot.docs.map((doc) => doc.data()).toList();
+  //   setState(() {
+  //   });
+  //   print(allData);
+  // }
+  // List allData = [];
+
+  String endplace = "";
+  String date = "";
+  int days = 0;
+  void getTripData() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      var profile = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection('Plan_trip')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+      endplace = profile.data()?['endtrip'];
+      date = profile.data()?['StartDate'];
+      days = profile.data()?['totalDays'];
+
+    }
+    setState(() {
+    });
+  }
+
+  List des = [];
+  List touristSport = [];
+  List touristSportimage = [];
+  String cityimage = "";
+  void getsportdata() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      var profile = await FirebaseFirestore.instance
+          .collection('TripCity')
+          .doc('Ahmedabad')
+          .get();
+      des = profile.data()?['TouristSportDesc'];
+      touristSport = profile.data()?['TouristSport'];
+      touristSportimage = profile.data()?['TouristSportImage'];
+      cityimage = profile.data()?['cityImage'];
+
+    }
+    setState(() {
+    });
+    print('&&&&&&&&&&&&&&&');
+    print('$endplace');
+    print('$des');
+  }
+
+
+  @override
+  void initState() {
+    //getData();
+    getsportdata();
+    getTripData();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if(cityimage != ConnectionState.waiting && des != ConnectionState.waiting && touristSportimage != ConnectionState.waiting ) {
+      return Scaffold(
+        body: Stack(
+          children: [
+            ListView.builder(
+                padding: EdgeInsets.zero,
+                itemCount: int.parse(days.toString()),
+                itemBuilder: (context, i) {
+                  return SizedBox(
+                    height: height(context),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            height: height(context) * 0.43,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    fit: BoxFit.fill,
+                                    image: NetworkImage(cityimage))),
+                            child: SafeArea(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Container(
+                                    height: height(context) * 0.11,
+                                    width: width(context) * 1,
+                                    padding: const EdgeInsets.only(left: 5),
+                                    color: black.withOpacity(0.5),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment
+                                          .start,
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.location_on,
+                                              color: primary,
+                                              size: 20,
+                                            ),
+                                            Text(
+                                              '$endplace',
+                                              style: bodyText16normal(
+                                                  color: white),
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding:
+                                          const EdgeInsets.only(
+                                              left: 8.0, top: 5),
+                                          child: Row(
+                                            children: [
+                                              Text(
+                                                '$endplace',
+                                                style: bodyText14normal(
+                                                    color: white),
+                                              ),
+                                              Text(' Trip',
+                                                  style: bodyText14normal(
+                                                      color: white)),
+                                            ],
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding:
+                                          const EdgeInsets.only(
+                                              left: 8.0, top: 5),
+                                          child: Text(
+                                            '$date',
+                                            style: bodyText13normal(
+                                                color: white),
+                                          ),
+                                        ),
+                                        addVerticalSpace(10)
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                              height: height(context) * 2.8,
+                              child: ListView.builder(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  padding: EdgeInsets.zero,
+                                  itemCount: int.parse(days.toString()),
+                                  itemBuilder: (context, i) {
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 12.0, vertical: 5),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment
+                                            .start,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                dayWiseList[i],
+                                                style: bodyText20w700(
+                                                    color: black),
+                                              ),
+                                              // InkWell(
+                                              //     onTap: () {
+                                              //       Navigator.push(
+                                              //           context,
+                                              //           MaterialPageRoute(
+                                              //               builder: (context) =>
+                                              //               const TripMapScreen()));
+                                              //     },
+                                              //     child: Image.asset(
+                                              //         'assets/images/akar-icons_map.png'))
+                                            ],
+                                          ),
+                                          Text('$date'),
+                                          addVerticalSpace(10),
+                                          SizedBox(
+                                            height: height(context) * 0.32,
+                                            child: ListView.builder(
+                                                physics:
+                                                const NeverScrollableScrollPhysics(),
+                                                itemCount: 2,
+                                                padding: EdgeInsets.zero,
+                                                itemBuilder: (context, i) {
+                                                  return Column(
+                                                    children: [
+                                                      InkWell(
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder: (
+                                                                      context) =>
+                                                                  const TouristSpotsScreen()));
+                                                        },
+                                                        child: Row(
+                                                          children: [
+                                                            Column(
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                              children: [
+                                                                Text(
+                                                                  touristSport[i],
+                                                                  style: bodyText18w600(
+                                                                      color: black),
+                                                                ),
+                                                                const Text(
+                                                                  'Religious,Culture',
+                                                                  style: TextStyle(
+                                                                      height: 1.4),
+                                                                ),
+                                                                SizedBox(
+                                                                  width:
+                                                                  width(
+                                                                      context) *
+                                                                      0.56,
+                                                                  child: Text(
+                                                                    des[i],
+                                                                    style:
+                                                                    bodyText12Small(
+                                                                        spacing:
+                                                                        1.5,
+                                                                        color:
+                                                                        black),
+                                                                  ),
+                                                                ),
+                                                                addVerticalSpace(
+                                                                    5),
+                                                                // Row(
+                                                                //   children: [
+                                                                //     Text(
+                                                                //       'Learn more on ',
+                                                                //       style:
+                                                                //       bodytext12Bold(
+                                                                //           color:
+                                                                //           black),
+                                                                //     ),
+                                                                //     Image.asset(
+                                                                //         'assets/images/google.png')
+                                                                //   ],
+                                                                // )
+                                                              ],
+                                                            ),
+                                                            addHorizontalySpace(
+                                                                10),
+                                                            SizedBox(
+                                                                height:
+                                                                height(
+                                                                    context) *
+                                                                    0.12,
+                                                                child: Image
+                                                                    .network(
+                                                                  touristSportimage[i],
+                                                                  fit: BoxFit
+                                                                      .fill,
+                                                                ))
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      addVerticalSpace(15)
+                                                    ],
+                                                  );
+                                                }),
+                                          ),
+                                          // const Divider(
+                                          //   thickness: 1,
+                                          // ),
+                                        ],
+                                      ),
+                                    );
+                                  })),
+                          addVerticalSpace(30)
+                        ],
+                      ),
+                    ),
+                  );
+                }
+            ),
+            // Positioned(
+            //   bottom: height(context) * 0.06,
+            //   left: width(context) * 0.17,
+            //   child: Center(
+            //       child: SizedBox(
+            //           width: width(context) * 0.65,
+            //           child: CustomButton(
+            //               name: 'See your travel Utility',
+            //               onPressed: () {
+            //                 Navigator.push(
+            //                     context,
+            //                     MaterialPageRoute(
+            //                         builder: (context) =>
+            //                            const TravelAgencyDetailsScreen(MP: widget,)));
+            //               }))),
+            // )
+          ],
+        ),
+      );
+    }
+    else{
+      return CircularProgressIndicator();
+    }
+  }
+}

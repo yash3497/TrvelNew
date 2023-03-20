@@ -4,10 +4,11 @@ import '../utils/constant.dart';
 
 class CustomTextFieldWidget extends StatelessWidget {
   CustomTextFieldWidget(
-      {required this.labelText, this.icon, this.onClick, this.controller});
+      {required this.labelText, this.icon, this.onClick, this.controller, this.Enable});
 
   String labelText;
   Icon? icon;
+  bool? Enable;
   TextEditingController? controller;
   VoidCallback? onClick;
   // void Function()? onChanged;
@@ -24,6 +25,7 @@ class CustomTextFieldWidget extends StatelessWidget {
               ),
         ),
         child: TextField(
+          enabled: Enable ,
           onTap: onClick,
           controller: controller,
           // onChanged:(String){ onChanged},
