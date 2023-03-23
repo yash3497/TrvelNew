@@ -18,35 +18,25 @@ class SaveTripStep1 extends StatefulWidget {
 }
 
 class _SaveTripStep1State extends State<SaveTripStep1> {
-  final List dayWiseList1 = [
-    'Day 1',
-    'Bonus Tourist Spot'
-  ];
-  final List dayWiseList2 = [
-    'Day 1',
-    'Day 2',
-    'Bonus Tourist Spot'
-  ];
-  final List dayWiseList3 = [
-    'Day 1',
-    'Day 2',
-    'Day 3',
-    'Bonus Tourist Spot'
-  ];
+  final List dayWiseList1 = ['Day 1', 'Bonus Tourist Spot'];
+  final List dayWiseList2 = ['Day 1', 'Day 2', 'Bonus Tourist Spot'];
+  final List dayWiseList3 = ['Day 1', 'Day 2', 'Day 3', 'Bonus Tourist Spot'];
   final List dayWiseList4 = [
     'Day 1',
     'Day 2',
     'Day 3',
     'Day 4',
     'Bonus Tourist Spot'
-  ];final List dayWiseList5 = [
+  ];
+  final List dayWiseList5 = [
     'Day 1',
     'Day 2',
     'Day 3',
     'Day 4',
     'Day 5',
     'Bonus Tourist Spot'
-  ];final List dayWiseList6 = [
+  ];
+  final List dayWiseList6 = [
     'Day 1',
     'Day 2',
     'Day 3',
@@ -65,10 +55,6 @@ class _SaveTripStep1State extends State<SaveTripStep1> {
     'Day 7',
     'Bonus Tourist Spot'
   ];
-
-
-
-
 
   // CollectionReference _collectionRef =
   // FirebaseFirestore.instance.collection('Aspired_trips');
@@ -94,14 +80,15 @@ class _SaveTripStep1State extends State<SaveTripStep1> {
           .collection('Plan_trip')
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .get();
-          endplace = profile.data()?['endtrip'];
-          days = profile.data()?['totalDays'];
-        print(endplace);
+      endplace = profile.data()?['endtrip'];
+      days = profile.data()?['totalDays'];
+      print(endplace);
     }
     setState(() {
       print(endplace);
     });
   }
+
   List des = [];
   List touristSportimage = [];
   void getsportdata() async {
@@ -113,23 +100,23 @@ class _SaveTripStep1State extends State<SaveTripStep1> {
       des = profile.data()?['TouristSportDesc'];
       touristSportimage = profile.data()?['TouristSportImage'];
     }
-    setState(() {
-    });
+    setState(() {});
     print('&&&&&&&&&&&&&&&');
     print('$endplace');
     print('$des');
   }
 
-@override
+  @override
   void initState() {
-getTripData();
-  // getData();
-  getsportdata();
+    getTripData();
+    // getData();
+    getsportdata();
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
-    if(endplace != ConnectionState.waiting) {
+    if (endplace != ConnectionState.waiting) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -143,10 +130,10 @@ getTripData();
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: height(context) * 1.5,
+                  height: height(context) * 0.53,
                   child: ListView.builder(
                       physics: const NeverScrollableScrollPhysics(),
-                      itemCount: int.parse(days.toString()) +1,
+                      itemCount: int.parse(days.toString()) + 1,
                       padding: EdgeInsets.zero,
                       itemBuilder: (context, i) {
                         return Column(
@@ -160,8 +147,7 @@ getTripData();
                                           builder: (context) =>
                                               StoryPageView()));
                               },
-                              child:
-                              Row(
+                              child: Row(
                                 children: [
                                   SizedBox(
                                       height: height(context) * 0.12,
@@ -172,40 +158,58 @@ getTripData();
                                       )),
                                   addHorizontalySpace(10),
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment
-                                        .start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         children: [
-                                          if(int.parse(days.toString()) == 1)
-                                          Text(
-                                            dayWiseList1[i],
-                                            style: bodyText18w600(color: black),
-                                          )else if(int.parse(days.toString()) == 2)
+                                          if (int.parse(days.toString()) == 1)
+                                            Text(
+                                              dayWiseList1[i],
+                                              style:
+                                                  bodyText18w600(color: black),
+                                            )
+                                          else if (int.parse(days.toString()) ==
+                                              2)
                                             Text(
                                               dayWiseList2[i],
-                                              style: bodyText18w600(color: black),
-                                            )else if(int.parse(days.toString()) == 3)
-                                              Text(
-                                                dayWiseList3[i],
-                                                style: bodyText18w600(color: black),
-                                              )else if(int.parse(days.toString()) == 4)
-                                                Text(
-                                                  dayWiseList4[i],
-                                                  style: bodyText18w600(color: black),
-                                                )else if(int.parse(days.toString()) == 5)
-                                                  Text(
-                                                    dayWiseList5[i],
-                                                    style: bodyText18w600(color: black),
-                                                  )else if(int.parse(days.toString()) == 6)
-                                                    Text(
-                                                      dayWiseList6[i],
-                                                      style: bodyText18w600(color: black),
-                                                    )else
-                                                    Text(
-                                                      dayWiseList7[i],
-                                                      style: bodyText18w600(color: black),
-                                                    ),
+                                              style:
+                                                  bodyText18w600(color: black),
+                                            )
+                                          else if (int.parse(days.toString()) ==
+                                              3)
+                                            Text(
+                                              dayWiseList3[i],
+                                              style:
+                                                  bodyText18w600(color: black),
+                                            )
+                                          else if (int.parse(days.toString()) ==
+                                              4)
+                                            Text(
+                                              dayWiseList4[i],
+                                              style:
+                                                  bodyText18w600(color: black),
+                                            )
+                                          else if (int.parse(days.toString()) ==
+                                              5)
+                                            Text(
+                                              dayWiseList5[i],
+                                              style:
+                                                  bodyText18w600(color: black),
+                                            )
+                                          else if (int.parse(days.toString()) ==
+                                              6)
+                                            Text(
+                                              dayWiseList6[i],
+                                              style:
+                                                  bodyText18w600(color: black),
+                                            )
+                                          else
+                                            Text(
+                                              dayWiseList7[i],
+                                              style:
+                                                  bodyText18w600(color: black),
+                                            ),
                                           addHorizontalySpace(8),
                                           // if (i == 4)
                                           //   InkWell(
@@ -246,8 +250,7 @@ getTripData();
           )
         ],
       );
-    }
-    else{
+    } else {
       return CircularProgressIndicator();
     }
   }

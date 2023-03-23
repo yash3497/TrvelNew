@@ -18,6 +18,15 @@ class EditPrimaTripScreen extends StatefulWidget {
 class _EditPrimaTripScreenState extends State<EditPrimaTripScreen> {
   final TextEditingController startDate = TextEditingController();
   final TextEditingController endDate = TextEditingController();
+
+  List imgList1 = [
+    'assets/images/tp1.png',
+    'assets/images/tp2.png',
+    'assets/images/tp3.png',
+    'assets/images/tp1.png',
+    'assets/images/tp2.png',
+    'assets/images/tp3.png'
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -210,14 +219,19 @@ class _EditPrimaTripScreenState extends State<EditPrimaTripScreen> {
                   SizedBox(
                     height: height(context) * 0.16,
                     child: ListView.builder(
+                        itemCount: imgList1.length,
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (ctx, i) {
                           return Container(
                             margin: EdgeInsets.only(right: 8),
                             height: height(context) * 0.15,
                             width: width(context) * 0.3,
-                            decoration: myFillBoxDecoration(
-                                0, black.withOpacity(0.1), 15),
+                            child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.asset(
+                                  imgList1[i],
+                                  fit: BoxFit.fill,
+                                )),
                           );
                         }),
                   ),
@@ -239,13 +253,13 @@ class _EditPrimaTripScreenState extends State<EditPrimaTripScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       SizedBox(
-                        width: width(context) * 0.42,
+                        width: width(context) * 0.45,
                         child: CustomDropDownButton(
                             itemList: ['Public', 'Private'],
                             lableText: '  Who can see your trip  '),
                       ),
                       SizedBox(
-                        width: width(context) * 0.42,
+                        width: width(context) * 0.45,
                         child: CustomDropDownButton(
                             itemList: ['All Members', 'Only Friends'],
                             lableText: '  Members Type invited  '),
@@ -257,7 +271,7 @@ class _EditPrimaTripScreenState extends State<EditPrimaTripScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       SizedBox(
-                        width: width(context) * 0.4,
+                        width: width(context) * 0.45,
                         child: CustomDropDownButton(itemList: const [
                           '1',
                           '2',
@@ -272,7 +286,7 @@ class _EditPrimaTripScreenState extends State<EditPrimaTripScreen> {
                         ], lableText: '  Max Members for Trip  '),
                       ),
                       SizedBox(
-                        width: width(context) * 0.44,
+                        width: width(context) * 0.45,
                         child: CustomDropDownButton(
                             itemList: ['For him/her self'],
                             lableText: '  How spends distributed?  '),

@@ -76,7 +76,7 @@ class _MyBottomBarState extends State<MyBottomBar>
   final PageStorageBucket bucket = PageStorageBucket();
   TabController? tabController;
   final List<Widget> mainScreens = [
-     HomeScreen(),
+    HomeScreen(),
     // UpcomingTripsScreen(),
     // const Text(''),
     // const InboxScreen(),
@@ -159,39 +159,78 @@ class _MyBottomBarState extends State<MyBottomBar>
 
   @override
   Widget build(BuildContext context) {
+    print('spppppppp${check}');
+
     return Scaffold(
       key: _globalKey,
       drawer: MyDrawer(),
       resizeToAvoidBottomInset: true,
-      body:
-      SafeArea(
+      body: SafeArea(
         child: TabBarView(
           controller: tabController,
-         // physics: const NeverScrollableScrollPhysics(),
-          children: mainScreens,
+          // physics: const NeverScrollableScrollPhysics(),
+          children: [
+            HomeScreen(),
+          ],
         ),
       ),
       bottomNavigationBar: SafeArea(
         child: Container(
           height: 40,
-          child: BottomAppBar(
-            // notchMargin: 8,
-            child: TabBar(
-                tabs: [
-                  const Tab(
-                    icon: ImageIcon(
-                      AssetImage(
-                        'assets/images/navbar1.png',
+          child: TabBar(
+              tabs: [
+                const Tab(
+                  icon: ImageIcon(
+                    AssetImage(
+                      'assets/images/navbar1.png',
+                    ),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    if (check == "") {
+                      if (FirebaseAuth.instance.currentUser != null) {
+                        empatycomingtrip(context);
+                      } else {
+                        empatycomingtrip(context);
+                        Navigator.pop(context);
+                        showSnackBar(
+                            context, "Please Login First!", Colors.red);
+                      }
+                    } else {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (ctx) => UpcomingTripsScreen()));
+                    }
+                  },
+                  child: const Tab(
+                    icon: SizedBox(
+                      height: 100,
+                      width: 100,
+                      child: ImageIcon(
+                        AssetImage(
+                          'assets/images/navbar2.png',
+                        ),
                       ),
                     ),
                   ),
-                  InkWell(
-                    onTap: () {
-                      if (check == "") {
+                ),
+                InkWell(
+                  onTap: () async {
+                    if (_counT == 0) {
+                      _counT++;
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (ctx) =>
+                                  const GoPrimaSubscriptionScreen()));
+                    } else {
+                      if (Name == "") {
                         if (FirebaseAuth.instance.currentUser != null) {
-                          empatycomingtrip(context);
+                          empatyprimaccout(context);
                         } else {
-                          empatycomingtrip(context);
+                          empatyprimaccout(context);
                           Navigator.pop(context);
                           showSnackBar(
                               context, "Please Login First!", Colors.red);
@@ -200,125 +239,83 @@ class _MyBottomBarState extends State<MyBottomBar>
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (ctx) => UpcomingTripsScreen()));
+                                builder: (ctx) => PrimaMyBottomBar()));
                       }
-                    },
-
-                      child: const Tab(
-                        icon: SizedBox(
-                          height: 100,
-                          width: 100,
-                          child: ImageIcon(
-                            AssetImage(
-                              'assets/images/navbar2.png',
-                            ),
-                          ),
-                        ),
-                      ),
-
-                  ),
-                  InkWell(
-                    onTap: () async {
-                      if (_counT == 0) {
-                        _counT++;
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (ctx) =>
-                                    const GoPrimaSubscriptionScreen()));
-                       } else       {
-                              if (Name == "") {
-                                if (FirebaseAuth.instance.currentUser != null) {
-                                  empatyprimaccout(context);
-                                } else {
-                                  empatyprimaccout(context);
-                                  Navigator.pop(context);
-                                  showSnackBar(
-                                      context, "Please Login First!", Colors.red);
-                                }
-                              } else {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (ctx) => PrimaMyBottomBar()));
-                              }
-                            }
-    //             if (FirebaseAuth.instance.currentUser != null) {
-                      //   if (Name == "") {
-                      //     empatyprimaccout(context);
-                      //   } else {
-                      //     Navigator.push(
-                      //         context,
-                      //         MaterialPageRoute(
-                      //             builder: (ctx) => const PrimaMyBottomBar()));
-                      //   }
-                      // } else {
-                      //   showSnackBar(
-                      //       context, "Please Login First!", Colors.red);
-                      // }
-                    },
-                    child: const Tab(
-                      icon: SizedBox(
-                        height: 100,
-                        width: 100,
-                        child: ImageIcon(
-                          AssetImage(
-                            'assets/images/navbar3.png',
-                          ),
+                    }
+                    //  if (FirebaseAuth.instance.currentUser != null) {
+                    //   if (Name == "") {
+                    //     empatyprimaccout(context);
+                    //   } else {
+                    //     Navigator.push(
+                    //         context,
+                    //         MaterialPageRoute(
+                    //             builder: (ctx) => const PrimaMyBottomBar()));
+                    //   }
+                    // } else {
+                    //   showSnackBar(
+                    //       context, "Please Login First!", Colors.red);
+                    // }
+                  },
+                  child: const Tab(
+                    icon: SizedBox(
+                      height: 100,
+                      width: 100,
+                      child: ImageIcon(
+                        AssetImage(
+                          'assets/images/navbar3.png',
                         ),
                       ),
                     ),
                   ),
-                  InkWell(
-                    onTap: () {
-                      if (FirebaseAuth.instance.currentUser != null) {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (ctx) => InboxScreen()));
-                      } else {
-                        showSnackBar(
-                            context, "Please Login First!", Colors.red);
-                      }
-                    },
-                    child: const Tab(
-                      icon: SizedBox(
-                        height: 100,
-                        width: 100,
-                        child: ImageIcon(
-                          AssetImage(
-                            'assets/images/navbar4.png',
-                          ),
+                ),
+                InkWell(
+                  onTap: () {
+                    if (FirebaseAuth.instance.currentUser != null) {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (ctx) => InboxScreen()));
+                    } else {
+                      showSnackBar(context, "Please Login First!", Colors.red);
+                    }
+                  },
+                  child: const Tab(
+                    icon: SizedBox(
+                      height: 100,
+                      width: 100,
+                      child: ImageIcon(
+                        AssetImage(
+                          'assets/images/navbar4.png',
                         ),
                       ),
                     ),
                   ),
-                  InkWell(
-                    onTap: () {
-                      _globalKey.currentState!.openDrawer();
-                    },
-                    child: const Tab(
-                      icon: SizedBox(
-                        height: 100,
-                        width: 100,
-                        child: ImageIcon(
-                          AssetImage(
-                            'assets/images/navbar5.png',
-                          ),
+                ),
+                InkWell(
+                  onTap: () {
+                    _globalKey.currentState!.openDrawer();
+                  },
+                  child: const Tab(
+                    icon: SizedBox(
+                      height: 100,
+                      width: 100,
+                      child: ImageIcon(
+                        AssetImage(
+                          'assets/images/navbar5.png',
                         ),
                       ),
                     ),
-                  )
-                ],
-                labelPadding: const EdgeInsets.all(0),
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                labelColor: primary,
-                unselectedLabelColor: Colors.grey.shade400,
-                isScrollable: false,
-                indicatorSize: TabBarIndicatorSize.tab,
-                indicatorPadding: const EdgeInsets.all(0.0),
-                indicatorColor: primary,
-                controller: tabController,
-                indicator: const CustomTabIndicator()),
-          ),
+                  ),
+                )
+              ],
+              labelPadding: const EdgeInsets.all(0),
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              labelColor: primary,
+              unselectedLabelColor: Colors.grey.shade400,
+              isScrollable: false,
+              indicatorSize: TabBarIndicatorSize.tab,
+              indicatorPadding: const EdgeInsets.all(0.0),
+              indicatorColor: primary,
+              controller: tabController,
+              indicator: const CustomTabIndicator()),
         ),
       ),
     );

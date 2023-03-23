@@ -20,15 +20,15 @@ addPublishTripDetails() async {
       .collection("Trip_Plan")
       .doc(FirebaseAuth.instance.currentUser!.uid)
       .set({
-    "Uid": FirebaseAuth.instance.currentUser!.uid,
-    "Star_Trip_location": startLocationController.text,
-    "Specify_type": _string1,
-    "where_to": _string2,
-    "Mode_of_travel": _string3,
-    "start_date": endDateController.text,
-    "End_date": endDateController.text,
-    "Specify_trip_name": specitTripNameController.text,
-  })
+        "Uid": FirebaseAuth.instance.currentUser!.uid,
+        "Star_Trip_location": startLocationController.text,
+        "Specify_type": _string1,
+        "where_to": _string2,
+        "Mode_of_travel": _string3,
+        "start_date": endDateController.text,
+        "End_date": endDateController.text,
+        "Specify_trip_name": specitTripNameController.text,
+      })
       .then((value) => print("User Added"))
       .catchError((error) => print("Failed to add user: $error"));
 }
@@ -42,14 +42,14 @@ addStep1PublishTripDetails() async {
       .collection("Trip_Plan")
       .doc(FirebaseAuth.instance.currentUser!.uid)
       .update({
-    "Star_Trip_location": startLocationController.text,
-    "Specify_type": _string1,
-    "where_to": _string2,
-    "Mode_of_travel": _string3,
-    "start_date": endDateController.text,
-    "End_date": endDateController.text,
-    "Specify_trip_name": specitTripNameController.text,
-  })
+        "Star_Trip_location": startLocationController.text,
+        "Specify_type": _string1,
+        "where_to": _string2,
+        "Mode_of_travel": _string3,
+        "start_date": endDateController.text,
+        "End_date": endDateController.text,
+        "Specify_trip_name": specitTripNameController.text,
+      })
       .then((value) => print("User Added"))
       .catchError((error) => print("Failed to add user: $error"));
 }
@@ -74,17 +74,16 @@ class Step1 extends StatefulWidget {
   State<Step1> createState() => _Step1State();
 }
 
-var b=1;
-
+var b = 1;
 
 class _Step1State extends State<Step1> {
-
   @override
   void initState() {
     getDetails();
     gethomelocation();
     super.initState();
   }
+
   // final List<String> tripLocation = ['Pune', 'Mumbai', 'chennai'];
   void getDetails() async {
     if (FirebaseAuth.instance.currentUser != null) {
@@ -94,7 +93,7 @@ class _Step1State extends State<Step1> {
           .collection('Trip_Plan')
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .get();
-       startLocationController.text = profile.data()?['Star_Trip_location'];
+      startLocationController.text = profile.data()?['Star_Trip_location'];
       _string1 = profile.data()?['Specify_type'];
       _string2 = profile.data()?['where_to'];
       _string3 = profile.data()?['Mode_of_travel'];
@@ -117,6 +116,7 @@ class _Step1State extends State<Step1> {
       setState(() {});
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -129,25 +129,37 @@ class _Step1State extends State<Step1> {
         ),
         addVerticalSpace(25),
         CustomDropDownButton(
-          value: _string1,
-          // controller: specitTripNameController,
+            value: _string1,
+            // controller: specitTripNameController,
             lableText: 'Specify tirp type',
-            itemList: ['Adventure that thrills','Fairs and Festiva','Road trip']
-        ),
+            itemList: [
+              'Adventure that thrills',
+              'Fairs and Festiva',
+              'Road trip'
+            ]),
         addVerticalSpace(25),
         CustomDropDownButton(
-          value: _string2,
+            value: _string2,
             controller: specitTripNameController,
             lableText: 'Where to ?',
-            itemList: ['jaipur','Bengaluru ','Vadodara','Mysuru','Jaisalmer','Patan','Thanjavur','Kasargod','Belgavi','Ujjain']
-        ),
+            itemList: [
+              'jaipur',
+              'Bengaluru ',
+              'Vadodara',
+              'Mysuru',
+              'Jaisalmer',
+              'Patan',
+              'Thanjavur',
+              'Kasargod',
+              'Belgavi',
+              'Ujjain'
+            ]),
         addVerticalSpace(25),
         CustomDropDownButton(
-          value: _string3,
-           // controller: specitTripNameController,
+            value: _string3,
+            // controller: specitTripNameController,
             lableText: 'Mode of trip',
-            itemList: ['Flight','Train','Road']
-        ),
+            itemList: ['Flight', 'Train', 'Road']),
         addVerticalSpace(20),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -169,7 +181,7 @@ class _Step1State extends State<Step1> {
                         if (pickedDate != null) {
                           print(pickedDate);
                           String formattedDate =
-                          DateFormat('yyyy-MM-dd').format(pickedDate);
+                              DateFormat('yyyy-MM-dd').format(pickedDate);
 
                           setState(() {
                             startDateController.text = formattedDate;
@@ -184,7 +196,6 @@ class _Step1State extends State<Step1> {
                       ),
                     )),
                 addVerticalSpace(15),
-
                 SizedBox(
                     width: width(context) * 0.5,
                     height: 40,
@@ -200,7 +211,7 @@ class _Step1State extends State<Step1> {
                         if (pickedDate != null) {
                           print(pickedDate);
                           String formattedDate =
-                          DateFormat('yyyy-MM-dd').format(pickedDate);
+                              DateFormat('yyyy-MM-dd').format(pickedDate);
                           b = pickedDate.day;
                           setState(() {
                             endDateController.text = formattedDate;
@@ -248,55 +259,53 @@ class _Step1State extends State<Step1> {
                 color: black.withOpacity(0.2),
               ),
               InkWell(
-                  onTap: (){
-                      pickUploadImage();
-
+                  onTap: () {
+                    pickUploadImage();
                   },
                   child: Text('Choose a cover pic')),
             ],
           ),
-
         ),
         addVerticalSpace(20),
-    SizedBox(
-    height: height(context) * 0.05,
-    width: width(context) * 0.95,
-    child: Theme(
-    data: ThemeData(
-    colorScheme: Theme.of(context).colorScheme.copyWith(
-    primary: primary,
-    ),
-    ),
-    child: TextField(
-      minLines: 2,
-    maxLines: 2,
-    controller: specitTripNameController,
-    // onChanged:(String){ onChanged},
-    keyboardType: TextInputType.text,
-    decoration: InputDecoration(
-    labelText: 'Specify a trip name',
-    // labelStyle: bodyText14w600(color: primarhy),
+        SizedBox(
+          height: height(context) * 0.06,
+          width: width(context) * 0.95,
+          child: Theme(
+            data: ThemeData(
+              colorScheme: Theme.of(context).colorScheme.copyWith(
+                    primary: primary,
+                  ),
+            ),
+            child: TextField(
+              // minLines: 2,
+              // maxLines: 2,
+              controller: specitTripNameController,
+              // onChanged:(String){ onChanged},
+              keyboardType: TextInputType.text,
+              decoration: InputDecoration(
+                labelText: 'Specify a trip name',
+                // labelStyle: bodyText14w600(color: primarhy),
 
-    focusColor: primary,
+                focusColor: primary,
 
-    enabledBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Colors.black26, width: 1.0),
-    borderRadius: BorderRadius.circular(10)),
-    focusedBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: primary, width: 1.5),
-    borderRadius: BorderRadius.circular(10),
-    ),
-    contentPadding: const EdgeInsets.only(
-    left: 20,
-    ),
-    ),
-    ),
-    ),
-    ),
+                enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black26, width: 1.0),
+                    borderRadius: BorderRadius.circular(10)),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: primary, width: 1.5),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                // contentPadding:
+                //     const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+              ),
+            ),
+          ),
+        ),
         addVerticalSpace(20),
       ],
     );
   }
+
   void pickUploadImage() async {
     final image = await ImagePicker().pickImage(
         source: ImageSource.gallery,
@@ -314,6 +323,7 @@ class _Step1State extends State<Step1> {
     });
   }
 }
+
 class Step4 extends StatefulWidget {
   const Step4({Key? key}) : super(key: key);
 
@@ -327,4 +337,3 @@ class _Step4State extends State<Step4> {
     return Container();
   }
 }
-

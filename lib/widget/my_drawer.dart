@@ -75,6 +75,7 @@ class _MyDrawerState extends State<MyDrawer> {
     // _locationProvider.fetchCurrentPosition();
     super.initState();
   }
+
   String check = "";
   void checkupcoming() async {
     if (FirebaseAuth.instance.currentUser != null) {
@@ -85,12 +86,10 @@ class _MyDrawerState extends State<MyDrawer> {
           .doc('checktrip')
           .get();
       check = profile.data()?['upcoming'];
-
     }
-    setState(() {
-
-    });
+    setState(() {});
   }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -160,15 +159,16 @@ class _MyDrawerState extends State<MyDrawer> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => MyAccountScreen()));
+                                          builder: (context) =>
+                                              MyAccountScreen()));
                                 } else {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
                                               SignupWithSocialMediaScreen()));
-                                  showSnackBar(
-                                      context, "Please Login First!", Colors.red);
+                                  showSnackBar(context, "Please Login First!",
+                                      Colors.red);
                                 }
                               },
                               child: Text(
@@ -212,19 +212,19 @@ class _MyDrawerState extends State<MyDrawer> {
                       child: InkWell(
                           onTap: () {
                             if (check == "") {
-                              if(FirebaseAuth.instance.currentUser != null){
+                              if (FirebaseAuth.instance.currentUser != null) {
                                 empatycomingtrip(context);
-                              }else{
+                              } else {
                                 empatycomingtrip(context);
                                 Navigator.pop(context);
-                                showSnackBar(context, "Please Login First!", Colors.red);
-
+                                showSnackBar(
+                                    context, "Please Login First!", Colors.red);
                               }
                             } else {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (ctx) =>  UpcomingTripsScreen()));
+                                      builder: (ctx) => UpcomingTripsScreen()));
                             }
                           },
                           child: Row(
@@ -247,10 +247,11 @@ class _MyDrawerState extends State<MyDrawer> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (ctx) =>  TripLibraryScreen()));
+                                    builder: (ctx) => TripLibraryScreen()));
                           } else {
                             Navigator.pop(context);
-                            showSnackBar(context, "Please Login First!", Colors.red);
+                            showSnackBar(
+                                context, "Please Login First!", Colors.red);
                           }
                         },
                         child: Row(
@@ -302,10 +303,11 @@ class _MyDrawerState extends State<MyDrawer> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (ctx) =>  CreatePrimaProfile()));
+                                      builder: (ctx) => CreatePrimaProfile()));
                             } else {
                               Navigator.pop(context);
-                              showSnackBar(context, "Please Login First!", Colors.red);
+                              showSnackBar(
+                                  context, "Please Login First!", Colors.red);
                             }
                           },
                           child: Row(
@@ -325,10 +327,11 @@ class _MyDrawerState extends State<MyDrawer> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (ctx) =>  PublishYourTripScreen()));
+                                    builder: (ctx) => PublishYourTripScreen()));
                           } else {
                             Navigator.pop(context);
-                            showSnackBar(context, "Please Login First!", Colors.red);
+                            showSnackBar(
+                                context, "Please Login First!", Colors.red);
                           }
                         },
                         child: Row(
@@ -352,11 +355,12 @@ class _MyDrawerState extends State<MyDrawer> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => MyTripFriendsScreen(
-                                      title: 'Friends in vicinity',
-                                    )));
+                                          title: 'Friends in vicinity',
+                                        )));
                           } else {
                             Navigator.pop(context);
-                            showSnackBar(context, "Please Login First!", Colors.red);
+                            showSnackBar(
+                                context, "Please Login First!", Colors.red);
                           }
                         },
                         child: Row(
@@ -458,20 +462,15 @@ class _MyDrawerState extends State<MyDrawer> {
               style: bodyText14w600(color: black),
             ),
             onTap: () async {
-
               if (FirebaseAuth.instance.currentUser != null) {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (ctx) => QuickEscapeScreen()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (ctx) => QuickEscapeScreen()));
               } else {
-                showSnackBar(
-                    context, "Please Login First!", Colors.red);
+                showSnackBar(context, "Please Login First!", Colors.red);
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (ctx) =>
-                            SignupWithSocialMediaScreen()));
+                        builder: (ctx) => SignupWithSocialMediaScreen()));
               }
             },
           ),
@@ -509,10 +508,11 @@ class _MyDrawerState extends State<MyDrawer> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (ctx) =>  MySavedPinsScreens()));
+                                    builder: (ctx) => MySavedPinsScreens()));
                           } else {
                             Navigator.pop(context);
-                            showSnackBar(context, "Please Login First!", Colors.red);
+                            showSnackBar(
+                                context, "Please Login First!", Colors.red);
                           }
                         },
                         child: Text('Trip City'),
@@ -527,10 +527,11 @@ class _MyDrawerState extends State<MyDrawer> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (ctx) =>  MySavedPinsScreens()));
+                                    builder: (ctx) => MySavedPinsScreens()));
                           } else {
                             Navigator.pop(context);
-                            showSnackBar(context, "Please Login First!", Colors.red);
+                            showSnackBar(
+                                context, "Please Login First!", Colors.red);
                           }
                         },
                         child: Text('Tourist Spots'),
@@ -574,17 +575,17 @@ class _MyDrawerState extends State<MyDrawer> {
             ],
           ),
           Container(
-            margin: EdgeInsets.all(9),
-            height: height(context) * 0.3,
-            // width: width(context) * 0.2,
-            decoration: myOutlineBoxDecoration(1, Colors.black26, 15),
-            child: Center(
-              child: Text(
-                '250*250',
-                style: bodyText14w600(color: black),
-              ),
-            ),
-          ),
+              margin: EdgeInsets.all(9),
+              height: height(context) * 0.3,
+              // width: width(context) * 0.2,
+
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: Image.asset(
+                  'assets/images/tp1.png',
+                  fit: BoxFit.fill,
+                ),
+              )),
           addVerticalSpace(height(context) * 0.06),
           Center(
             child: Text(
@@ -597,26 +598,30 @@ class _MyDrawerState extends State<MyDrawer> {
       ),
     );
   }
-  empatycomingtrip(BuildContext context) {
 
+  empatycomingtrip(BuildContext context) {
     showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          contentPadding: const EdgeInsets.all(6),
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10.0))),
-          content: Builder(
-            builder: (context) {
-              var height = MediaQuery.of(context).size.height;
-              var width = MediaQuery.of(context).size.width;
+              contentPadding: const EdgeInsets.all(6),
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0))),
+              content: Builder(
+                builder: (context) {
+                  var height = MediaQuery.of(context).size.height;
+                  var width = MediaQuery.of(context).size.width;
 
-              return Container(
-                height: 200,
-                child: Center(child: Text('You not have any upcoming tirp.',style: TextStyle(fontFamily: GoogleFonts.roboto().fontFamily),)),
-
-              );
-            },
-          ),
-        ));
+                  return Container(
+                    height: 200,
+                    child: Center(
+                        child: Text(
+                      'You not have any upcoming tirp.',
+                      style: TextStyle(
+                          fontFamily: GoogleFonts.roboto().fontFamily),
+                    )),
+                  );
+                },
+              ),
+            ));
   }
 }

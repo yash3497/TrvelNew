@@ -48,12 +48,11 @@ class _PlanATripState extends State<PlanATrip> {
           .get();
       startplace = profile.data()?['locality'];
     }
-    setState(() {
-
-    });
+    setState(() {});
   }
+
   setTripPlan() async {
-      CollectionReference users = FirebaseFirestore.instance.collection('users');
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
     users
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .collection("Plan_trip")
@@ -62,62 +61,70 @@ class _PlanATripState extends State<PlanATrip> {
       "StartTrip": startplace,
       "tripPlan": _string1,
       "endtrip": _string2,
-      "StartDate":startDate.text,
+      "StartDate": startDate.text,
       "EndDate": endDate.text,
       "tripmode": _string3,
-      "totalDays":totalDays,
-      "mainualyEnterDays":enterdate.text
+      "totalDays": totalDays,
+      "mainualyEnterDays": enterdate.text
     });
-    setState(() {
-
-    });
+    setState(() {});
   }
+
   @override
   void initState() {
     getData();
     super.initState();
   }
+
   String _string1 = "Select";
   String _string2 = "Select";
   String _string3 = "Select";
-  var firstDate ;
-  var secondDate ;
+  var firstDate;
+  var secondDate;
   int totalDays = 0;
   bool dateEnable = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-          preferredSize: Size.fromHeight(50),
+          preferredSize: const Size.fromHeight(50),
           child: CustomAppBar(title: 'Let’s Plan your trip')),
       body: SingleChildScrollView(
         child: Column(
           children: [
             Container(
-              margin: EdgeInsets.all(10),
-              padding: EdgeInsets.all(12),
-              height: height(context) * 0.85,
+              margin: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(12),
+              height: height(context) * 0.88,
               width: width(context) * 0.95,
               decoration: shadowDecoration(15, 5),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  addVerticalSpace(height(context) * 0.08),
-                  Text('        Trip Start Location*'),
+                  addVerticalSpace(height(context) * 0.04),
+                  const Text('        Trip Start Location*'),
+                  addVerticalSpace(10),
                   Padding(
                     padding: const EdgeInsets.only(left: 10),
                     child: Container(
                         height: 43,
                         width: width(context) * 0.85,
-                        decoration: myOutlineBoxDecoration(1, Colors.black26, 10),
+                        decoration:
+                            myOutlineBoxDecoration(1, Colors.black26, 10),
                         child: Padding(
-                          padding: const EdgeInsets.only(top: 10,left: 10),
-                          child: Text('$startplace',style: TextStyle(fontSize: 15),),
+                          padding: const EdgeInsets.only(top: 10, left: 10),
+                          child: Text(
+                            '$startplace',
+                            style: const TextStyle(fontSize: 15),
+                          ),
                         )),
                   ),
                   addVerticalSpace(25),
                   Container(
-                      child: Text('       Type of Trip you are planning*  ')),
+                      child: const Text(
+                          '       Type of Trip you are planning*  ')),
+                  addVerticalSpace(10),
+
                   Padding(
                     padding: const EdgeInsets.only(left: 10),
                     child: SizedBox(
@@ -126,21 +133,13 @@ class _PlanATripState extends State<PlanATrip> {
                       child: Container(
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-                            border: Border(
+                            border: const Border(
                                 top: BorderSide(
-                                  color: Colors.black26
-                                  ,                        ),
-                                bottom: BorderSide(
-                                    color: Colors.black26
+                                  color: Colors.black26,
                                 ),
-                                right: BorderSide(
-                                    color: Colors.black26
-                                ),
-                                left: BorderSide(
-                                    color: Colors.black26
-                                )
-                            )
-                        ),
+                                bottom: BorderSide(color: Colors.black26),
+                                right: BorderSide(color: Colors.black26),
+                                left: BorderSide(color: Colors.black26))),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: DropdownButton<String>(
@@ -152,18 +151,29 @@ class _PlanATripState extends State<PlanATrip> {
                                 _string1 = newValue!;
                               });
                             },
-                            items: ['Select','Family','Friends','Religious','Couple','Adventure','Unexplored','Escape alone']
-                                .map<DropdownMenuItem<String>>(
-                                    (String value) => DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 5),
-                                    child: Text(
-                                      value,
-                                      style:TextStyle(fontSize: 15,color: Colors.black),
-                                    ),
-                                  ),
-                                ))
+                            items: [
+                              'Select',
+                              'Family',
+                              'Friends',
+                              'Religious',
+                              'Couple',
+                              'Adventure',
+                              'Unexplored',
+                              'Escape alone'
+                            ]
+                                .map<DropdownMenuItem<String>>((String value) =>
+                                    DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(left: 5),
+                                        child: Text(
+                                          value,
+                                          style: const TextStyle(
+                                              fontSize: 15,
+                                              color: Colors.black),
+                                        ),
+                                      ),
+                                    ))
                                 .toList(),
 
                             // add extra sugar..
@@ -187,8 +197,9 @@ class _PlanATripState extends State<PlanATrip> {
                   //   itemList: items2,
                   // ),
                   addVerticalSpace(25),
-                  Container(
-                      child: Text('       Plan trip at  ')),
+                  Container(child: const Text('       Plan trip at  ')),
+                  addVerticalSpace(10),
+
                   Padding(
                     padding: const EdgeInsets.only(left: 10),
                     child: SizedBox(
@@ -197,21 +208,13 @@ class _PlanATripState extends State<PlanATrip> {
                       child: Container(
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-                            border: Border(
+                            border: const Border(
                                 top: BorderSide(
-                                  color: Colors.black26
-                                  ,                        ),
-                                bottom: BorderSide(
-                                    color: Colors.black26
+                                  color: Colors.black26,
                                 ),
-                                right: BorderSide(
-                                    color: Colors.black26
-                                ),
-                                left: BorderSide(
-                                    color: Colors.black26
-                                )
-                            )
-                        ),
+                                bottom: BorderSide(color: Colors.black26),
+                                right: BorderSide(color: Colors.black26),
+                                left: BorderSide(color: Colors.black26))),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: DropdownButton<String>(
@@ -219,23 +222,55 @@ class _PlanATripState extends State<PlanATrip> {
                             value: _string2,
                             isExpanded: true,
                             onChanged: (newValue) {
-
                               setState(() {
                                 _string2 = newValue!;
                               });
                             },
-                            items: ['Select','Agartala','Ahmedabad','Aizawl','Amritsar','Ayodhya','Badrinath','Bengaluru','Bhopal','Bhubaneshwar','Bilaspur','Chandigarh','Dehradun','Delhi','Gangtok','Guwahati','Hyderabad','Jaipur','Agra','Aurangabad','Bhuj','Bhavnagar','Ajmer','Anandpur Sahib','Chamarajanagar','Rewari','Namakkal','Azamgarh','Chalakudy','Bishnupur']
-                                  .map<DropdownMenuItem<String>>(
-                                    (String value) => DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 5),
-                                    child: Text(
-                                      value,
-                                      style:TextStyle(fontSize: 15,color: Colors.black),
-                                    ),
-                                  ),
-                                ))
+                            items: [
+                              'Select',
+                              'Agartala',
+                              'Ahmedabad',
+                              'Aizawl',
+                              'Amritsar',
+                              'Ayodhya',
+                              'Badrinath',
+                              'Bengaluru',
+                              'Bhopal',
+                              'Bhubaneshwar',
+                              'Bilaspur',
+                              'Chandigarh',
+                              'Dehradun',
+                              'Delhi',
+                              'Gangtok',
+                              'Guwahati',
+                              'Hyderabad',
+                              'Jaipur',
+                              'Agra',
+                              'Aurangabad',
+                              'Bhuj',
+                              'Bhavnagar',
+                              'Ajmer',
+                              'Anandpur Sahib',
+                              'Chamarajanagar',
+                              'Rewari',
+                              'Namakkal',
+                              'Azamgarh',
+                              'Chalakudy',
+                              'Bishnupur'
+                            ]
+                                .map<DropdownMenuItem<String>>((String value) =>
+                                    DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(left: 5),
+                                        child: Text(
+                                          value,
+                                          style: const TextStyle(
+                                              fontSize: 15,
+                                              color: Colors.black),
+                                        ),
+                                      ),
+                                    ))
                                 .toList(),
 
                             // add extra sugar..
@@ -333,8 +368,8 @@ class _PlanATripState extends State<PlanATrip> {
                                   );
                                   if (pickedDate != null) {
                                     print(pickedDate);
-                                     secondDate = pickedDate.day;
-                                     totalDays = secondDate-firstDate;
+                                    secondDate = pickedDate.day;
+                                    totalDays = secondDate - firstDate;
                                     String formattedDate =
                                         DateFormat('yyyy-MM-dd')
                                             .format(pickedDate);
@@ -361,27 +396,28 @@ class _PlanATripState extends State<PlanATrip> {
                         child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              if(dateEnable)
-                              Container(
-                                height: 30,
-                                width: width(context) * 0.25,
-                                decoration:
-                                    myOutlineBoxDecoration(1, primary, 7),
-                                child:  Center(
-                                  child: Text('$totalDays Days'),
-                                ),
-                              )else
+                              if (dateEnable)
                                 Container(
                                   height: 30,
                                   width: width(context) * 0.25,
                                   decoration:
-                                  myOutlineBoxDecoration(1, primary, 7),
-                                  child:  Center(
+                                      myOutlineBoxDecoration(1, primary, 7),
+                                  child: Center(
+                                    child: Text('$totalDays Days'),
+                                  ),
+                                )
+                              else
+                                Container(
+                                  height: 30,
+                                  width: width(context) * 0.25,
+                                  decoration:
+                                      myOutlineBoxDecoration(1, primary, 7),
+                                  child: Center(
                                     child: Text('${enterdate.text} Days'),
                                   ),
                                 ),
                               InkWell(
-                                onTap: (){
+                                onTap: () {
                                   setState(() {
                                     dateEnable = !dateEnable;
                                   });
@@ -389,9 +425,10 @@ class _PlanATripState extends State<PlanATrip> {
                                 child: Container(
                                     height: 30,
                                     width: width(context) * 0.25,
-                                    decoration: dateEnable?
-                                        myFillBoxDecoration(1, primary, 7):
-                                        myFillBoxDecoration(1, Colors.black12, 7),
+                                    decoration: dateEnable
+                                        ? myFillBoxDecoration(1, primary, 7)
+                                        : myFillBoxDecoration(
+                                            1, Colors.black12, 7),
                                     child: Row(
                                       children: [
                                         Icon(
@@ -406,31 +443,37 @@ class _PlanATripState extends State<PlanATrip> {
                                       ],
                                     )),
                               ),
-
                             ]),
                       ),
                     ],
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 295,top: 5),
+                    padding: const EdgeInsets.only(left: 230, top: 5),
                     child: InkWell(
-                        onTap: (){
+                        onTap: () {
                           KnowMore(context);
                         },
-                        child: Text('Know More',style: TextStyle(decoration: TextDecoration.underline, ),)),
+                        child: const Text(
+                          'Know More',
+                          style: TextStyle(
+                            decoration: TextDecoration.underline,
+                          ),
+                        )),
                   ),
                   addVerticalSpace(15),
-                  if(!dateEnable)
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10,right: 10,bottom: 20),
-                    child: CustomTextFieldWidget(
-                        controller: enterdate,
-                        labelText: 'Please Enter Your Trip Days'
+                  if (!dateEnable)
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 10, right: 10, bottom: 20),
+                      child: CustomTextFieldWidget(
+                          controller: enterdate,
+                          labelText: 'Please Enter Your Trip Days'),
                     ),
-                  ),
                   Container(
-                    child: Text('       Travel Mode'),
+                    child: const Text('       Travel Mode'),
                   ),
+                  addVerticalSpace(10),
+
                   Padding(
                     padding: const EdgeInsets.only(left: 10),
                     child: SizedBox(
@@ -439,21 +482,13 @@ class _PlanATripState extends State<PlanATrip> {
                       child: Container(
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-                            border: Border(
+                            border: const Border(
                                 top: BorderSide(
-                                  color: Colors.black26
-                                  ,                        ),
-                                bottom: BorderSide(
-                                    color: Colors.black26
+                                  color: Colors.black26,
                                 ),
-                                right: BorderSide(
-                                    color: Colors.black26
-                                ),
-                                left: BorderSide(
-                                    color: Colors.black26
-                                )
-                            )
-                        ),
+                                bottom: BorderSide(color: Colors.black26),
+                                right: BorderSide(color: Colors.black26),
+                                left: BorderSide(color: Colors.black26))),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: DropdownButton<String>(
@@ -465,18 +500,21 @@ class _PlanATripState extends State<PlanATrip> {
                                 _string3 = newValue!;
                               });
                             },
-                            items: ['Select','Bus','Train','Flight']
+                            items: ['Select', 'Bus', 'Train', 'Flight']
                                 .map<DropdownMenuItem<String>>(
                                     (String value) => DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 10),
-                                    child: Text(
-                                      value,
-                                      style: TextStyle(fontSize: 15,color: Colors.black),
-                                    ),
-                                  ),
-                                ))
+                                          value: value,
+                                          child: Padding(
+                                            padding:
+                                                const EdgeInsets.only(left: 10),
+                                            child: Text(
+                                              value,
+                                              style: const TextStyle(
+                                                  fontSize: 15,
+                                                  color: Colors.black),
+                                            ),
+                                          ),
+                                        ))
                                 .toList(),
 
                             // add extra sugar..
@@ -526,7 +564,8 @@ class _PlanATripState extends State<PlanATrip> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (ctx) => SaveYourTripsScreen()));
+                                      builder: (ctx) =>
+                                          const SaveYourTripsScreen()));
                             })),
                   )
                 ],
@@ -537,37 +576,43 @@ class _PlanATripState extends State<PlanATrip> {
       ),
     );
   }
-  KnowMore(BuildContext context) {
 
+  KnowMore(BuildContext context) {
     showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          contentPadding: const EdgeInsets.all(6),
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10.0))),
-          content: Builder(
-            builder: (context) {
-              var height = MediaQuery.of(context).size.height;
-              var width = MediaQuery.of(context).size.width;
+              contentPadding: const EdgeInsets.all(6),
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0))),
+              content: Builder(
+                builder: (context) {
+                  var height = MediaQuery.of(context).size.height;
+                  var width = MediaQuery.of(context).size.width;
 
-              return Container(
-                height: 200,
-                child: Center(
-                  child: Column(
-                    children: [
-
-                      Center(
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 20,left: 20,right: 10),
-                          child: Center(child: Text("The dates taken here might require change as per travel seat availability and other convenience of the trip to the selected trip destination. If you wish our travel operator to suggest you a date for the trip, opt for I'm flexible. The number of days here suggested is for sightseeing and travel times will be added after the mode of travel is saved.",style: TextStyle(fontFamily: GoogleFonts.roboto().fontFamily),)),
-                        ),
+                  return Container(
+                    height: 200,
+                    child: Center(
+                      child: Column(
+                        children: [
+                          Center(
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 20, left: 20, right: 10),
+                              child: Center(
+                                  child: Text(
+                                "The dates taken here might require change as per travel seat availability and other convenience of the trip to the selected trip destination. If you wish our travel operator to suggest you a date for the trip, opt for I'm flexible. The number of days here suggested is for sightseeing and travel times will be added after the mode of travel is saved.",
+                                style: TextStyle(
+                                    fontFamily:
+                                        GoogleFonts.roboto().fontFamily),
+                              )),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        ));
+                    ),
+                  );
+                },
+              ),
+            ));
   }
 }

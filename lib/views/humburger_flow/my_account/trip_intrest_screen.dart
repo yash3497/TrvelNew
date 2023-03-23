@@ -35,7 +35,7 @@ class _YourTripInterestState extends State<YourTripInterest> {
         children: [
           SingleChildScrollView(
             child: SizedBox(
-              height: height(context)*1.02,
+              height: height(context) * 1.02,
               child: Column(
                 children: <Widget>[
                   Align(
@@ -114,10 +114,11 @@ class _YourTripInterestState extends State<YourTripInterest> {
             child: Center(
               child: SizedBox(
                 width: width(context) * 0.5,
-                child: CustomButton(name: 'Save',
+                child: CustomButton(
+                    name: 'Save',
                     onPressed: () {
-                  Navigator.pop(context);
-                }),
+                      Navigator.pop(context);
+                    }),
               ),
             ),
           )
@@ -133,9 +134,6 @@ class YourNatureInterest extends StatefulWidget {
 }
 
 class _YourNatureInterestState extends State<YourNatureInterest> {
-
-
-
   List chipList = [
     {'name': "Camping", 'isSelect': false},
     {'name': "Waterfalls", 'isSelect': false},
@@ -198,8 +196,7 @@ class _YourNatureInterestState extends State<YourNatureInterest> {
                     name: 'Save',
                     onPressed: () {
                       Navigator.pop(context);
-                    }
-                ),
+                    }),
               ),
             ),
           )
@@ -208,6 +205,7 @@ class _YourNatureInterestState extends State<YourNatureInterest> {
     );
   }
 }
+
 class YourAdventureInterest extends StatefulWidget {
   @override
   _YourAdventureInterestState createState() => _YourAdventureInterestState();
@@ -272,7 +270,8 @@ class _YourAdventureInterestState extends State<YourAdventureInterest> {
             child: Center(
               child: SizedBox(
                 width: width(context) * 0.5,
-                child: CustomButton(name: 'Save',
+                child: CustomButton(
+                    name: 'Save',
                     onPressed: () {
                       Navigator.pop(context);
                     }),
@@ -284,6 +283,7 @@ class _YourAdventureInterestState extends State<YourAdventureInterest> {
     );
   }
 }
+
 class YourCityInterest extends StatefulWidget {
   @override
   _YourCityInterestState createState() => _YourCityInterestState();
@@ -348,7 +348,8 @@ class _YourCityInterestState extends State<YourCityInterest> {
             child: Center(
               child: SizedBox(
                 width: width(context) * 0.5,
-                child: CustomButton(name: 'Save',
+                child: CustomButton(
+                    name: 'Save',
                     onPressed: () {
                       Navigator.pop(context);
                     }),
@@ -360,6 +361,7 @@ class _YourCityInterestState extends State<YourCityInterest> {
     );
   }
 }
+
 class YourReliglousInterst extends StatefulWidget {
   @override
   _YourReliglousInterstState createState() => _YourReliglousInterstState();
@@ -424,7 +426,8 @@ class _YourReliglousInterstState extends State<YourReliglousInterst> {
             child: Center(
               child: SizedBox(
                 width: width(context) * 0.5,
-                child: CustomButton(name: 'Save',
+                child: CustomButton(
+                    name: 'Save',
                     onPressed: () {
                       Navigator.pop(context);
                     }),
@@ -436,6 +439,7 @@ class _YourReliglousInterstState extends State<YourReliglousInterst> {
     );
   }
 }
+
 class NaturefilterChipWidget extends StatefulWidget {
   final List chipName;
 
@@ -446,12 +450,11 @@ class NaturefilterChipWidget extends StatefulWidget {
 }
 
 class _NaturefilterChipWidgetState extends State<NaturefilterChipWidget> {
-
-
   void initState() {
     getDetails();
     super.initState();
   }
+
   var _isSelected = false;
   List NatureList = [];
   void getDetails() async {
@@ -466,6 +469,7 @@ class _NaturefilterChipWidgetState extends State<NaturefilterChipWidget> {
       setState(() {});
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -476,42 +480,41 @@ class _NaturefilterChipWidgetState extends State<NaturefilterChipWidget> {
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3, childAspectRatio: 2.8),
           itemBuilder: (ctx, i) {
-            return InkWell(
-                  onTap: () {
-                    if (NatureList.contains(widget.chipName[i]['name'])) {
-                      NatureList
-                          .removeAt(NatureList.indexOf(widget.chipName[i]['name']));
-                      CollectionReference users = FirebaseFirestore.instance
-                            .collection('users');
-                              users
-                            .doc(FirebaseAuth.instance.currentUser!.uid)
-                            .collection("primaAccount")
-                            .doc("profile")
-                           .update({
-                        'Nature':
+            return GestureDetector(
+              onTap: () {
+                if (NatureList.contains(widget.chipName[i]['name'])) {
+                  NatureList.removeAt(
+                      NatureList.indexOf(widget.chipName[i]['name']));
+                  CollectionReference users =
+                      FirebaseFirestore.instance.collection('users');
+                  users
+                      .doc(FirebaseAuth.instance.currentUser!.uid)
+                      .collection("primaAccount")
+                      .doc("profile")
+                      .update({
+                    'Nature':
                         FieldValue.arrayRemove([widget.chipName[i]['name']])
-                      });
-                      setState(() {});
-                      getDetails();
-                    } else {
-                      NatureList.add(widget.chipName[i]['name']);
-                      CollectionReference users = FirebaseFirestore.instance
-                          .collection('users');
-                      users
-                          .doc(FirebaseAuth.instance.currentUser!.uid)
-                          .collection("primaAccount")
-                          .doc("profile")
-                          .update({
-                        'Nature':
+                  });
+                  setState(() {});
+                  getDetails();
+                } else {
+                  NatureList.add(widget.chipName[i]['name']);
+                  CollectionReference users =
+                      FirebaseFirestore.instance.collection('users');
+                  users
+                      .doc(FirebaseAuth.instance.currentUser!.uid)
+                      .collection("primaAccount")
+                      .doc("profile")
+                      .update({
+                    'Nature':
                         FieldValue.arrayUnion([widget.chipName[i]['name']])
-                      });
-                      setState(() {});
-                      getDetails();
-                    }
-                  },
-                  child:
-                    Container(
-                    margin: EdgeInsets.all(5),
+                  });
+                  setState(() {});
+                  getDetails();
+                }
+              },
+              child: Container(
+                margin: EdgeInsets.all(5),
                 height: height(context) * 0.045,
                 width: width(context) * 0.3,
                 decoration: NatureList.contains(widget.chipName[i]['name'])
@@ -521,7 +524,7 @@ class _NaturefilterChipWidgetState extends State<NaturefilterChipWidget> {
                   child: Text(widget.chipName[i]['name']),
                 ),
               ),
-                );
+            );
           }),
     );
   }
@@ -533,16 +536,16 @@ class ReliglousfilterChipWidget extends StatefulWidget {
   ReliglousfilterChipWidget({required this.chipName});
 
   @override
-  _ReliglousfilterChipWidgetState createState() => _ReliglousfilterChipWidgetState();
+  _ReliglousfilterChipWidgetState createState() =>
+      _ReliglousfilterChipWidgetState();
 }
 
 class _ReliglousfilterChipWidgetState extends State<ReliglousfilterChipWidget> {
-
-
   void initState() {
     getDetails();
     super.initState();
   }
+
   var _isSelected = false;
   List NatureList = [];
   void getDetails() async {
@@ -557,6 +560,7 @@ class _ReliglousfilterChipWidgetState extends State<ReliglousfilterChipWidget> {
       setState(() {});
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -567,41 +571,40 @@ class _ReliglousfilterChipWidgetState extends State<ReliglousfilterChipWidget> {
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3, childAspectRatio: 2.8),
           itemBuilder: (ctx, i) {
-            return InkWell(
+            return GestureDetector(
               onTap: () {
                 if (NatureList.contains(widget.chipName[i]['name'])) {
-                  NatureList
-                      .removeAt(NatureList.indexOf(widget.chipName[i]['name']));
-                  CollectionReference users = FirebaseFirestore.instance
-                      .collection('users');
+                  NatureList.removeAt(
+                      NatureList.indexOf(widget.chipName[i]['name']));
+                  CollectionReference users =
+                      FirebaseFirestore.instance.collection('users');
                   users
                       .doc(FirebaseAuth.instance.currentUser!.uid)
                       .collection("primaAccount")
                       .doc("profile")
                       .update({
                     'Religlous':
-                    FieldValue.arrayRemove([widget.chipName[i]['name']])
+                        FieldValue.arrayRemove([widget.chipName[i]['name']])
                   });
                   setState(() {});
                   getDetails();
                 } else {
                   NatureList.add(widget.chipName[i]['name']);
-                  CollectionReference users = FirebaseFirestore.instance
-                      .collection('users');
+                  CollectionReference users =
+                      FirebaseFirestore.instance.collection('users');
                   users
                       .doc(FirebaseAuth.instance.currentUser!.uid)
                       .collection("primaAccount")
                       .doc("profile")
                       .update({
                     'Religlous':
-                    FieldValue.arrayUnion([widget.chipName[i]['name']])
+                        FieldValue.arrayUnion([widget.chipName[i]['name']])
                   });
                   setState(() {});
                   getDetails();
                 }
               },
-              child:
-              Container(
+              child: Container(
                 margin: EdgeInsets.all(5),
                 height: height(context) * 0.045,
                 width: width(context) * 0.3,
@@ -628,12 +631,11 @@ class CityfilterChipWidget extends StatefulWidget {
 }
 
 class _CityfilterChipWidgetState extends State<CityfilterChipWidget> {
-
-
   void initState() {
     getDetails();
     super.initState();
   }
+
   var _isSelected = false;
   List NatureList = [];
   void getDetails() async {
@@ -648,6 +650,7 @@ class _CityfilterChipWidgetState extends State<CityfilterChipWidget> {
       setState(() {});
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -658,41 +661,38 @@ class _CityfilterChipWidgetState extends State<CityfilterChipWidget> {
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3, childAspectRatio: 2.8),
           itemBuilder: (ctx, i) {
-            return InkWell(
+            return GestureDetector(
               onTap: () {
                 if (NatureList.contains(widget.chipName[i]['name'])) {
-                  NatureList
-                      .removeAt(NatureList.indexOf(widget.chipName[i]['name']));
-                  CollectionReference users = FirebaseFirestore.instance
-                      .collection('users');
+                  NatureList.removeAt(
+                      NatureList.indexOf(widget.chipName[i]['name']));
+                  CollectionReference users =
+                      FirebaseFirestore.instance.collection('users');
                   users
                       .doc(FirebaseAuth.instance.currentUser!.uid)
                       .collection("primaAccount")
                       .doc("profile")
                       .update({
-                    'City':
-                    FieldValue.arrayRemove([widget.chipName[i]['name']])
+                    'City': FieldValue.arrayRemove([widget.chipName[i]['name']])
                   });
                   setState(() {});
                   getDetails();
                 } else {
                   NatureList.add(widget.chipName[i]['name']);
-                  CollectionReference users = FirebaseFirestore.instance
-                      .collection('users');
+                  CollectionReference users =
+                      FirebaseFirestore.instance.collection('users');
                   users
                       .doc(FirebaseAuth.instance.currentUser!.uid)
                       .collection("primaAccount")
                       .doc("profile")
                       .update({
-                    'City':
-                    FieldValue.arrayUnion([widget.chipName[i]['name']])
+                    'City': FieldValue.arrayUnion([widget.chipName[i]['name']])
                   });
                   setState(() {});
                   getDetails();
                 }
               },
-              child:
-              Container(
+              child: Container(
                 margin: EdgeInsets.all(5),
                 height: height(context) * 0.045,
                 width: width(context) * 0.3,
@@ -715,16 +715,16 @@ class AdventurefilterChipWidget extends StatefulWidget {
   AdventurefilterChipWidget({required this.chipName});
 
   @override
-  _AdventurefilterChipWidgetState createState() => _AdventurefilterChipWidgetState();
+  _AdventurefilterChipWidgetState createState() =>
+      _AdventurefilterChipWidgetState();
 }
 
 class _AdventurefilterChipWidgetState extends State<AdventurefilterChipWidget> {
-
-
   void initState() {
     getDetails();
     super.initState();
   }
+
   var _isSelected = false;
   List NatureList = [];
   void getDetails() async {
@@ -750,41 +750,40 @@ class _AdventurefilterChipWidgetState extends State<AdventurefilterChipWidget> {
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3, childAspectRatio: 2.8),
           itemBuilder: (ctx, i) {
-            return InkWell(
+            return GestureDetector(
               onTap: () {
                 if (NatureList.contains(widget.chipName[i]['name'])) {
-                  NatureList
-                      .removeAt(NatureList.indexOf(widget.chipName[i]['name']));
-                  CollectionReference users = FirebaseFirestore.instance
-                      .collection('users');
+                  NatureList.removeAt(
+                      NatureList.indexOf(widget.chipName[i]['name']));
+                  CollectionReference users =
+                      FirebaseFirestore.instance.collection('users');
                   users
                       .doc(FirebaseAuth.instance.currentUser!.uid)
                       .collection("primaAccount")
                       .doc("profile")
                       .update({
                     'Adventure':
-                    FieldValue.arrayRemove([widget.chipName[i]['name']])
+                        FieldValue.arrayRemove([widget.chipName[i]['name']])
                   });
                   setState(() {});
                   getDetails();
                 } else {
                   NatureList.add(widget.chipName[i]['name']);
-                  CollectionReference users = FirebaseFirestore.instance
-                      .collection('users');
+                  CollectionReference users =
+                      FirebaseFirestore.instance.collection('users');
                   users
                       .doc(FirebaseAuth.instance.currentUser!.uid)
                       .collection("primaAccount")
                       .doc("profile")
                       .update({
                     'Adventure':
-                    FieldValue.arrayUnion([widget.chipName[i]['name']])
+                        FieldValue.arrayUnion([widget.chipName[i]['name']])
                   });
                   setState(() {});
                   getDetails();
                 }
               },
-              child:
-              Container(
+              child: Container(
                 margin: EdgeInsets.all(5),
                 height: height(context) * 0.045,
                 width: width(context) * 0.3,

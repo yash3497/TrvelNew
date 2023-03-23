@@ -203,12 +203,10 @@ class _PrimaTrip1To4ScreensState extends State<PrimaTrip1To4Screens> {
               ],
             ),
           ),
-          Positioned(
-              bottom: 30,
-              left: width(context) * 0.27,
-              child: CustomRequestToJoinButton()),
         ],
       ),
+      bottomNavigationBar:
+          SizedBox(height: 60, child: CustomRequestToJoinButton()),
     );
   }
 }
