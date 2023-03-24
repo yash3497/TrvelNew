@@ -276,55 +276,55 @@ class _FestivalsDataListState extends State<FestivalsDataList> {
                               height: 200,
                               width: 700,
                               child: Image.network(allData[index]['imageUrl'])),
-                          Positioned(
-                              top: -5,
-                              right: -5,
-                              child: IconButton(
-                                  onPressed: () async {
-                                    // Navigator.push(context, MaterialPageRoute(builder: (context)=>TripLibraryScreen()));
-                                    //  bookmark();
-                                    if (!isBookmarked)  {
-
-                                             Bookmarklist.add(context);
-                                             DocumentReference users = FirebaseFirestore.instance
-                                                 .collection('users')
-                                                 .doc(FirebaseAuth.instance.currentUser!.uid)
-                                                 .collection("bookmarks")
-                                                 .doc();
-                                             users.set({
-                                             'id': _id,
-                                             "postID": users.id,
-                                             'image': _imagee,
-                                             'location':_location,
-                                             'subtitle':_subtitle,
-                                             'title':_title,
-                                             });
-                                             }
-                                             else {
-                                             var trip = await FirebaseFirestore.instance
-                                                 .collection('users')
-                                                 .doc(FirebaseAuth.instance.currentUser!.uid)
-                                                 .collection('bookmarks')
-                                                 .doc()
-                                                 .get();
-                                             var docID = trip.data()?['docID'];
-                                             FirebaseDB().removeBookmark(docID);
-                                             }
-                                             setState(() {
-                                             isBookmarked = !isBookmarked;
-                                             });
-
-                                    setState(() {
-                                      isBookmarked = !isBookmarked;
-                                    });
-                                  },
-                                  icon: !isBookmarked
-                                      ? Icon(
-                                    Icons.bookmark_border,
-                                    color: Colors.black,
-                                  )
-                                      : const Icon(Icons.bookmark)),
-                              ),
+                          // Positioned(
+                          //     top: -5,
+                          //     right: -5,
+                          //     child: IconButton(
+                          //         onPressed: () async {
+                          //           // Navigator.push(context, MaterialPageRoute(builder: (context)=>TripLibraryScreen()));
+                          //           //  bookmark();
+                          //           if (!isBookmarked)  {
+                          //
+                          //                    Bookmarklist.add(context);
+                          //                    DocumentReference users = FirebaseFirestore.instance
+                          //                        .collection('users')
+                          //                        .doc(FirebaseAuth.instance.currentUser!.uid)
+                          //                        .collection("bookmarks")
+                          //                        .doc();
+                          //                    users.set({
+                          //                    'id': _id,
+                          //                    "postID": users.id,
+                          //                    'image': _imagee,
+                          //                    'location':_location,
+                          //                    'subtitle':_subtitle,
+                          //                    'title':_title,
+                          //                    });
+                          //                    }
+                          //                    else {
+                          //                    var trip = await FirebaseFirestore.instance
+                          //                        .collection('users')
+                          //                        .doc(FirebaseAuth.instance.currentUser!.uid)
+                          //                        .collection('bookmarks')
+                          //                        .doc()
+                          //                        .get();
+                          //                    var docID = trip.data()?['docID'];
+                          //                    FirebaseDB().removeBookmark(docID);
+                          //                    }
+                          //                    setState(() {
+                          //                    isBookmarked = !isBookmarked;
+                          //                    });
+                          //
+                          //           setState(() {
+                          //             isBookmarked = !isBookmarked;
+                          //           });
+                          //         },
+                          //         icon: !isBookmarked
+                          //             ? Icon(
+                          //           Icons.bookmark_border,
+                          //           color: Colors.black,
+                          //         )
+                          //             : const Icon(Icons.bookmark)),
+                          //     ),
                           Positioned(
                               bottom: 0,
                               left: 0,
@@ -600,6 +600,7 @@ class _ShowDetailsOfFestivalsState extends State<ShowDetailsOfFestivals> {
       setState(() {});
     }
   }
+  bool isbookmark = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -638,11 +639,61 @@ class _ShowDetailsOfFestivalsState extends State<ShowDetailsOfFestivals> {
                             },
                             icon: Icon(Icons.arrow_back_ios)),
                         Spacer(),
-                        IconButton(
-                            onPressed: () {
-                              bookmark();
-                            },
-                            icon: Icon(Icons.bookmark_border_rounded)),
+
+                        Positioned(
+                          top: -5,
+                          right: -5,
+                          child: IconButton(
+                              onPressed: () async {
+                                SharedPreferences _prefs =
+                                await SharedPreferences.getInstance();
+                                if (!isBookmarked) {
+
+                                  Bookmarklist.add(context);
+                                  DocumentReference users = FirebaseFirestore.instance
+                                      .collection('users')
+                                      .doc(FirebaseAuth.instance.currentUser!.uid)
+                                      .collection("bookmarks")
+                                      .doc();
+                                  users.set({
+                                    'id': _id,
+                                    "postID": users.id,
+                                    'image': _imagee,
+                                    'location':_location,
+                                    'subtitle':_subtitle,
+                                    'title':_title,
+                                  });
+                                }
+                                else {
+                                  var trip = await FirebaseFirestore.instance
+                                      .collection('users')
+                                      .doc(FirebaseAuth.instance.currentUser!.uid)
+                                      .collection('bookmarks')
+                                      .doc()
+                                      .get();
+                                  var docID = trip.data()?['docID'];
+                                  FirebaseDB().removeBookmark(docID);
+                                }
+                                setState(() {
+                                  isBookmarked = !isBookmarked;
+                                });
+                                // DocumentReference users = FirebaseFirestore.instance
+                                //     .collection('users')
+                                //
+                                //     .doc(FirebaseAuth.instance.currentUser!.uid)
+                                //     .collection("bookmarks")
+                                // .doc();
+                                //     users.set({
+                                //       "postID": users.id,
+                                // });
+                              },
+                              icon: !isBookmarked
+                                  ? Icon(
+                                Icons.bookmark_border,
+                                color: white,
+                              )
+                                  : const Icon(Icons.bookmark)),
+                        ),
                         const Padding(
                           padding: EdgeInsets.only(right: 12.0, top: 10),
                           child: ImageIcon(

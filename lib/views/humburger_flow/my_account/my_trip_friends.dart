@@ -404,14 +404,14 @@ class _MyTripFriendsScreenState extends State<MyTripFriendsScreen> {
                           addVerticalSpace(height * 0.01),
                           Row(
                             children: [
-                              Text("by Age : ${ageFilter ? currentValue : ''}"),
+                              Text("by Age : $currentValue"),
                               Container(
                                 width: width * 0.5,
                                 child: DropdownButton<String>(
                                   isExpanded: true,
                                   items: ages.map((String value) {
                                     return DropdownMenuItem<String>(
-                                      value: currentValue,
+                                      value: value,
                                       child: Text(value),
                                     );
                                   }).toList(),

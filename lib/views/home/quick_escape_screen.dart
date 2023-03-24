@@ -2,9 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:travel_app/model/home_model.dart';
 import 'package:travel_app/utils/constant.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../../services/db/firebaseDB.dart';
 import '../../widget/custom_appbar.dart';
 import '../../widget/custom_tab_indicator.dart';
 
@@ -38,7 +40,15 @@ class _QuickEscapeScreenState extends State<QuickEscapeScreen>
     print(allData);
   }
   List allData = [];
-
+ bool isbookmark = false;
+ bool isBookmarked = false;
+  String _id = "";
+  String _location = "";
+  String _subtitle = "";
+  String _title = "";
+  String _imagee = "";
+  // bool isBookmarked = false;
+  List Bookmarklist =[];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -110,14 +120,59 @@ class _QuickEscapeScreenState extends State<QuickEscapeScreen>
                                                     topRight: Radius.circular(15)),
                                                 child: Image.network(allData[i]['imageUrl'])),
                                             Positioned(
-                                                top: -5,
-                                                right: -5,
-                                                child: IconButton(
-                                                    onPressed: () {},
-                                                    icon: Icon(
-                                                      Icons.bookmark_border,
-                                                      color: white,
-                                                    ))),
+                                              top: -5,
+                                              right: -5,
+                                              child: IconButton(
+                                                  onPressed: () async {
+                                                    SharedPreferences _prefs =
+                                                    await SharedPreferences.getInstance();
+                                                    if (!isBookmarked) {
+
+                                                      Bookmarklist.add(context);
+                                                      DocumentReference users = FirebaseFirestore.instance
+                                                          .collection('users')
+                                                          .doc(FirebaseAuth.instance.currentUser!.uid)
+                                                          .collection("bookmarks")
+                                                          .doc();
+                                                      users.set({
+                                                        'id': _id,
+                                                        "postID": users.id,
+                                                        'image': _imagee,
+                                                        'location':_location,
+                                                        'subtitle':_subtitle,
+                                                        'title':_title,
+                                                      });
+                                                    }
+                                                    else {
+                                                      var trip = await FirebaseFirestore.instance
+                                                          .collection('users')
+                                                          .doc(FirebaseAuth.instance.currentUser!.uid)
+                                                          .collection('bookmarks')
+                                                          .doc()
+                                                          .get();
+                                                      var docID = trip.data()?['docID'];
+                                                      FirebaseDB().removeBookmark(docID);
+                                                    }
+                                                    setState(() {
+                                                      isBookmarked = !isBookmarked;
+                                                    });
+                                                    // DocumentReference users = FirebaseFirestore.instance
+                                                    //     .collection('users')
+                                                    //
+                                                    //     .doc(FirebaseAuth.instance.currentUser!.uid)
+                                                    //     .collection("bookmarks")
+                                                    // .doc();
+                                                    //     users.set({
+                                                    //       "postID": users.id,
+                                                    // });
+                                                  },
+                                                  icon: !isBookmarked
+                                                      ? Icon(
+                                                    Icons.bookmark_border,
+                                                    color: white,
+                                                  )
+                                                      : const Icon(Icons.bookmark)),
+                                            ),
                                             Positioned(
                                                 bottom: 0,
                                                 left: 0,

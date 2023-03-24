@@ -66,7 +66,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
       'gender': Gendervalue,
       'maritalStatus': statusvalue,
       'UID': FirebaseAuth.instance.currentUser!.uid,
-      "profileImg": img ?? "",
+      "profileuserImage": img ?? "",
       "document": url ?? "",
     });
   }
@@ -76,15 +76,18 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
   UploadTask? task;
   String url = "";
   String img = "";
-  void getDetails() async {
+  String fullname = "";
+
+  void getData() async {
     if (FirebaseAuth.instance.currentUser != null) {
       var profile = await FirebaseFirestore.instance
           .collection('users')
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .get();
-      img = profile.data()?['profileImg'];
+      img = profile.data()?['profileuserImage'];
       url = profile.data()?['document'];
       firstName.text = profile.data()?['firstName'];
+      // firstName.text = profile.data()?['fullName'];
       dateOfBirth.text = profile.data()?['dob'];
       anniversaryDate.text = profile.data()?['anniversary'];
       profession.text = profile.data()?['profession'];
@@ -93,6 +96,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
       mobNum.text = profile.data()?['mobNum'];
       Gendervalue = profile.data()?['gender'];
       statusvalue = profile.data()?['maritalStatus'];
+
       setState(() {});
     }
   }
@@ -106,7 +110,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
 
   @override
   void initState() {
-    getDetails();
+    getData();
     super.initState();
   }
 

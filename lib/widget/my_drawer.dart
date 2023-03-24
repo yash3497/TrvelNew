@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:share/share.dart';
+import 'package:social_share_plugin/social_share_plugin.dart';
 import 'package:travel_app/providers/location_provider.dart';
 
 import 'package:travel_app/utils/constant.dart';
@@ -41,21 +44,22 @@ class _MyDrawerState extends State<MyDrawer> {
   // // }
 
   String url = "";
-  String? userName = "";
-  // new function
-  void getDetails() async {
+  String name = "";
+
+  void getData() async {
     if (FirebaseAuth.instance.currentUser != null) {
       var profile = await FirebaseFirestore.instance
           .collection('users')
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .get();
-      url = profile.data()?['profileImg'];
-      userName = profile.data()?['fullName'];
+      name = profile.data()?['fullName'];
+      url = profile.data()?['profileuserImage'];
+
       setState(() {});
     }
   }
 
-  showSnackBar(BuildContext context, String str, [Color clr = Colors.black]) {
+    showSnackBar(BuildContext context, String str, [Color clr = Colors.black]) {
     return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(str),
       backgroundColor: clr,
@@ -68,7 +72,7 @@ class _MyDrawerState extends State<MyDrawer> {
   bool isExpand3 = false;
   @override
   void initState() {
-    getDetails();
+    getData();
     checkupcoming();
     // registerUser();
     //LocationProvider _locationProvider = LocationProvider();
@@ -119,7 +123,7 @@ class _MyDrawerState extends State<MyDrawer> {
                         Row(
                           children: [
                             Text(
-                              'Hii, $userName',
+                              'Hii, $name',
                               style: bodyText22w700(color: white),
                             ),
                             addHorizontalySpace(3),
@@ -548,9 +552,14 @@ class _MyDrawerState extends State<MyDrawer> {
                 const AssetImage(
                   'assets/images/menu7.png',
                 )),
-            title: Text(
-              'Rate us on App Store',
-              style: bodyText14w600(color: black),
+            title: InkWell(
+              onTap: (){
+                rating(context);
+              },
+              child: Text(
+                'Rate us on App Store',
+                style: bodyText14w600(color: black),
+              ),
             ),
           ),
           const Divider(
@@ -559,17 +568,32 @@ class _MyDrawerState extends State<MyDrawer> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(
-                'assets/images/Subtract.png',
-                fit: BoxFit.fill,
+              InkWell(
+                onTap: (){
+                  Share.share("https://play.google.com/store/apps/details?id=com.instructivetech.testapp");
+                },
+                child: Image.asset(
+                  'assets/images/Subtract.png',
+                  fit: BoxFit.fill,
+                ),
               ),
-              Image.asset(
-                'assets/images/Subtract (1).png',
-                fit: BoxFit.fill,
+              InkWell(
+                onTap: (){
+                  Share.share("https://play.google.com/store/apps/details?id=com.instructivetech.testapp");
+                },
+                child: Image.asset(
+                  'assets/images/Subtract (1).png',
+                  fit: BoxFit.fill,
+                ),
               ),
-              Image.asset(
-                'assets/images/Subtract (2).png',
-                fit: BoxFit.fill,
+              InkWell(
+                onTap: (){
+                  Share.share("https://play.google.com/store/apps/details?id=com.instructivetech.testapp");
+                },
+                child: Image.asset(
+                  'assets/images/Subtract (2).png',
+                  fit: BoxFit.fill,
+                ),
               ),
             ],
           ),
@@ -614,6 +638,41 @@ class _MyDrawerState extends State<MyDrawer> {
                 height: 200,
                 child: Center(child: Text('You not have any upcoming tirp.',style: TextStyle(fontFamily: GoogleFonts.roboto().fontFamily),)),
 
+              );
+            },
+          ),
+        ));
+  }
+  rating(BuildContext context) {
+   double rating = 0;
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          contentPadding: const EdgeInsets.all(6),
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          content: Builder(
+            builder: (context) {
+              return Container(
+                height: 200,
+                child: Scaffold(
+
+                  body: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                       Text('App Rating'),
+                        addVerticalSpace(40),
+                        RatingBar.builder(
+                        maxRating: 1,
+                  itemBuilder: (context,_) => Icon(Icons.star, color: Colors.amber,),
+                        onRatingUpdate: (rating) => setState(() {
+                          // this.rating = rating;
+                        }),
+                  ),
+                      ],
+                    ),),
+                ),
               );
             },
           ),

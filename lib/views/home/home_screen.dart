@@ -251,11 +251,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     InkWell(
                       onTap: () async {
                         if (FirebaseAuth.instance.currentUser != null) {
-                          LocationProvider _locationProvider =
-                          LocationProvider();
-                          await _locationProvider.fetchCurrentPosition();
-                          registerUser();
-                          await _locationProvider.locationDeatials();
+                          // LocationProvider _locationProvider =
+                          // LocationProvider();
+                          // await _locationProvider.fetchCurrentPosition();
+                          // registerUser();
+                          // await _locationProvider.locationDeatials();
                           Navigator.push(context,
                               MaterialPageRoute(builder: (ctx) => PlanATrip()));
                         } else {
@@ -292,11 +292,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           onTap: () async {
 
                             if (FirebaseAuth.instance.currentUser != null) {
-                              LocationProvider _locationProvider =
-                              LocationProvider();
-                              await _locationProvider.fetchCurrentPosition();
-                              registerUser();
-                              await _locationProvider.locationDeatials();
+                              // LocationProvider _locationProvider =
+                              // LocationProvider();
+                              // await _locationProvider.fetchCurrentPosition();
+                              // registerUser();
+                              // await _locationProvider.locationDeatials();
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(

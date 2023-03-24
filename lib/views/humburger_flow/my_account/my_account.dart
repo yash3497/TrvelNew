@@ -1,12 +1,16 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:travel_app/utils/constant.dart';
 import 'package:travel_app/views/humburger_flow/my_account/B2B_registration.dart';
@@ -37,18 +41,18 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
   String url = "";
   String userName = "";
   String place = "";
-  void getDetails() async {
+  void getData() async {
     if (FirebaseAuth.instance.currentUser != null) {
       var profile = await FirebaseFirestore.instance
           .collection('users')
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .get();
-      url = profile.data()?['profileImg'];
       userName = profile.data()?['fullName'];
-      place = profile.data()?['locality'];
+
       setState(() {});
     }
   }
+
 
   final List listTileList = [
     {
@@ -61,9 +65,20 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
     {'title': 'Help', 'subTitle': 'FAOs, Support'},
     {'title': 'Travel Safety', 'subTitle': 'Information you need to be safe'},
   ];
+
+  showDialogBox() => showCupertinoDialog<String>(
+    context: context,
+    builder: (BuildContext context) => CupertinoAlertDialog(
+      title: Text('No Internet'),
+      content: Text('Please Check your Internet Connection'),
+      actions: [
+        TextButton(onPressed: (){Navigator.pop(context);}, child: Text('OK'))
+      ],
+    )
+  );
   @override
   void initState() {
-    getDetails();
+    getData();
     gerprimacheck();
     getprimDetails();
     super.initState();
@@ -93,6 +108,8 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
     }
     setState(() {});
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -336,26 +353,30 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
             addVerticalSpace(height(context) * 0.06),
             InkWell(
               onTap: () async {
-                if (FirebaseAuth.instance.currentUser != null) {
-                  final SharedPreferences sharedPreferences =
-                      await SharedPreferences.getInstance();
-                  sharedPreferences.remove('email');
-                  await FirebaseAuth.instance.signOut();
-                  print('l1');
-                  final _googleSignIn = GoogleSignIn();
+                if(await InternetConnectionChecker().hasConnection == false){
+                  showDialogBox();
+                } else {
+                  if (FirebaseAuth.instance.currentUser != null) {
+                    final SharedPreferences sharedPreferences =
+                    await SharedPreferences.getInstance();
+                    sharedPreferences.remove('email');
+                    await FirebaseAuth.instance.signOut();
+                    print('l1');
+                    final _googleSignIn = GoogleSignIn();
 
-                  final GoogleSignInAccount? googleSignInAccount =
-                      await _googleSignIn.signIn();
+                    final GoogleSignInAccount? googleSignInAccount =
+                    await _googleSignIn.signIn();
 
-                  print('l2');
-                  await googleSignInAccount!.clearAuthCache();
-                  print('l3');
+                    print('l2');
+                    await googleSignInAccount!.clearAuthCache();
+                    print('l3');
 
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: ((context) =>
-                              SignupWithSocialMediaScreen())));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: ((context) =>
+                                SignupWithSocialMediaScreen())));
+                  }
                 }
               },
               child: Row(
@@ -485,7 +506,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (ctx) => SignUpScreen()));
+                                      builder: (ctx) => B2BRegistrationScreen()));
                             },
                             child: RichText(
                                 text: TextSpan(children: [

@@ -38,6 +38,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         .collection("users")
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .set({
+      'firstName' : field0.text,
       'fullName': field0.text,
       'email': field1.text,
       'dob': field2.text,
@@ -158,7 +159,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       email = value;
                                     },
                                     decoration: InputDecoration(
-                                      prefixIcon: Icon(Icons.mail_outline,color: primary),
                                       suffixIcon: IconButton(
                                           onPressed: () {
                                             showSnackBar(
@@ -167,11 +167,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                                 Colors.green);
                                           },
                                           icon: Icon(
-                                            Icons.help,
+                                            Icons.mail_outline,
                                             color: primary,
                                           )),
                                       hintText: 'name@example.com',
-                                      labelText: 'Email',
+                                      labelText: '  Email',
                                       focusColor: primary,
 
                                       enabledBorder: OutlineInputBorder(

@@ -69,6 +69,10 @@ dependencies:
   age_calculator: ^1.0.0
   flutter_local_notifications: ^13.0.0
   story_view: ^0.14.0
+  internet_connection_checker: ^1.0.0+1
+  connectivity_plus: ^3.0.3
+  share: ^2.0.4
+  social_share_plugin: ^0.4.1+2
 
 
 dev_dependencies:
