@@ -83,6 +83,7 @@ class _SaveYourTripsScreenState extends State<SaveYourTripsScreen> {
                             name: 'Submit',
                             onPressed: () {
                               updatePlanTrip();
+                              addUpcomingTrip();
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(

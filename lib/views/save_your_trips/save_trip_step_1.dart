@@ -9,6 +9,7 @@ import 'package:travel_app/views/humburger_flow/trip_library_screen.dart';
 import 'package:travel_app/widget/custom_button.dart';
 
 import '../humburger_flow/stroyView.dart';
+import '../humburger_flow/tourist_spot_screen.dart';
 
 class SaveTripStep1 extends StatefulWidget {
   SaveTripStep1({super.key});
@@ -18,35 +19,25 @@ class SaveTripStep1 extends StatefulWidget {
 }
 
 class _SaveTripStep1State extends State<SaveTripStep1> {
-  final List dayWiseList1 = [
-    'Day 1',
-    'Bonus Tourist Spot'
-  ];
-  final List dayWiseList2 = [
-    'Day 1',
-    'Day 2',
-    'Bonus Tourist Spot'
-  ];
-  final List dayWiseList3 = [
-    'Day 1',
-    'Day 2',
-    'Day 3',
-    'Bonus Tourist Spot'
-  ];
+  final List dayWiseList1 = ['Day 1', 'Bonus Tourist Spot'];
+  final List dayWiseList2 = ['Day 1', 'Day 2', 'Bonus Tourist Spot'];
+  final List dayWiseList3 = ['Day 1', 'Day 2', 'Day 3', 'Bonus Tourist Spot'];
   final List dayWiseList4 = [
     'Day 1',
     'Day 2',
     'Day 3',
     'Day 4',
     'Bonus Tourist Spot'
-  ];final List dayWiseList5 = [
+  ];
+  final List dayWiseList5 = [
     'Day 1',
     'Day 2',
     'Day 3',
     'Day 4',
     'Day 5',
     'Bonus Tourist Spot'
-  ];final List dayWiseList6 = [
+  ];
+  final List dayWiseList6 = [
     'Day 1',
     'Day 2',
     'Day 3',
@@ -66,10 +57,6 @@ class _SaveTripStep1State extends State<SaveTripStep1> {
     'Bonus Tourist Spot'
   ];
 
-
-
-
-
   // CollectionReference _collectionRef =
   // FirebaseFirestore.instance.collection('Aspired_trips');
   //
@@ -85,6 +72,7 @@ class _SaveTripStep1State extends State<SaveTripStep1> {
   // List allData = [];
 
   String endplace = "";
+  String type = "";
   int days = 0;
   void getTripData() async {
     if (FirebaseAuth.instance.currentUser != null) {
@@ -94,160 +82,286 @@ class _SaveTripStep1State extends State<SaveTripStep1> {
           .collection('Plan_trip')
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .get();
-          endplace = profile.data()?['endtrip'];
-          days = profile.data()?['totalDays'];
-        print(endplace);
+      endplace = profile.data()?['endtrip'];
+      days = profile.data()?['totalDays'];
+      type = profile.data()?['tripPlan'];
+
+      print(endplace);
     }
     setState(() {
       print(endplace);
     });
   }
-  List des = [];
-  List touristSportimage = [];
-  void getsportdata() async {
-    if (FirebaseAuth.instance.currentUser != null) {
-      var profile = await FirebaseFirestore.instance
-          .collection('TripCity')
-          .doc('Ahmedabad')
-          .get();
-      des = profile.data()?['TouristSportDesc'];
-      touristSportimage = profile.data()?['TouristSportImage'];
-    }
+
+  CollectionReference _collectionRef =
+  FirebaseFirestore.instance.collection('tripstate')
+      .doc('karnataka')
+      .collection('tripcity')
+      .doc('Bengaluru')
+      .collection('touristSport');
+  Future<void> getallData() async {
+    // Get docs from collection reference
+    QuerySnapshot querySnapshot = await _collectionRef.get();
+    // Get data from docs and convert map to List
+    allData = querySnapshot.docs.map((doc) => doc.data()).toList();
     setState(() {
     });
-    print('&&&&&&&&&&&&&&&');
-    print('$endplace');
-    print('$des');
+    print(allData);
   }
+  List allData = [];
 
-@override
+
+  @override
   void initState() {
-getTripData();
-  // getData();
-  getsportdata();
+    getTripData();
+    getallData();
+    // getData();
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
-    if(endplace != ConnectionState.waiting) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Trek to Sinhagad, $endplace Trip',
-              style: TextStyle(fontSize: 18, color: black)),
-          Text('Your travel sightseeing'),
-          addVerticalSpace(15),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 5),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: height(context) * 1.5,
-                  child: ListView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: int.parse(days.toString()) +1,
-                      padding: EdgeInsets.zero,
-                      itemBuilder: (context, i) {
-                        return Column(
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                if (i != int.parse(days.toString()))
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              StoryPageView()));
-                              },
-                              child:
-                              Row(
-                                children: [
-                                  SizedBox(
-                                      height: height(context) * 0.12,
-                                      width: width(context) * 0.24,
-                                      child: Image.network(
-                                        touristSportimage[i],
-                                        fit: BoxFit.fill,
-                                      )),
-                                  addHorizontalySpace(10),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment
-                                        .start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          if(int.parse(days.toString()) == 1)
-                                          Text(
-                                            dayWiseList1[i],
-                                            style: bodyText18w600(color: black),
-                                          )else if(int.parse(days.toString()) == 2)
-                                            Text(
-                                              dayWiseList2[i],
-                                              style: bodyText18w600(color: black),
-                                            )else if(int.parse(days.toString()) == 3)
+    if (endplace != ConnectionState.waiting) {
+      return Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Trek to Sinhagad, $endplace Trip',
+                style: TextStyle(fontSize: 18, color: black)),
+            Text('Your travel sightseeing'),
+            addVerticalSpace(15),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 5),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 1000,
+                    child: ListView.builder(
+                        padding: EdgeInsets.zero,
+                        shrinkWrap: true,
+                        itemCount: int.parse(days.toString()) + 1,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, i) {
+                          return Column(
+                            children: [
+                              // allData[i]['type'] == type ?
+                              InkWell(
+                                onTap: () {
+                                  if (i != int.parse(days.toString()))
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                StoryPageView()));
+                                },
+                                child: Row(
+                                  children: [
+                                    // allData[i]['type'] == type ?
+                                    SizedBox(
+                                        height: height(context) * 0.12,
+                                        width: width(context) * 0.24,
+                                        child: Image.network(
+                                          allData[i]['image'],
+                                          fit: BoxFit.fill,
+                                        )),
+                                   // : SizedBox(),
+                                    addHorizontalySpace(10),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        // allData[i]['type'] == type ?
+                                        Row(
+                                          children: [
+                                            if (int.parse(days.toString()) == 1)
+                                              Text(
+                                                dayWiseList1[i],
+                                                style:
+                                                    bodyText18w600(color: black),
+                                              )
+                                            else if (int.parse(days.toString()) ==
+                                                2)
+                                              Text(
+                                                dayWiseList2[i],
+                                                style:
+                                                    bodyText18w600(color: black),
+                                              )
+                                            else if (int.parse(days.toString()) ==
+                                                3)
                                               Text(
                                                 dayWiseList3[i],
-                                                style: bodyText18w600(color: black),
-                                              )else if(int.parse(days.toString()) == 4)
-                                                Text(
-                                                  dayWiseList4[i],
-                                                  style: bodyText18w600(color: black),
-                                                )else if(int.parse(days.toString()) == 5)
-                                                  Text(
-                                                    dayWiseList5[i],
-                                                    style: bodyText18w600(color: black),
-                                                  )else if(int.parse(days.toString()) == 6)
-                                                    Text(
-                                                      dayWiseList6[i],
-                                                      style: bodyText18w600(color: black),
-                                                    )else
-                                                    Text(
-                                                      dayWiseList7[i],
-                                                      style: bodyText18w600(color: black),
-                                                    ),
-                                          addHorizontalySpace(8),
-                                          // if (i == 4)
-                                          //   InkWell(
-                                          //     onTap: () {
-                                          //       showDialogBox(context);
-                                          //     },
-                                          //     child: Icon(
-                                          //       Icons.help,
-                                          //       color: black.withOpacity(0.5),
-                                          //     ),
-                                          //   )
-                                        ],
-                                      ),
-                                      addVerticalSpace(6),
-                                      SizedBox(
-                                        width: width(context) * 0.5,
-                                        child: Text(
-                                          des[i],
-                                          style: bodyText14normal(color: black),
+                                                style:
+                                                    bodyText18w600(color: black),
+                                              )
+                                            else if (int.parse(days.toString()) ==
+                                                4)
+                                              Text(
+                                                dayWiseList4[i],
+                                                style:
+                                                    bodyText18w600(color: black),
+                                              )
+                                            else if (int.parse(days.toString()) ==
+                                                5)
+                                              Text(
+                                                dayWiseList5[i],
+                                                style:
+                                                    bodyText18w600(color: black),
+                                              )
+                                            else if (int.parse(days.toString()) ==
+                                                6)
+                                              Text(
+                                                dayWiseList6[i],
+                                                style:
+                                                    bodyText18w600(color: black),
+                                              )
+                                            else
+                                              Text(
+                                                dayWiseList7[i],
+                                                style:
+                                                    bodyText18w600(color: black),
+                                              ),
+                                            addHorizontalySpace(8),
+
+                                            // if (i == 4)
+                                            //   InkWell(
+                                            //     onTap: () {
+                                            //       showDialogBox(context);
+                                            //     },
+                                            //     child: Icon(
+                                            //       Icons.help,
+                                            //       color: black.withOpacity(0.5),
+                                            //     ),
+                                            //   )
+                                          ],
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                        // : SizedBox(),
+                                        addVerticalSpace(6),
+                                        // allData[i]['type'] == type ?
+                                        SizedBox(
+                                          width: width(context) * 0.56,
+                                          child: Text(
+                                            allData[i]['name'],
+                                              // style:
+                                              // bodyText18w600(color: black),
+                                          ),
+                                        ),
+                                        // : SizedBox(),
+                                        addVerticalSpace(6),
+                                        // SizedBox(
+                                        //   width: width(context) * 0.5,
+                                        //   child: Text(
+                                        //     allData[i]['about'],
+                                        //     style: bodyText14normal(color: black),
+                                        //   ),
+                                        // ),
+
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            // addVerticalSpace(15),
-                            const Divider(
-                              height: 30,
-                              thickness: 1,
-                            ),
-                          ],
-                        );
-                      }),
-                ),
-              ],
-            ),
-          )
-        ],
+                              // : SizedBox(),
+                              // addVerticalSpace(15),
+                              // allData[i]['type'] == type ?
+                              const Divider(
+                                height: 30,
+                                thickness: 1,
+                              ),
+                                  // :  SizedBox()
+                            ],
+                          );
+                        }),
+                    //   child: ListView.builder(
+                    //       padding: EdgeInsets.zero,
+                    //       shrinkWrap: true,
+                    //       itemCount: allData.length,
+                    //       physics: const NeverScrollableScrollPhysics(),
+                    //       itemBuilder: (ctx, i) {
+                    //         return Column(
+                    //           crossAxisAlignment: CrossAxisAlignment.start,
+                    //           children: [
+                    //             allData[i]['type'] == type ?
+                    //             Container(
+                    //               height:  33 ,
+                    //               width: 51,
+                    //               decoration: BoxDecoration(
+                    //                   borderRadius: BorderRadius.circular(10),
+                    //                   image: DecorationImage(
+                    //                       fit: BoxFit.fill,
+                    //                       image: NetworkImage(
+                    //                           allData[i]['image']))),
+                    //               child: Column(
+                    //                 // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    //                 crossAxisAlignment: CrossAxisAlignment.start,
+                    //                 children: [
+                    //                   Row(
+                    //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //                     children: [
+                    //                       const Spacer(),
+                    //                     ],
+                    //                   ),
+                    //                   addVerticalSpace(3),
+                    //                   // Center(
+                    //                   //   child: Icon(
+                    //                   //     widget.contentType == 'video'
+                    //                   //         ? Icons.play_circle_sharp
+                    //                   //         : widget.contentType == 'audio'
+                    //                   //         ? Icons.volume_up
+                    //                   //         : widget.contentType == 'file'
+                    //                   //         ? Icons.file_copy
+                    //                   //         : null,
+                    //                   //     color: white,
+                    //                   //     size: 5.h,
+                    //                   //   ),
+                    //                   // )
+                    //                 ],
+                    //               ),
+                    //             )
+                    //                 : SizedBox(),
+                    //             addVerticalSpace(10),
+                    //             allData[i]['type'] == type ?
+                    //             Text(
+                    //               allData[i]['name'],
+                    //               // style: kBodyText12wNormal(black),
+                    //             )
+                    //                 : SizedBox(),
+                    //             addVerticalSpace(10),
+                    //             allData[i]['type'] == type ?
+                    //             Row(
+                    //               children: [
+                    //                 InkWell(
+                    //                     onTap: () {
+                    //                       // nextScreen(context,  profileMoreDetails(MP: allData[i],));
+                    //                     },
+                    //                     child: Text(
+                    //                       'Description & more ',
+                    //                       // style: kBodyText10wNormal(black),
+                    //                     )),
+                    //                 const Icon(
+                    //                   Icons.arrow_forward,
+                    //                   size: 15,
+                    //                 )
+                    //               ],
+                    //             )
+                    //                 : SizedBox(),
+                    //             addVerticalSpace(10),
+                    //             allData[i]['type'] == type ?
+                    //             Divider()
+                    //                 : SizedBox(),
+                    //             addVerticalSpace(10),
+                    //
+                    //           ],
+                    //         );
+                    //       })
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
       );
-    }
-    else{
+    } else {
       return CircularProgressIndicator();
     }
   }

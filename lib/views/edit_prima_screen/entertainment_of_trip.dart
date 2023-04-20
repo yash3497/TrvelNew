@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:travel_app/utils/constant.dart';
 import 'package:travel_app/widget/custom_button.dart';
@@ -38,6 +40,28 @@ class _EntertainmentOfTripScreenState extends State<EntertainmentOfTripScreen> {
     {'name': "Vaily & River", 'isSelect': false},
     {'name': "Botony", 'isSelect': false},
   ];
+  final List FreeTime = [
+    {'name': "Camping", 'isSelect': false},
+    {'name': "Bonfire", 'isSelect': false},
+    {'name': "Singing", 'isSelect': false},
+    {'name': "Cooking", 'isSelect': false},
+    {'name': "Archey", 'isSelect': false},
+    {'name': "Reading", 'isSelect': false},
+    {'name': "Star Gazing", 'isSelect': false},
+    {'name': "Dancing", 'isSelect': false},
+    {'name': "Fishing", 'isSelect': false},
+    {'name': "Boating", 'isSelect': false},
+    {'name': "Shopping", 'isSelect': false},
+    {'name': "Arts and crafts", 'isSelect': false},
+    {'name': "Casino", 'isSelect': false},
+    {'name': "Luxury Stay", 'isSelect': false},
+    {'name': "Cruise", 'isSelect': false},
+  ];
+  final List wellnessList  = [
+    {'name': "Yoga", 'isSelect': false},
+    {'name': "Medition", 'isSelect': false},
+    {'name': "Naturopathy", 'isSelect': false},
+];
 
   @override
   Widget build(BuildContext context) {
@@ -81,6 +105,14 @@ class _EntertainmentOfTripScreenState extends State<EntertainmentOfTripScreen> {
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Text(
+                    'Free Time',
+                    style: bodyText18w600(color: black),
+                  ),
+                ),
+                filterChipWidget(height: 0.37, chipName: FreeTime),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Text(
                     'Religious ',
                     style: bodyText18w600(color: black),
                   ),
@@ -94,6 +126,14 @@ class _EntertainmentOfTripScreenState extends State<EntertainmentOfTripScreen> {
                   ),
                 ),
                 filterChipWidget(height: 0.16, chipName: natureList),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Text(
+                    'Wellness ',
+                    style: bodyText18w600(color: black),
+                  ),
+                ),
+                filterChipWidget(height: 0.16, chipName: wellnessList),
                 addVerticalSpace(height(context) * 0.09),
               ],
             ),
@@ -104,7 +144,9 @@ class _EntertainmentOfTripScreenState extends State<EntertainmentOfTripScreen> {
             child: Center(
               child: SizedBox(
                 width: width(context) * 0.5,
-                child: CustomButton(name: 'Save', onPressed: () {}),
+                child: CustomButton(name: 'Save', onPressed: () {
+                  Navigator.pop(context);
+                }),
               ),
             ),
           )
@@ -125,28 +167,95 @@ class filterChipWidget extends StatefulWidget {
 }
 
 class _filterChipWidgetState extends State<filterChipWidget> {
+
+  String name = "";
+  void getdata() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      var profile = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection("primaAccount")
+          .doc('profile')
+          .get();
+      name = profile.data()?['firstName'];
+    }
+    setState(() {
+    });
+  }
+  @override
+  void initState() {
+    getdata();
+    getDetails();
+    super.initState();
+  }
+  List EntertainmentList = [];
+  void getDetails() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      var profile = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection("Prima_Trip_Plan")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+      EntertainmentList = profile['Entertainment'];
+      setState(() {});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: height(context) * widget.height,
+      height: height(context) * widget.height +30,
       child: GridView.builder(
           physics: NeverScrollableScrollPhysics(),
           itemCount: widget.chipName.length,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3, childAspectRatio: 2.1),
+              crossAxisCount: 3, childAspectRatio: 1.9),
           itemBuilder: (ctx, i) {
-            return InkWell(
+            return GestureDetector(
               onTap: () {
-                setState(() {
-                  widget.chipName[i]['isSelect'] =
-                      !widget.chipName[i]['isSelect'];
-                });
+                if (EntertainmentList.contains(widget.chipName[i]['name'])) {
+                  EntertainmentList.removeAt(
+                      EntertainmentList.indexOf(widget.chipName[i]['name']));
+                  CollectionReference users =
+                  FirebaseFirestore.instance.collection('users');
+                  users
+                      .doc(FirebaseAuth.instance.currentUser!.uid)
+                      .collection("Prima_Trip_Plan")
+                      .doc(FirebaseAuth.instance.currentUser!.uid)
+                      .update({
+                    'Entertainment':
+                    FieldValue.arrayRemove([widget.chipName[i]['name']])
+                  });
+                  setState(() {
+                    widget.chipName[i]['isSelect'] =
+                    !widget.chipName[i]['isSelect'];
+                  });
+                  getDetails();
+                } else {
+                  EntertainmentList.add(widget.chipName[i]['name']);
+                  CollectionReference users =
+                  FirebaseFirestore.instance.collection('users');
+                  users
+                      .doc(FirebaseAuth.instance.currentUser!.uid)
+                      .collection("Prima_Trip_Plan")
+                      .doc(FirebaseAuth.instance.currentUser!.uid)
+                      .update({
+                    'Entertainment':
+                    FieldValue.arrayUnion([widget.chipName[i]['name']])
+                  });
+                  setState(() {
+                    widget.chipName[i]['isSelect'] =
+                    !widget.chipName[i]['isSelect'];
+                  });
+                  getDetails();
+                }
               },
               child: Column(
                 children: [
                   widget.chipName[i]['isSelect']
                       ? Text(
-                          'Sumit',
+                          '$name',
                           style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
@@ -159,11 +268,26 @@ class _filterChipWidgetState extends State<filterChipWidget> {
                               fontWeight: FontWeight.w600,
                               color: black),
                         ),
+                  if(EntertainmentList.contains(widget.chipName[i]['name']))
+                    Text(
+                      '$name',
+                      style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          color: black),
+                    )else
+                    Text(
+                      '',
+                      style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          color: black),
+                    ),
                   Container(
                     margin: EdgeInsets.all(5),
-                    height: height(context) * 0.04,
+                    height: height(context) * 0.045,
                     width: width(context) * 0.3,
-                    decoration: widget.chipName[i]['isSelect']
+                    decoration: EntertainmentList.contains(widget.chipName[i]['name'])
                         ? myFillBoxDecoration(0, primary, 8)
                         : myOutlineBoxDecoration(2, primary, 8),
                     child: Center(

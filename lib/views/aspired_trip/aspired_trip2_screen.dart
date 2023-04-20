@@ -19,24 +19,20 @@ void getCount(_count) async {
   counter.setInt('count', _count);
 }
 
-
 class aspiredScreen extends StatefulWidget {
   const aspiredScreen({super.key});
 
   @override
-  State<aspiredScreen> createState() =>
-      _aspiredScreen();
+  State<aspiredScreen> createState() => _aspiredScreen();
 }
 
-class _aspiredScreen
-    extends State<aspiredScreen> with TickerProviderStateMixin {
+class _aspiredScreen extends State<aspiredScreen>
+    with TickerProviderStateMixin {
   TabController? _tabController;
   bool isShow = false;
 
-
   @override
   void initState() {
-
     _tabController = TabController(length: 4, vsync: this);
     super.initState();
   }
@@ -59,9 +55,9 @@ class _aspiredScreen
         title: isShow
             ? CustomTextFieldWidget(labelText: '  Search  ')
             : Text(
-          'Touch Nature at Hills',
-          style: bodyText20w700(color: black),
-        ),
+                'Touch Nature at Hills',
+                style: bodyText20w700(color: black),
+              ),
         actions: [
           IconButton(
               onPressed: () {
@@ -94,7 +90,7 @@ class _aspiredScreen
                     onTap: (value) {},
                     isScrollable: true,
                     indicator: BoxDecoration(
-                      // shape: BoxShape.rectangle,
+                        // shape: BoxShape.rectangle,
                         borderRadius: BorderRadius.circular(10),
                         color: primary),
                     indicatorColor: primary,
@@ -105,19 +101,17 @@ class _aspiredScreen
                         fontSize: 14, fontWeight: FontWeight.w400),
                     tabs: const [
                       Tab(
-
                         text: 'Aspired Trip',
                       ),
                       Tab(
                         text: 'Festival Trip',
                       ),
-
                     ],
                   ),
                 ),
                 Expanded(
                   child:
-                  TabBarView(controller: _tabController, children: const [
+                      TabBarView(controller: _tabController, children: const [
                     AspiredTrip2Screen(),
                     AspiredTrip2Screen(),
                   ]),
@@ -142,17 +136,17 @@ class _AspiredTrip2ScreenState extends State<AspiredTrip2Screen> {
   bool isShow = false;
 
   CollectionReference _collectionRef =
-  FirebaseFirestore.instance.collection('Aspired_trips');
+      FirebaseFirestore.instance.collection('Aspired_trips');
 
   Future<void> getData() async {
     // Get docs from collection reference
     QuerySnapshot querySnapshot = await _collectionRef.get();
     // Get data from docs and convert map to List
     allData = querySnapshot.docs.map((doc) => doc.data()).toList();
-    setState(() {
-    });
+    setState(() {});
     print(allData);
   }
+
   List allData = [];
 
   // String _destination = "";
@@ -184,11 +178,10 @@ class _AspiredTrip2ScreenState extends State<AspiredTrip2Screen> {
   String _title = "";
   String _imagee = "";
   bool isBookmarked = false;
-  List Bookmarklist =[];
+  List Bookmarklist = [];
   void bookmark() {
     if (isBookmarked) {
-      Bookmarklist
-          .removeAt(Bookmarklist.indexOf(['postID']));
+      Bookmarklist.removeAt(Bookmarklist.indexOf(['postID']));
       // CollectionReference users = FirebaseFirestore.instance
       //     .collection('users');
       // users
@@ -204,20 +197,19 @@ class _AspiredTrip2ScreenState extends State<AspiredTrip2Screen> {
       // setState(() {
       //   isBookmarked = !isBookmarked;
       // });
-    } else
-    {
+    } else {
       Bookmarklist.add(context);
-      CollectionReference users = FirebaseFirestore.instance
-          .collection('users');
+      CollectionReference users =
+          FirebaseFirestore.instance.collection('users');
       users
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .collection("bookmarks")
           .add({
         'id': _id,
         'image': _imagee,
-        'location':_location,
-        'subtitle':_subtitle,
-        'title':_title,
+        'location': _location,
+        'subtitle': _subtitle,
+        'title': _title,
       });
       // setState(() {
       // });
@@ -230,200 +222,217 @@ class _AspiredTrip2ScreenState extends State<AspiredTrip2Screen> {
     getData();
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
-          Expanded(child: ListView.builder(itemCount:allData.length,itemBuilder: (ctx, i) {
-            return InkWell(
-              onTap: () {
-                if (FirebaseAuth.instance.currentUser != null) {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => AspiredTripDetailsScreen(MP: allData[i],)));
-                } else{
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SignupWithSocialMediaScreen(),
-                    ),
-                  );
-                }
-              },
-              child: Container(
-                margin: EdgeInsets.all(10),
-                height: height(context) * 0.450,
-                width: width(context) * 0.95,
-                decoration: shadowDecoration(15, 0.2),
-                child: Column(
-                  children: [
-                    Stack(
-                      children: [
-                        ClipRRect(
-                            borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(15),
-                                topRight: Radius.circular(15)),
-                            child: Image.network(allData[i]['imageUrl'])),
-                        Positioned(
-                          top: -5,
-                          right: -5,
-                          child: IconButton(
-                              onPressed: ()  async{
-                              //  Navigator.push(context, MaterialPageRoute(builder: (context)=>TripLibraryScreen()));
-                               // bookmark();
-                                if (!isBookmarked) {
-
-                                  Bookmarklist.add(context);
-                                  DocumentReference users = FirebaseFirestore.instance
-                                      .collection('users')
-                                      .doc(FirebaseAuth.instance.currentUser!.uid)
-                                      .collection("bookmarks")
-                                      .doc();
-                                  users.set({
-                                    'id': _id,
-                                    "postID": users.id,
-                                    'image': _imagee,
-                                    'location':_location,
-                                    'subtitle':_subtitle,
-                                    'title':_title,
-                                  });
-                                }
-                                else {
-                                  var trip = await FirebaseFirestore.instance
-                                      .collection('users')
-                                      .doc(FirebaseAuth.instance.currentUser!.uid)
-                                      .collection('bookmarks')
-                                      .doc()
-                                      .get();
-                                  var docID = trip.data()?['docID'];
-                                  FirebaseDB().removeBookmark(docID);
-                                }
-                                setState(() {
-                                  isBookmarked = !isBookmarked;
-                                });
-                              },
-                              icon: !isBookmarked
-                                  ? Icon(
-                                Icons.bookmark_border,
-                                color: white,
-                              )
-                                  : const Icon(Icons.bookmark)),
-                        ),
-                        Positioned(
-                            bottom: 0,
-                            left: 0,
-                            child: Container(
-                              height: height(context) * 0.04,
-                              width: width(context) * 0.95,
-                              padding: EdgeInsets.only(left: 5),
-                              color: black.withOpacity(0.5),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
+          Expanded(
+              child: ListView.builder(
+                  itemCount: allData.length,
+                  itemBuilder: (ctx, i) {
+                    return InkWell(
+                      onTap: () {
+                        if (FirebaseAuth.instance.currentUser != null) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      AspiredTripDetailsScreen(
+                                        MP: allData[i],
+                                      )));
+                        } else {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  SignupWithSocialMediaScreen(),
+                            ),
+                          );
+                        }
+                      },
+                      child: Container(
+                        margin: EdgeInsets.all(10),
+                        height: height(context) * 0.450,
+                        width: width(context) * 0.95,
+                        decoration: shadowDecoration(15, 0.2),
+                        child: Column(
+                          children: [
+                            Stack(
+                              children: [
+                                ClipRRect(
+                                    borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(15),
+                                        topRight: Radius.circular(15)),
+                                    child:
+                                        Image.network(allData[i]['imageUrl'])),
+                                Positioned(
+                                  top: -5,
+                                  right: -5,
+                                  child: IconButton(
+                                      onPressed: () async {
+                                        //  Navigator.push(context, MaterialPageRoute(builder: (context)=>TripLibraryScreen()));
+                                        // bookmark();
+                                        if (!isBookmarked) {
+                                          Bookmarklist.add(context);
+                                          DocumentReference users =
+                                              FirebaseFirestore.instance
+                                                  .collection('users')
+                                                  .doc(FirebaseAuth.instance
+                                                      .currentUser!.uid)
+                                                  .collection("bookmarks")
+                                                  .doc();
+                                          users.set({
+                                            'id': _id,
+                                            "postID": users.id,
+                                            'image': _imagee,
+                                            'location': _location,
+                                            'subtitle': _subtitle,
+                                            'title': _title,
+                                          });
+                                        } else {
+                                          var trip = await FirebaseFirestore
+                                              .instance
+                                              .collection('users')
+                                              .doc(FirebaseAuth
+                                                  .instance.currentUser!.uid)
+                                              .collection('bookmarks')
+                                              .doc()
+                                              .get();
+                                          var docID = trip.data()?['docID'];
+                                          FirebaseDB().removeBookmark(docID);
+                                        }
+                                        setState(() {
+                                          isBookmarked = !isBookmarked;
+                                        });
+                                      },
+                                      icon: !isBookmarked
+                                          ? Icon(
+                                              Icons.bookmark_border,
+                                              color: white,
+                                            )
+                                          : const Icon(Icons.bookmark)),
+                                ),
+                                Positioned(
+                                    bottom: 0,
+                                    left: 0,
+                                    child: Container(
+                                      height: height(context) * 0.04,
+                                      width: width(context) * 0.95,
+                                      padding: EdgeInsets.only(left: 5),
+                                      color: black.withOpacity(0.5),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          SizedBox(
+                                            width: width(context) * 0.88,
+                                            child: Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.location_on_rounded,
+                                                  color: primary,
+                                                  size: 20,
+                                                ),
+                                                addHorizontalySpace(5),
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      allData[i]
+                                                          ['destinationname'],
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: white),
+                                                    ),
+                                                    Text(
+                                                      allData[i]['statename'],
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: white),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Spacer(),
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      allData[i]['tripdays'],
+                                                      style: bodyText14w600(
+                                                          color: Colors.yellow),
+                                                    ),
+                                                    Text(
+                                                      '  Days',
+                                                      style: bodyText14w600(
+                                                          color: Colors.yellow),
+                                                    ),
+                                                  ],
+                                                )
+                                              ],
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ))
+                              ],
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Row(
                                 children: [
-                                  SizedBox(
-                                    width: width(context) * 0.88,
-                                    child: Row(
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        Icon(
-                                          Icons.location_on_rounded,
-                                          color: primary,
-                                          size: 20,
+                                        Text(
+                                          allData[i]['tripname'],
+                                          style: bodyText22w700(color: black),
                                         ),
-                                        addHorizontalySpace(5),
+                                        addVerticalSpace(10),
+                                        Text(
+                                          allData[i]['Excerpt_of_trip'],
+                                          style: bodyText14normal(color: black),
+                                        ),
+                                        addVerticalSpace(4),
                                         Row(
                                           children: [
                                             Text(
-                                             allData[i]['destinationname'],
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                  color: white),
+                                              'Expected ₹: ',
+                                              style:
+                                                  bodyText14w600(color: black),
                                             ),
                                             Text(
-                                              allData[i]['statename'],
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                  color: white),
-                                            ),
-                                          ],
-                                        ),
-                                        Spacer(),
-                                        Row(
-                                          children: [
-                                            Text(
-                                             allData[i]['tripdays'],
-                                              style: bodyText14w600(color: Colors.yellow),
+                                              allData[i]['Budget'],
+                                              style:
+                                                  bodyText14w600(color: black),
                                             ),
                                             Text(
-                                             '  Days',
-                                              style: bodyText14w600(color: Colors.yellow),
+                                              ' /per person',
+                                              style:
+                                                  bodyText14w600(color: black),
                                             ),
+                                            Spacer(),
+                                            TextButton(
+                                                child: Text('get quotes'),
+                                                onPressed: () {})
                                           ],
                                         )
                                       ],
                                     ),
-                                  )
+                                  ),
                                 ],
                               ),
-                            ))
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  allData[i]['tripname'],
-                                  style: bodyText22w700(color: black),
-                                ),
-                                addVerticalSpace(10),
-                                Text(
-                                  allData[i]['Excerpt_of_trip'],
-                                  style: bodyText14normal(color: black),
-                                ),
-                               addVerticalSpace(4),
-                                Row(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          'Expected ₹: ',
-                                          style: bodyText14w600(color: black),
-                                        ),
-                                        Text(
-                                          allData[i]['Budget'],
-                                          style: bodyText14w600(color: black),
-                                        ),
-                                        Text(
-                                          ' /per person',
-                                          style: bodyText14w600(color: black),
-                                        ),
-                                      ],
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 60),
-                                      child: TextButton(child: Text('get quotes'), onPressed: (){}),
-                                    )
-                                  ],
-                                )
-                              ],
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-
-                  ],
-                ),
-              ),
-            );
-          }))
+                    );
+                  }))
         ],
       ),
     );

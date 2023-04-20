@@ -63,7 +63,7 @@ class _MyTripFriendsScreenState extends State<MyTripFriendsScreen> {
     for (var element in allMemList) {
       var lastActTime = DateTime.fromMillisecondsSinceEpoch(
           int.parse(element['lastActive'] ?? 0.0) * 1000);
-      //prima, friend & 
+      //prima, friend &
       var nowTime = DateTime.now();
 
       print('${element['UID']}=====$nowTime ========$lastActTime');
@@ -392,6 +392,7 @@ class _MyTripFriendsScreenState extends State<MyTripFriendsScreen> {
                           Row(
                             children: [
                               Text("by Location : "),
+                              Spacer(),
                               Container(
                                 width: width * 0.35,
                                 child: CustomTextFieldWidget(
@@ -404,14 +405,14 @@ class _MyTripFriendsScreenState extends State<MyTripFriendsScreen> {
                           addVerticalSpace(height * 0.01),
                           Row(
                             children: [
-                              Text("by Age : $currentValue"),
+                              Text("by Age : ${ageFilter ? currentValue : ''}"),
                               Container(
-                                width: width * 0.5,
+                                width: width * 0.35,
                                 child: DropdownButton<String>(
                                   isExpanded: true,
                                   items: ages.map((String value) {
                                     return DropdownMenuItem<String>(
-                                      value: value,
+                                      value: currentValue,
                                       child: Text(value),
                                     );
                                   }).toList(),
@@ -430,6 +431,7 @@ class _MyTripFriendsScreenState extends State<MyTripFriendsScreen> {
                           Row(
                             children: [
                               Text("by profession : "),
+                              Spacer(),
                               Container(
                                 width: width * 0.35,
                                 child: CustomTextFieldWidget(

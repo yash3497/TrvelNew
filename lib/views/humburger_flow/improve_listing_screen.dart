@@ -10,7 +10,8 @@ import 'package:travel_app/widget/custom_textfield.dart';
 import '../../model/save_trip_model.dart';
 
 class ImproveListingScreen extends StatefulWidget {
-  const ImproveListingScreen({super.key});
+  const ImproveListingScreen({super.key, required this.MP});
+  final Map<String,dynamic> MP;
 
   @override
   State<ImproveListingScreen> createState() => _ImproveListingScreenState();
@@ -40,7 +41,7 @@ class _ImproveListingScreenState extends State<ImproveListingScreen> {
               ),
               addVerticalSpace(25),
               Text(
-                'Shree Krishna Math',
+                widget.MP['TouristSportName'],
                 style: bodyText18w600(color: black),
               ),
               Text(

@@ -16,15 +16,22 @@ class SaveTripStep2 extends StatefulWidget {
 }
 
 class _SaveTripStep2State extends State<SaveTripStep2> {
-  final List saveTripList = [
+  final List saveTripList1 = [
     {'img': 'assets/images/road.png', 'name': 'Road'},
+    {'img': 'assets/images/plane.png', 'name': 'Flight'},
+  ];
+  final List saveTripList2 = [
     {'img': 'assets/images/train.png', 'name': 'Train'},
+    {'img': 'assets/images/plane.png', 'name': 'Flight'},
+  ];
+  final List saveTripList3 = [
     {'img': 'assets/images/plane.png', 'name': 'Flight'},
   ];
 
   int currentIndex1 = 0;
   int currentIndex2 = 1;
-  int currentIndex3 = 2;
+  String changemode = "";
+  // int currentIndex3 = 2;
   String startplace = "";
   String endplace = "";
   String mode = "";
@@ -39,6 +46,22 @@ class _SaveTripStep2State extends State<SaveTripStep2> {
       startplace = profile.data()?['StartTrip'];
       endplace = profile.data()?['endtrip'];
       mode = profile.data()?['tripmode'];
+
+    }
+    setState(() {
+
+    });
+  }
+  void updateTripData() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      var profile = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection('Plan_trip')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({
+        "tripmode": changemode
+      });
 
     }
     setState(() {
@@ -74,22 +97,108 @@ class _SaveTripStep2State extends State<SaveTripStep2> {
           height: 30,
           thickness: 1,
         ),
-        InkWell(
-          onTap: (){
-            TravelMode(context);
-          },
-          child: SizedBox(
+        // InkWell(
+        //   onTap: (){
+        //     TravelMode(context);
+        //   },
+        if(mode=='Bus')
+           SizedBox(
             height: height(context) * 0.15,
             child: ListView.builder(
-                itemCount: saveTripList.length,
+                itemCount: saveTripList1.length,
                 scrollDirection: Axis.horizontal,
                 padding: EdgeInsets.zero,
                 physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (ctx, i) {
-                  return  Column(
+                  return  InkWell(
+                    onTap: (){
+                      setState(() {
+                        currentIndex1 = i;
+                        changemode = saveTripList1[i]['name'];
+                      });
+                      updateTripData();
+                    },
+                    child: Column(
+                        children: [
+                          if(mode == 'Bus')
+                           Container(
+                              height: height(context) * 0.1,
+                              width: width(context) * 0.23,
+                              padding: EdgeInsets.all(8),
+                              margin: EdgeInsets.all(12),
+                              decoration: currentIndex1 == i
+                                  ? myFillBoxDecoration(0, primary, 10)
+                                  : myFillBoxDecoration(0, white, 10),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  SizedBox(
+                                    height: 30,
+                                    child: Image.asset(
+                                      saveTripList1[i]['img'],
+                                      color: currentIndex1 == i ? white : primary,
+                                    ),
+                                  ),
+                                  addVerticalSpace(10),
+                                  Text(
+                                    saveTripList1[i]['name'],
+                                    style: bodyText16w600(color: black),
+                                  )
+                                ],
+                              ),
+                          )else
+                            Container(
+                              height: height(context) * 0.1,
+                              width: width(context) * 0.23,
+                              padding: EdgeInsets.all(8),
+                              margin: EdgeInsets.all(12),
+                              decoration: currentIndex2 == i
+                                  ? myFillBoxDecoration(0, primary, 10)
+                                  : myFillBoxDecoration(0, white, 10),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  SizedBox(
+                                    height: 30,
+                                    child: Image.asset(
+                                      saveTripList1[i]['img'],
+                                      color: currentIndex2 == i ? white : primary,
+                                    ),
+                                  ),
+                                  addVerticalSpace(10),
+                                  Text(
+                                    saveTripList1[i]['name'],
+                                    style: bodyText16w600(color: black),
+                                  )
+                                ],
+                              ),
+                            )
+                        ],
+                      ),
+                  );
+
+                }),
+          )else if(mode == 'Train')
+          SizedBox(
+            height: height(context) * 0.15,
+            child: ListView.builder(
+                itemCount: saveTripList2.length,
+                scrollDirection: Axis.horizontal,
+                padding: EdgeInsets.zero,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: (ctx, i) {
+                  return  InkWell(
+                    onTap: (){
+                      setState(() {
+                        currentIndex1 = i;
+                        changemode = saveTripList2[i]['name'];
+                        updateTripData();
+                      });
+                    },
+                    child: Column(
                       children: [
-                        if(mode == 'Bus')
-                         Container(
+                         if(mode == 'Train')
+                          Container(
                             height: height(context) * 0.1,
                             width: width(context) * 0.23,
                             padding: EdgeInsets.all(8),
@@ -103,18 +212,18 @@ class _SaveTripStep2State extends State<SaveTripStep2> {
                                 SizedBox(
                                   height: 30,
                                   child: Image.asset(
-                                    saveTripList[i]['img'],
+                                    saveTripList2[i]['img'],
                                     color: currentIndex1 == i ? white : primary,
                                   ),
                                 ),
                                 addVerticalSpace(10),
                                 Text(
-                                  saveTripList[i]['name'],
+                                  saveTripList2[i]['name'],
                                   style: bodyText16w600(color: black),
                                 )
                               ],
                             ),
-                        )else if(mode == 'Train')
+                          )else
                           Container(
                             height: height(context) * 0.1,
                             width: width(context) * 0.23,
@@ -129,50 +238,67 @@ class _SaveTripStep2State extends State<SaveTripStep2> {
                                 SizedBox(
                                   height: 30,
                                   child: Image.asset(
-                                    saveTripList[i]['img'],
+                                    saveTripList2[i]['img'],
                                     color: currentIndex2 == i ? white : primary,
                                   ),
                                 ),
                                 addVerticalSpace(10),
                                 Text(
-                                  saveTripList[i]['name'],
-                                  style: bodyText16w600(color: black),
-                                )
-                              ],
-                            ),
-                          )else
-                          Container(
-                            height: height(context) * 0.1,
-                            width: width(context) * 0.23,
-                            padding: EdgeInsets.all(8),
-                            margin: EdgeInsets.all(12),
-                            decoration: currentIndex3 == i
-                                ? myFillBoxDecoration(0, primary, 10)
-                                : myFillBoxDecoration(0, white, 10),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                SizedBox(
-                                  height: 30,
-                                  child: Image.asset(
-                                    saveTripList[i]['img'],
-                                    color: currentIndex3 == i ? white : primary,
-                                  ),
-                                ),
-                                addVerticalSpace(10),
-                                Text(
-                                  saveTripList[i]['name'],
+                                  saveTripList2[i]['name'],
                                   style: bodyText16w600(color: black),
                                 )
                               ],
                             ),
                           )
                       ],
-                    );
+                    ),
+                  );
+
+                }),
+          )
+        else
+          SizedBox(
+            height: height(context) * 0.15,
+            child: ListView.builder(
+                itemCount: saveTripList3.length,
+                scrollDirection: Axis.horizontal,
+                padding: EdgeInsets.zero,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: (ctx, i) {
+                  return  Column(
+                    children: [
+                        Container(
+                          height: height(context) * 0.1,
+                          width: width(context) * 0.23,
+                          padding: EdgeInsets.all(8),
+                          margin: EdgeInsets.all(12),
+                          decoration: currentIndex1 == i
+                              ? myFillBoxDecoration(0, primary, 10)
+                              : myFillBoxDecoration(0, white, 10),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              SizedBox(
+                                height: 30,
+                                child: Image.asset(
+                                  saveTripList3[i]['img'],
+                                  color: currentIndex1 == i ? white : primary,
+                                ),
+                              ),
+                              addVerticalSpace(10),
+                              Text(
+                                saveTripList3[i]['name'],
+                                style: bodyText16w600(color: black),
+                              )
+                            ],
+                          ),
+                        )
+                    ],
+                  );
 
                 }),
           ),
-        ),
+
         const Divider(
           height: 30,
           thickness: 1,
@@ -188,7 +314,7 @@ class _SaveTripStep2State extends State<SaveTripStep2> {
         SizedBox(
           width: width(context) * 0.56,
           child: CustomDropDownButton(
-            itemList: ['Yes', 'No'],
+            itemList: ['Rent me a vehicle', 'I’ll use my own'],
             lableText: '  Bus booking  ',
           ),
         )else if(mode == 'Train')
@@ -198,14 +324,7 @@ class _SaveTripStep2State extends State<SaveTripStep2> {
               itemList: ['Yes', 'No'],
               lableText: '  Train booking  ',
             ),
-          )else
-              SizedBox(
-              width: width(context) * 0.56,
-               child: CustomDropDownButton(
-               itemList: ['Yes', 'No'],
-               lableText: '  Flight booking  ',
-              ),
-              ),
+          ),
         addVerticalSpace(15),
         Text('It will take 8 hours to reach')
       ],

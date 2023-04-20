@@ -33,7 +33,57 @@ String incl1 = "";
     "Includes": incl1,
   });
 }
+String place = "";
+int days1 = 0;
+String days2 = "";
+String _image = "";
+String _date = "";
+String _tripName = "";
+String _tripType = "";
+bool? flexibledate ;
 
+void getData() async {
+  if (FirebaseAuth.instance.currentUser != null) {
+    var profile = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection('Plan_trip')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get();
+    place = profile.data()?['endtrip'];
+    days1 = profile.data()?['totalDays'];
+    days2 = profile.data()?['mainualyEnterDays'];
+    flexibledate = profile.data()?['Flexible'];
+    _image = profile.data()?['cityImage'];
+    _date = profile.data()?['StartDate'];
+    _tripName = profile.data()?['endtrip'];
+    _tripType = profile.data()?['tripPlan'];
+    _totalday = profile.data()?['totalDays'];
+  }
+  // setState(() {
+  //
+  // });
+}
+int _totalday = 0;
+addUpcomingTrip() async {
+  CollectionReference users = FirebaseFirestore.instance.collection('users');
+  users
+      .doc(FirebaseAuth.instance.currentUser!.uid)
+      .collection("upcomingtrip")
+      .add({
+    "image": _image,
+    "tirpname": _tripName,
+    "address": place,
+    "date": _date,
+    "tripsport":"Kankaria Lake, Sabarmati Ashram, Indro Nature Park",
+    "travelTrip":true,
+    "tripType": _tripType,
+    "totalDays": _totalday
+  });
+  // setState(() {
+  //
+  // });
+}
 class SaveTripStep3 extends StatefulWidget {
   const SaveTripStep3({super.key});
 
@@ -43,27 +93,8 @@ class SaveTripStep3 extends StatefulWidget {
 
 class _SaveTripStep3State extends State<SaveTripStep3> {
 
-  String place = "";
- int days1 = 0;
-  String days2 = "";
 
-  void getData() async {
-    if (FirebaseAuth.instance.currentUser != null) {
-      var profile = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .collection('Plan_trip')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .get();
-      place = profile.data()?['endtrip'];
-      days1 = profile.data()?['totalDays'];
-      days2 = profile.data()?['mainualyEnterDays'];
 
-    }
-    setState(() {
-
-    });
-  }
   String _email = "";
   String _mobnum = "";
   void getcontact() async{
@@ -128,6 +159,14 @@ class _SaveTripStep3State extends State<SaveTripStep3> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if(flexibledate == false)
+                  SizedBox(
+                      width: width(context) * 0.6,
+                      child: CustomTextFieldWidget(
+                        Enable: false,
+                          controller: DepatureDateController,
+                          labelText: 'Departure date'
+                      ))else
                 SizedBox(
                     width: width(context) * 0.6,
                     child: CustomTextFieldWidget(

@@ -3,7 +3,12 @@ import 'package:flutter/material.dart';
 import '../utils/constant.dart';
 
 class CustomDropDownButton extends StatefulWidget {
-  CustomDropDownButton({super.key, required this.itemList, this.lableText,TextEditingController? controller, this.value});
+  CustomDropDownButton(
+      {super.key,
+      required this.itemList,
+      this.lableText,
+      TextEditingController? controller,
+      this.value});
   final List<String> itemList;
   final value;
   final lableText;
@@ -37,7 +42,10 @@ class _CustomDropDownButtonState extends State<CustomDropDownButton> {
                     // width: width(context) * 0.35,
                     decoration: myFillBoxDecoration(0, white, 20),
                     child: Center(
-                      child: Text(widget.lableText,style: TextStyle(fontSize: 18),),
+                      child: Text(
+                        widget.lableText,
+                        style: TextStyle(fontSize: 14),
+                      ),
                     ),
                   ),
                 ),
@@ -54,9 +62,9 @@ class _CustomDropDownButtonState extends State<CustomDropDownButton> {
         items: widget.itemList
             .map<DropdownMenuItem<String>>(
                 (String value) => DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            ))
+                      value: value,
+                      child: Text(value),
+                    ))
             .toList(),
         value: selectedItem,
         onChanged: (newValue) {
@@ -67,5 +75,4 @@ class _CustomDropDownButtonState extends State<CustomDropDownButton> {
       ),
     );
   }
-
 }

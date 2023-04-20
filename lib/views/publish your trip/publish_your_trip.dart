@@ -31,27 +31,43 @@ class _PublishYourTripScreenState extends State<PublishYourTripScreen> {
 
   @override
   void initState() {
-    getDetails();
+    // getDetails();
+    getdata();
+    getPrimaDeatials();
     super.initState();
   }
   // final List<String> tripLocation = ['Pune', 'Mumbai', 'chennai'];
-  void getDetails() async {
+  String image = "";
+  void getPrimaDeatials() async {
     if (FirebaseAuth.instance.currentUser != null) {
       var profile = await FirebaseFirestore.instance
           .collection('users')
           .doc(FirebaseAuth.instance.currentUser!.uid)
-          .collection('Trip_Plan')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection('primaAccount')
+          .doc('profile')
           .get();
-      SeeTripController.text = profile.data()?['who see trip'];
-      InvitedMemberController.text = profile.data()?['Inveted Member'];
-      MaxMemberController.text = profile.data()?['Max Member'];
-      SpendsController.text = profile.data()?['Spends'];
+      image = profile.data()?['imageUrl'];
       setState(() {});
     }
   }
+  String member = "";
+  String maxmember = "";
+  void getdata() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      var profile = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection("Prima_Trip_Plan")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+      member = profile.data()?['Inveted Member'];
+      maxmember = profile.data()?['Max_Member'];
+    }
+    setState(() {
+    });
+  }
   int _activeCurrentStep = 0;
-  bool isChecked = false;
+  bool isChecked = true;
   TextEditingController pass = TextEditingController();
   TextEditingController address = TextEditingController();
   TextEditingController pincode = TextEditingController();
@@ -68,21 +84,21 @@ class _PublishYourTripScreenState extends State<PublishYourTripScreen> {
     CollectionReference users = FirebaseFirestore.instance.collection('users');
     users
         .doc(FirebaseAuth.instance.currentUser!.uid)
-        .collection("Trip_Plan")
+        .collection("Prima_Trip_Plan")
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .update({
       "who see trip": seetripvalue,
       "Inveted Member": InvitedMembervalue,
-      "Max Member": MaxMembervalue,
+      "Max_Member": MaxMembervalue,
       "Spends": spendvalue,
     })
         .then((value) => print("User Added"))
         .catchError((error) => print("Failed to add user: $error"));
   }
-  String InvitedMembervalue="All Members";
-  String seetripvalue="Public";
-  String MaxMembervalue="1";
-  String spendvalue="For him/her self";
+  String InvitedMembervalue="Public";
+  String seetripvalue="Select";
+  String MaxMembervalue="Select";
+  String spendvalue="Select";
 
   List<Step> stepList() => [
     Step(
@@ -108,59 +124,348 @@ class _PublishYourTripScreenState extends State<PublishYourTripScreen> {
         title: const SizedBox(),
         content: Column(
           children: [
-            Row(
+            Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                SizedBox(
-                  width: width(context) * 0.42,
-                  child: CustomDropDownButton(
-                      value: seetripvalue,
-                      itemList: ['Public', 'My Trip friends'],
-                      controller: SeeTripController,
-                      lableText: 'Who can see your trip'),
+                Row(
+                  children: [
+                    Container(
+                        child: const Text(
+                            '     Who can see your trip  ')),
+                    Container(
+                        child: const Text(
+                            '                      Members Type invited  ')),
+                  ],
                 ),
-                SizedBox(
-                  width: width(context) * 0.42,
-                  child: CustomDropDownButton(
-                      value: InvitedMembervalue,
-                      itemList: ['All type', ' Only Men','Only Women'],
-                      controller: InvitedMemberController,
-                      lableText: 'Members Type invited'),
-                )
+                addVerticalSpace(5),
+
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 5),
+                      child: SizedBox(
+                        height: 43,
+                        width: width(context) * 0.42,
+                        child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: const Border(
+                                  top: BorderSide(
+                                    color: Colors.black26,
+                                  ),
+                                  bottom: BorderSide(color: Colors.black26),
+                                  right: BorderSide(color: Colors.black26),
+                                  left: BorderSide(color: Colors.black26))),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: DropdownButton<String>(
+                              borderRadius: BorderRadius.circular(10),
+                              value: InvitedMembervalue,
+                              isExpanded: true,
+                              onChanged: (newValue) {
+                                setState(() {
+                                  InvitedMembervalue = newValue!;
+                                });
+                              },
+                              items: [
+                                'Public',
+                                'My Trip friends'
+                              ]
+                                  .map<DropdownMenuItem<String>>((String value) =>
+                                  DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 5),
+                                      child: Text(
+                                        value,
+                                        style: const TextStyle(
+                                            fontSize: 15,
+                                            color: Colors.black),
+                                      ),
+                                    ),
+                                  ))
+                                  .toList(),
+
+                              // add extra sugar..
+                              icon: const Padding(
+                                padding: EdgeInsets.only(bottom: 8.0),
+                                child: Icon(
+                                  Icons.arrow_drop_down,
+                                ),
+                              ),
+                              iconSize: 25,
+                              iconEnabledColor: primary,
+                              iconDisabledColor: black.withOpacity(0.7),
+                              underline: const SizedBox(),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: SizedBox(
+                        height: 43,
+                        width: width(context) * 0.42,
+                        child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: const Border(
+                                  top: BorderSide(
+                                    color: Colors.black26,
+                                  ),
+                                  bottom: BorderSide(color: Colors.black26),
+                                  right: BorderSide(color: Colors.black26),
+                                  left: BorderSide(color: Colors.black26))),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: DropdownButton<String>(
+                              borderRadius: BorderRadius.circular(10),
+                              value: seetripvalue,
+                              isExpanded: true,
+                              onChanged: (newValue) {
+                                setState(() {
+                                  seetripvalue = newValue!;
+                                });
+                              },
+                              items: [
+                                'Select',
+                                'All type',
+                                'Only Men',
+                                'Only Women'
+                              ]
+                                  .map<DropdownMenuItem<String>>((String value) =>
+                                  DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 5),
+                                      child: Text(
+                                        value,
+                                        style: const TextStyle(
+                                            fontSize: 15,
+                                            color: Colors.black),
+                                      ),
+                                    ),
+                                  ))
+                                  .toList(),
+
+                              // add extra sugar..
+                              icon: const Padding(
+                                padding: EdgeInsets.only(bottom: 8.0),
+                                child: Icon(
+                                  Icons.arrow_drop_down,
+                                ),
+                              ),
+                              iconSize: 25,
+                              iconEnabledColor: primary,
+                              iconDisabledColor: black.withOpacity(0.7),
+                              underline: const SizedBox(),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                // SizedBox(
+                //   width: width(context) * 0.42,
+                //   child: CustomDropDownButton(
+                //       value: seetripvalue,
+                //       itemList: ['Public', 'My Trip friends'],
+                //       controller: SeeTripController,
+                //       lableText: 'Who can see your trip'),
+                // ),
+                // SizedBox(
+                //   width: width(context) * 0.42,
+                //   child: CustomDropDownButton(
+                //       value: InvitedMembervalue,
+                //       itemList: ['All type', ' Only Men','Only Women'],
+                //       controller: InvitedMemberController,
+                //       lableText: 'Members Type invited'),
+                // )
+
               ],
             ),
             addVerticalSpace(20),
-            Row(
+            Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                SizedBox(
-                  width: width(context) * 0.4,
-                  child: CustomDropDownButton(itemList: [
-                    '1',
-                    '2',
-                    '3',
-                    '4',
-                    '5',
-                    '6',
-                    '7',
-                    '8',
-                    '9',
-                    '10'
+                Row(
+                  children: [
+                    Container(
+                        child: const Text(
+                            '     Max Members for Trip  ')),
+                    Container(
+                        child: const Text(
+                            '                      How spends distributed?  ')),
                   ],
-                      value: MaxMembervalue,
-                      controller: MaxMemberController,
-                      lableText: 'Max Members for Trip'),
                 ),
-                SizedBox(
-                  width: width(context) * 0.44,
-                  child: CustomDropDownButton(
-                      itemList: ['For him/her self',' Trip host','Except trip host'],
-                      value: spendvalue,
-                      controller: SpendsController,
-                      lableText: 'How spends distributed?'),
-                )
+                addVerticalSpace(5),
+
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 5),
+                      child: SizedBox(
+                        height: 43,
+                        width: width(context) * 0.42,
+                        child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: const Border(
+                                  top: BorderSide(
+                                    color: Colors.black26,
+                                  ),
+                                  bottom: BorderSide(color: Colors.black26),
+                                  right: BorderSide(color: Colors.black26),
+                                  left: BorderSide(color: Colors.black26))),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: DropdownButton<String>(
+                              borderRadius: BorderRadius.circular(10),
+                              value: MaxMembervalue,
+                              isExpanded: true,
+                              onChanged: (newValue) {
+                                setState(() {
+                                  MaxMembervalue = newValue!;
+                                });
+                              },
+                              items: [
+                                'Select',
+                                '1',
+                                '2',
+                                '3',
+                                '4',
+                              ]
+                                  .map<DropdownMenuItem<String>>((String value) =>
+                                  DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 5),
+                                      child: Text(
+                                        value,
+                                        style: const TextStyle(
+                                            fontSize: 15,
+                                            color: Colors.black),
+                                      ),
+                                    ),
+                                  ))
+                                  .toList(),
+
+                              // add extra sugar..
+                              icon: const Padding(
+                                padding: EdgeInsets.only(bottom: 8.0),
+                                child: Icon(
+                                  Icons.arrow_drop_down,
+                                ),
+                              ),
+                              iconSize: 25,
+                              iconEnabledColor: primary,
+                              iconDisabledColor: black.withOpacity(0.7),
+                              underline: const SizedBox(),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: SizedBox(
+                        height: 43,
+                        width: width(context) * 0.42,
+                        child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: const Border(
+                                  top: BorderSide(
+                                    color: Colors.black26,
+                                  ),
+                                  bottom: BorderSide(color: Colors.black26),
+                                  right: BorderSide(color: Colors.black26),
+                                  left: BorderSide(color: Colors.black26))),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: DropdownButton<String>(
+                              borderRadius: BorderRadius.circular(10),
+                              value: spendvalue,
+                              isExpanded: true,
+                              onChanged: (newValue) {
+                                setState(() {
+                                  spendvalue = newValue!;
+                                });
+                              },
+                              items: [
+                                'Select',
+                                'For him/her self',
+                                ' Trip host',
+                                'Except trip host'
+                              ]
+                                  .map<DropdownMenuItem<String>>((String value) =>
+                                  DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 5),
+                                      child: Text(
+                                        value,
+                                        style: const TextStyle(
+                                            fontSize: 15,
+                                            color: Colors.black),
+                                      ),
+                                    ),
+                                  ))
+                                  .toList(),
+
+                              // add extra sugar..
+                              icon: const Padding(
+                                padding: EdgeInsets.only(bottom: 8.0),
+                                child: Icon(
+                                  Icons.arrow_drop_down,
+                                ),
+                              ),
+                              iconSize: 25,
+                              iconEnabledColor: primary,
+                              iconDisabledColor: black.withOpacity(0.7),
+                              underline: const SizedBox(),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ],
-            )
+            ),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: [
+            //     // SizedBox(
+            //     //   width: width(context) * 0.4,
+            //     //   child: CustomDropDownButton(itemList: [
+            //     //     '1',
+            //     //     '2',
+            //     //     '3',
+            //     //     '4',
+            //     //     '5',
+            //     //     '6',
+            //     //     '7',
+            //     //     '8',
+            //     //     '9',
+            //     //     '10'
+            //     //   ],
+            //     //       value: MaxMembervalue,
+            //     //       controller: MaxMemberController,
+            //     //       lableText: 'Max Members for Trip'),
+            //     // ),
+            //     // SizedBox(
+            //     //   width: width(context) * 0.44,
+            //     //   child: CustomDropDownButton(
+            //     //       itemList: ['For him/her self',' Trip host','Except trip host'],
+            //     //       value: spendvalue,
+            //     //       controller: SpendsController,
+            //     //       lableText: 'How spends distributed?'),
+            //     // )
+            //   ],
+            // )
           ],
         )),
     Step(
@@ -180,13 +485,25 @@ class _PublishYourTripScreenState extends State<PublishYourTripScreen> {
                   children: [
                     Column(
                       children: [
-                        Container(
-                          height: 50,
-                          width: 50,
-                          decoration: myFillBoxDecoration(
-                              0, black.withOpacity(0.2), 50),
+                        ClipRRect(
+                          borderRadius: BorderRadius.all(Radius.circular(100)),
+                          child: Container(
+                            height: 50,
+                            width: 50,
+                            decoration: image == ""
+                                ? BoxDecoration(
+                                image: DecorationImage(
+                                    fit: BoxFit.fill,
+                                    image: AssetImage('assets/images/prima3.png')))
+                                : BoxDecoration(
+                                image: DecorationImage(
+                                    fit: BoxFit.fill, image: NetworkImage(image))),
+
+                            // myFillBoxDecoration(
+                            //     0, black.withOpacity(0.2), 50),
+                          ),
                         ),
-                        const Text('Host'),
+                         Text('Host'),
                       ],
                     ),
                     addHorizontalySpace(10),
@@ -219,7 +536,7 @@ class _PublishYourTripScreenState extends State<PublishYourTripScreen> {
                                 color: black.withOpacity(0.4)),
                           ),
                           Text(
-                            '1/6 added',
+                            '0/ ${maxmember} added',
                             style: bodyText14w600(color: black),
                           )
                         ],
@@ -230,13 +547,22 @@ class _PublishYourTripScreenState extends State<PublishYourTripScreen> {
               ),
             ),
             addVerticalSpace(15),
+            if(member == "Public")
             SizedBox(
               width: width(context) * 0.8,
               child: Text(
-                'Your trip friends can see your profile, and this trip and request you to join',
+               'Others can see your profile, and this trip and request you to join.',
+                style: bodyText14w600(color: black),
+              ),
+            )else
+            SizedBox(
+              width: width(context) * 0.8,
+              child: Text(
+                'Your trip friends can see your profile, and this trip and request you to join.',
                 style: bodyText14w600(color: black),
               ),
             ),
+
             Row(
               children: [
                 Checkbox(
@@ -280,25 +606,26 @@ class _PublishYourTripScreenState extends State<PublishYourTripScreen> {
                     ? Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    InkWell(
-                      onTap: () {
-                        if (_activeCurrentStep == 0) {
-                          return;
-                        }
-                        setState(() {
-                          _activeCurrentStep -= 1;
-                        });
-                      },
-                      child: Container(
-                        height: 40,
-                        width: width(context) * 0.4,
-                        decoration:
-                        myOutlineBoxDecoration(2, primary, 10),
-                        child: const Center(
-                          child: Text('Preview'),
-                        ),
-                      ),
-                    ),
+                    // InkWell(
+                    //   onTap: () {
+                    //     if (_activeCurrentStep == 0) {
+                    //       return;
+                    //     }
+                    //     setState(() {
+                    //       _activeCurrentStep -= 1;
+                    //     });
+                    //   },
+                    //   child: Container(
+                    //     height: 40,
+                    //     width: width(context) * 0.4,
+                    //     decoration:
+                    //     myOutlineBoxDecoration(2, primary, 10),
+                    //     child: const Center(
+                    //       child: Text('Preview'),
+                    //     ),
+                    //   ),
+                    // ),
+                    addHorizontalySpace(50),
                     InkWell(
                       onTap: () {
                         Navigator.push(
@@ -325,8 +652,8 @@ class _PublishYourTripScreenState extends State<PublishYourTripScreen> {
 
                         switch(_activeCurrentStep){
                           case 0:
-                          //addPublishTripDetails();
-                            addStep1PublishTripDetails();
+                            addPublishTripDetails();
+                          //   addStep1PublishTripDetails();
                             break;
                           case 1: addStep2PublishTripDetails();
                           break;
